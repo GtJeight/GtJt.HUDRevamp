@@ -5,6 +5,10 @@
     "Description": "",
     "Scripts": [
         {
+            "Path": "client/rui/basic_image_bar.gnut",
+            "RunOn": "CLIENT"
+        },
+        {
             "Path": "ui/hud_revamp_settings.nut",
             "RunOn": "UI",
             "UICallback": {

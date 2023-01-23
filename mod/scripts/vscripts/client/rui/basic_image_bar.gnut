@@ -1,0 +1,29 @@
+untyped
+global function GetConVarFloat2
+global function GetConVarFloat3
+
+vector function GetConVarFloat2(string convar)
+{
+    array<string> value = split( GetConVarString(convar), " " )
+    try {
+        return Vector( value[0].tofloat(), value[1].tofloat(), 0.0 )
+    }
+    catch (ex)
+    {
+        throw "Invalid convar " + convar + "! make sure it is a float2 and formatted as \"X Y\""
+    }
+    unreachable
+}
+
+vector function GetConVarFloat3(string convar)
+{
+    array<string> value = split( GetConVarString(convar), " " )
+    try {
+        return Vector( value[0].tofloat(), value[1].tofloat(), value[2].tofloat() )
+    }
+    catch (ex)
+    {
+        throw "Invalid convar " + convar + "! make sure it is a float3 and formatted as \"X Y Z\""
+    }
+    unreachable
+}

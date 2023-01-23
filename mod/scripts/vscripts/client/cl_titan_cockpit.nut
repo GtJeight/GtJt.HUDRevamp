@@ -289,15 +289,17 @@ void function ShowRUIHUD( entity cockpit )
 
 	// GtJt
 	{
-		var rui = RuiCreate( RUI_TEXT_CENTER, clGlobal.topoCockpitHud, RUI_DRAW_COCKPIT, 0 )
-		RuiSetInt( rui, "maxLines", 1 )
-		RuiSetInt( rui, "lineNum", 1 )
-		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
-		RuiSetString( rui, "msgText", "56" )
-		RuiSetFloat( rui, "msgFontSize", 96.0 )
-		RuiSetFloat( rui, "msgAlpha", 0.9 )
-		RuiSetFloat( rui, "thicken", 0.0 )
-		file.textRui = rui
+		file.textRui = RuiCreate( $"ui/cockpit_console_text_center.rpak", clGlobal.topoTitanCockpitHud, RUI_DRAW_COCKPIT, 0 )
+		RuiSetInt( file.textRui, "maxLines", 3 )
+		RuiSetInt( file.textRui, "lineNum", 1 )
+		RuiSetFloat2( file.textRui, "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
+		RuiSetString(file.textRui, "msgText", "Titan Cockpit Message (Center): " + player.GetHealth().tostring())
+		RuiSetFloat( file.textRui, "msgFontSize", 96.0 )
+		RuiSetFloat( file.textRui, "msgAlpha", 0.9 )
+		RuiSetFloat( file.textRui, "thicken", 0.0 )
+		TitanCockpitRUI tcRUI
+		tcRUI.rui = file.textRui
+		player.p.titanCockpitRUIs.append( tcRUI )
 	}
 
 	file.cockpitAdditionalRui = CreateTitanCockpitRui( $"ui/ajax_cockpit_fd.rpak" )
