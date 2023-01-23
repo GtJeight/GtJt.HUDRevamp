@@ -3,13 +3,19 @@ global function HudRevampSettings_Init
 void function HudRevampSettings_Init()
 {
     printt("Adding settings :D")
+	AddConVarSetting("comp_hud_accent_color", "Accent Color", "HUD Revamp - General", "float3")
+	AddConVarSetting("comp_hud_boost_text_color", "Amped/Boost Display Color", "HUD Revamp - General", "float3")
+
 	AddConVarSettingEnum("comp_hud_healthbar", "Titan Numerical Healthbar",
         "HUD Revamp - General", [ "No", "Yes" ] )
 	AddConVarSettingEnum("comp_hud_healthbar_overlap", "Health Number Overlap With Bar",
         "HUD Revamp - General", [ "No", "Yes" ] )
 	AddConVarSetting("comp_hud_health_text_offset", "Health Number Offset", "HUD Revamp - General", "float2" )
 
-
+	AddConVarSetting("comp_hud_ordnance_position", "Ordnance Position", "HUD Revamp - Abilities", "float2")
+	AddConVarSetting("comp_hud_tactical_position", "Tactical Position", "HUD Revamp - Abilities", "float2")
+	AddConVarSetting("comp_hud_utility_position", "Titan Utility Position", "HUD Revamp - Abilities", "float2")
+	AddConVarSetting("comp_hud_ability_cooldown_pos_offset", "Cooldown Text Position Offset", "HUD Revamp - Abilities", "float2")
 
 	AddConVarSettingEnum("comp_hud_wpd", "Enable",
         "HUD Revamp - Wallkick Practice Display", [ "No", "Yes" ] )

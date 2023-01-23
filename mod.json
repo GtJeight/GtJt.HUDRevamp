@@ -18,6 +18,16 @@
     ],
     "ConVars": [
         {
+            "Name": "comp_hud_accent_color",
+            "DefaultValue": "255 255 255",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_boost_text_color",
+            "DefaultValue": "255 178 76",
+            "Flags": 16777216
+        },
+        {
             "Name": "comp_hud_healthbar",
             "DefaultValue": "1",
             "Flags": 16777216
@@ -29,6 +39,26 @@
         },
         {
             "Name": "comp_hud_health_text_offset",
+            "DefaultValue": "0.0 0.0",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_tactical_position",
+            "DefaultValue": "-0.3338 0.445",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_ordnance_position",
+            "DefaultValue": "-0.2785 0.445",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_utility_position",
+            "DefaultValue": "-0.2236 0.445",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_ability_cooldown_pos_offset",
             "DefaultValue": "0.0 0.0",
             "Flags": 16777216
         },
@@ -49,7 +79,7 @@
         },
         {
             "Name": "comp_hud_wpd_color",
-            "DefaultValue": "255 255 255",
+            "DefaultValue": "255 178 76",
             "Flags": 16777216
         },
         {

@@ -83,7 +83,6 @@ struct
 struct {
 	vector healthPos = Vector(0.0, -0.2875, 0.0)
     vector shieldPos = Vector(0.0, -0.34, 0.0)
-    string abilityText = "%.1f"
 } settings
 // GtJt HUD
 
@@ -394,6 +393,7 @@ void function ShowRUIHUD( entity cockpit )
 		RuiSetFloat2( rui, "msgPos", settings.healthPos )
 		RuiSetString( rui, "msgText", "10000")
 		RuiSetFloat( rui, "msgFontSize", 32.0 )
+		RuiSetFloat3( rui, "msgColor", GetAccentColor() )
 		RuiSetFloat( rui, "msgAlpha", 0.9 )
 		RuiSetFloat( rui, "thicken", 0.0 )
 		file.ruis["health"] <- rui
@@ -409,6 +409,7 @@ void function ShowRUIHUD( entity cockpit )
 		RuiSetFloat2( rui, "msgPos", settings.shieldPos )
 		RuiSetString( rui, "msgText", "2500")
 		RuiSetFloat( rui, "msgFontSize", 32.0 )
+		RuiSetFloat3( rui, "msgColor", <0.33, 0.6, 1> )
 		RuiSetFloat( rui, "msgAlpha", 0.9 )
 		RuiSetFloat( rui, "thicken", 0.0 )
 		file.ruis["shield"] <- rui

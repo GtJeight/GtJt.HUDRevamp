@@ -3,6 +3,7 @@ global function ClWeaponStatus_SetOffhandVisible
 global function ClWeaponStatus_SetWeaponVisible
 global function ClWeaponStatus_GetWeaponHudRui
 global function ClWeaponStatus_RefreshWeaponStatus
+global function GetAccentColor
 
 struct
 {
@@ -24,6 +25,12 @@ struct
 	table<string, var> ruis
 	// GtJt HUD
 } file
+
+// GtJt HUD
+struct {
+    string abilityText = "%.1f"
+} settings
+// GtJt HUD
 
 void function ClWeaponStatus_Init()
 {
@@ -148,15 +155,55 @@ void function ClWeaponStatus_AddClient( entity player )
 // GtJt HUD
 void function InitAdditionalRuis()
 {
+	//offhands
+	{
+		var rui = RuiCreate( $"ui/cockpit_console_text_center.rpak", clGlobal.topoCockpitHud, RUI_DRAW_COCKPIT, 5 )
+		RuiSetInt( rui, "maxLines", 1 )
+		RuiSetInt( rui, "lineNum", 0 )
+		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_hud_ordnance_position") + GetConVarFloat2("comp_hud_ability_cooldown_pos_offset") )
+		RuiSetString( rui, "msgText", "5" )
+		RuiSetFloat( rui, "msgFontSize", 32.0 )
+		RuiSetFloat3( rui, "msgColor", GetAccentColor() )
+		RuiSetFloat( rui, "msgAlpha", 0.9 )
+		RuiSetFloat( rui, "thicken", -0.25 )
+		file.ruis["offhand0"] <- rui
+	}
+
+	{
+		var rui = RuiCreate( $"ui/cockpit_console_text_center.rpak", clGlobal.topoCockpitHud, RUI_DRAW_COCKPIT, 5 )
+		RuiSetInt( rui, "maxLines", 1 )
+		RuiSetInt( rui, "lineNum", 0 )
+		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_hud_tactical_position") + GetConVarFloat2("comp_hud_ability_cooldown_pos_offset") )
+		RuiSetString( rui, "msgText", "3" )
+		RuiSetFloat( rui, "msgFontSize", 32.0 )
+		RuiSetFloat3( rui, "msgColor", GetAccentColor() )
+		RuiSetFloat( rui, "msgAlpha", 0.9 )
+		RuiSetFloat( rui, "thicken", -0.25 )
+		file.ruis["offhand1"] <- rui
+	}
+
+	{
+		var rui = RuiCreate( $"ui/cockpit_console_text_center.rpak", clGlobal.topoCockpitHud, RUI_DRAW_COCKPIT, 5 )
+		RuiSetInt( rui, "maxLines", 1 )
+		RuiSetInt( rui, "lineNum", 0 )
+		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_hud_utility_position") + GetConVarFloat2("comp_hud_ability_cooldown_pos_offset") )
+		RuiSetString( rui, "msgText", "0.9" )
+		RuiSetFloat( rui, "msgFontSize", 32.0 )
+		RuiSetFloat3( rui, "msgColor", GetAccentColor() )
+		RuiSetFloat( rui, "msgAlpha", 0.9 )
+		RuiSetFloat( rui, "thicken", -0.25 )
+		file.ruis["offhand2"] <- rui
+	}
+
 	// speedo
 	{
 		var rui = RuiCreate( $"ui/cockpit_console_text_top_left.rpak", clGlobal.topoCockpitHud, RUI_DRAW_COCKPIT, 5 )
 		RuiSetInt( rui, "maxLines", 1 )
 		RuiSetInt( rui, "lineNum", 1 )
 		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_hud_wpd_pos") )
-		RuiSetFloat3( rui, "msgColor", GetConVarFloat3("comp_hud_wpd_color")/255.0 )
 		RuiSetString( rui, "msgText", "BOOST" )
 		RuiSetFloat( rui, "msgFontSize", GetConVarFloat("comp_hud_wpd_size") )
+		RuiSetFloat3( rui, "msgColor", GetConVarFloat3("comp_hud_wpd_color")/255.0 )
 		RuiSetFloat( rui, "msgAlpha", 0.9 )
 		RuiSetFloat( rui, "thicken", -0.25 )
 		file.ruis["speed"] <- rui
@@ -175,6 +222,7 @@ void function UpdateAdditionalRuis( float deltaTime )
 	entity player = GetLocalViewPlayer()
 	if (!IsValid(player) || !player.IsPlayer()) return
 
+	// update speedometer
 	RuiSetFloat3( file.ruis["speed"], "msgColor", GetConVarFloat3("comp_hud_wpd_color")/255.0 )
 	if (GetConVarBool("comp_hud_wpd") && !player.IsTitan())
 	{
@@ -201,10 +249,256 @@ void function UpdateAdditionalRuis( float deltaTime )
 
 			lastSpeed = Length( Vector( player.GetVelocity().x, player.GetVelocity().y, 0 ) )
 		}
-		return
+	}
+	else
+		RuiSetString(file.ruis["speed"], "msgText", "")
+
+	// update equipments cooldown
+	for (int i = 0; i < 3; i++)
+	{
+		var rui = file.ruis["offhand" + i]
+		RuiSetFloat3(rui, "msgColor", GetAccentColor() )
+		if (!IsValid(player.GetOffhandWeapon(i)))
+		{
+			RuiSetString(rui, "msgText", "")
+		}
+		else if(!player.IsTitan())
+		{
+			string posConVar = "comp_hud_ordnance_position"
+			switch (i)
+			{
+				case 1:
+					posConVar = "comp_hud_tactical_position"
+					break
+				case 2:
+					posConVar = "comp_hud_utility_position"
+					break
+			}
+			RuiSetFloat2( rui, "msgPos", GetConVarFloat2(posConVar) + GetConVarFloat2("comp_hud_ability_cooldown_pos_offset") )
+
+			UpdateOffhandRui(rui, player, player.GetOffhandWeapon(i))
+		}
+		else
+		{
+			string posConVar = "comp_hud_utility_position"
+			switch (i)
+			{
+				case 1:
+					posConVar = "comp_hud_tactical_position"
+					break
+				case 2:
+					posConVar = "comp_hud_ordnance_position"
+					break
+			}
+			RuiSetFloat2( rui, "msgPos", GetConVarFloat2(posConVar) + GetConVarFloat2("comp_hud_ability_cooldown_pos_offset") )
+
+			UpdateOffhandRui(rui, player, player.GetOffhandWeapon(i))
+		}
+	}
+}
+
+void function UpdateOffhandRui( var rui, entity player, entity weapon )
+{
+	float altCooldown = 0.0
+	float timeUntilNextCharge = 0.0
+	int maxCharges = 1
+	float minFracToUse = 1
+	bool doNotSetText = false
+	float ammoFrac = 0
+	if (weapon.IsChargeWeapon()) ammoFrac = 1 - weapon.GetWeaponChargeFraction()
+	if (weapon.GetWeaponPrimaryClipCountMax() > 0) ammoFrac = float(weapon.GetWeaponPrimaryClipCount()) / weapon.GetWeaponPrimaryClipCountMax()
+	// RuiSetImage( bar["icon"].imageRuis[0], "basicImage", GetWeaponInfoFileKeyFieldAsset_WithMods_Global( weapon.GetWeaponClassName(), weapon.GetMods(), "hud_icon" ) )
+	switch ( weapon.GetWeaponInfoFileKeyField( "cooldown_type" ) )
+	{
+		case "ammo_swordblock":
+			ammoFrac = 0
+			timeUntilNextCharge = 0
+			altCooldown = 0
+			break
+
+		case "shared_energy":
+			int curCost = weapon.GetWeaponCurrentEnergyCost() // 350
+			float energy = float( player.GetSharedEnergyCount() )
+			float maxEnergy = float( player.GetSharedEnergyTotal() ) // 1000
+			float energyRegenRate = player.GetSharedEnergyRegenRate()
+
+			maxCharges = int( maxEnergy ) / curCost
+			minFracToUse = float( curCost ) / maxEnergy
+			int curCharges = int( energy ) / curCost
+			int targetAmmo = (curCharges + 1) * curCost
+			timeUntilNextCharge = (targetAmmo - energy) / energyRegenRate
+			ammoFrac = (energy / curCost)
+
+			// Ability - 2/2 | 2.5s
+			break
+
+		case "shared_energy_drain":
+			float energy = float( player.GetSharedEnergyCount() )
+			float maxEnergy = float( player.GetSharedEnergyTotal() ) // 1000
+			float energyRegenRate = player.GetSharedEnergyRegenRate()
+			maxCharges = 1
+
+			minFracToUse = 0.1
+			timeUntilNextCharge = (maxEnergy - energy) / energyRegenRate
+			ammoFrac = (energy / maxEnergy)
+
+
+			if (player.GetActiveWeapon() == weapon)
+			{
+				timeUntilNextCharge = (energy / maxEnergy) * weapon.GetWeaponSettingFloat( eWeaponVar.charge_time )
+			}
+			break
+
+		case "vortex_drain":
+			// display percentage/cooldown
+			break
+
+		case "charged_shot":
+			float chargeCooldownTime = weapon.GetWeaponSettingFloat( eWeaponVar.charge_cooldown_time )
+			timeUntilNextCharge = (1 - ammoFrac) * chargeCooldownTime
+			ammoFrac = 1 - weapon.GetWeaponChargeFraction()
+			switch (weapon.GetWeaponClassName())
+			{
+				case "mp_titanweapon_shoulder_rockets":
+					minFracToUse = 0.2
+					break;
+				case "mp_titanweapon_vortex_shield":
+					minFracToUse = 0.1
+					break;
+				default:
+					minFracToUse = 1
+			}
+			break
+
+		case "grapple":
+			int ammoClipSize = 100
+			float ammoMinToFire = weapon.GetWeaponSettingFloat( eWeaponVar.grapple_power_required )
+			float grapplePower = player.GetSuitGrapplePower()
+			float grappleRegenRate = 3.0
+
+			if (player.HasPassive( ePassives.PAS_POWER_CELL ))
+			{
+				// AAAAAAAAAAAA
+				grappleRegenRate *= 1.35
+			}
+
+			maxCharges = 2
+			minFracToUse = 0.5
+			if (ammoMinToFire > 0) maxCharges = ammoClipSize / int( ammoMinToFire )
+			int curCharges = 0;
+			if (ammoMinToFire > 0) curCharges = int( grapplePower ) / int( ammoMinToFire )
+			int targetAmmo = (curCharges + 1) * int( ammoMinToFire )
+			timeUntilNextCharge = (targetAmmo - grapplePower) / grappleRegenRate
+			if (ammoClipSize == grapplePower) timeUntilNextCharge = 0
+			ammoFrac = grapplePower / ammoClipSize
+
+			break
+
+		case "ammo_instant":
+			int cost = weapon.GetWeaponSettingInt( eWeaponVar.shared_energy_cost )
+			if (cost > 0)
+			{
+				float energy = float( player.GetSharedEnergyCount() )
+				if (energy < cost)
+				{
+					float energyRegenRate = player.GetSharedEnergyRegenRate()
+					float timeUntilNextCharge = (cost - energy) / energyRegenRate
+					if (timeUntilNextCharge > altCooldown)
+						altCooldown = timeUntilNextCharge
+				}
+			}
+		default:
+			float refillRate = weapon.GetWeaponSettingFloat( eWeaponVar.regen_ammo_refill_rate )
+
+			float timeUntilNextAttack = weapon.GetNextAttackAllowedTime() - Time()
+			if (weapon.GetWeaponSettingFloat( eWeaponVar.fire_duration ) > 0)
+			{
+				if (timeUntilNextAttack > 1 / weapon.GetWeaponSettingFloat( eWeaponVar.fire_rate ))
+				{
+					// RuiSetFloat3( bar["bg"].imageRuis[0], "basicImageColor", <1, 0.5, 0.0> )
+					timeUntilNextCharge = timeUntilNextAttack - 1 / weapon.GetWeaponSettingFloat( eWeaponVar.fire_rate )
+					break
+				}
+			}
+			// RuiSetFloat3( bar["bg"].imageRuis[0], "basicImageColor", <0, 0, 0> )
+			if (timeUntilNextAttack > altCooldown)
+			{
+				altCooldown = timeUntilNextAttack
+			}
+			if ( refillRate > 0 || !weapon.IsChargeWeapon())
+			{
+				//printt( "HUD: ", weapon.GetWeaponClassName(), "using", "refillRate" )
+				int ammoClipSize = weapon.GetWeaponSettingInt( eWeaponVar.ammo_clip_size )
+				// returns MP setting despite it being 1
+				int ammoMinToFire = weapon.GetWeaponSettingInt( eWeaponVar.ammo_min_to_fire )
+				//printt(weapon.GetWeaponSettingString(eWeaponVar.printname), "| max ammo:", ammoClipSize, "min to fire:", ammoMinToFire)
+
+				maxCharges = ammoClipSize / ammoMinToFire
+				minFracToUse = float( ammoMinToFire ) / ammoClipSize
+				int curCharges = weapon.GetWeaponPrimaryClipCount() / ammoMinToFire
+				int targetAmmo = (curCharges + 1) * ammoMinToFire
+				if (refillRate > 0)
+					timeUntilNextCharge = float(targetAmmo - weapon.GetWeaponPrimaryClipCount()) / refillRate
+				else timeUntilNextCharge = 0.0
+				if (ammoClipSize == weapon.GetWeaponPrimaryClipCount()) timeUntilNextCharge = 0
+
+
+			}
+			else
+			{
+				float chargeCooldownTime = weapon.GetWeaponSettingFloat( eWeaponVar.charge_cooldown_time )
+				timeUntilNextCharge = (1 - ammoFrac) * chargeCooldownTime
+				switch (weapon.GetWeaponClassName())
+				{
+					case "mp_titanweapon_shoulder_rockets":
+						minFracToUse = 0.2
+						break;
+					case "mp_titanweapon_vortex_shield":
+						minFracToUse = 0.1
+						break;
+					default:
+						minFracToUse = 1
+				}
+			}
+			break
 	}
 
-	RuiSetString(file.ruis["speed"], "msgText", "")
+	float cooldown = max(timeUntilNextCharge, altCooldown)
+	// maxCharges = int( max(1, maxCharges) )
+	// if (maxCharges > 5) maxCharges = 1
+
+	// if (maxCharges != bar["bar"].segments)
+	// {
+	// 	BasicImageBar_UpdateSegmentCount(bar["bar"], maxCharges, 0.05)
+	// 	//BasicImageBar_UpdateSegmentCount(bar["bgBar"], maxCharges, 0.05)
+	// }
+	// foreach (var rui in bar["bgBar"].imageRuis)
+	// {
+	// 	RuiSetFloat3( rui, "basicImageColor", GetAccentColor() * 0.5)
+	// 	RuiSetFloat( rui, "basicImageAlpha", 0.1)
+	// }
+	// foreach(var rui in bar["bar"].imageRuis)
+	// {
+	// 	RuiSetFloat3(rui, "basicImageColor", GetAccentColor() )
+	// }
+	// BasicImageBar_SetFillFrac(bar["bar"], ammoFrac)
+	// BasicImageBar_SetFillFrac(bar["bgBar"], ammoFrac % 1.0)
+	// if (ammoFrac < minFracToUse)
+	// {
+	// 	RuiSetFloat3(bar["bgBar"].imageRuis[0], "basicImageColor", GetConVarFloat3("comp_hud_ability_bg_bar_empty_color") / 255.0)
+	// 	RuiSetFloat3(bar["bar"].imageRuis[maxCharges - 1], "basicImageColor", GetConVarFloat3("comp_hud_ability_bar_empty_color") / 255.0)
+	// }
+	// else {
+	// 	RuiSetFloat3(bar["bgBar"].imageRuis[0], "basicImageColor", GetAccentColor() * 0.5)
+	// 	RuiSetFloat3(bar["bar"].imageRuis[maxCharges - 1], "basicImageColor", GetAccentColor() )
+	// }
+	// RuiSetFloat(bar["bg"].imageRuis[0], "basicImageAlpha", GetConVarFloat("comp_hud_ability_bg_alpha"))
+
+	if (!doNotSetText) RuiSetString(rui, "msgText", format(settings.abilityText, cooldown))
+
+
+	if (cooldown == 0.0)
+		RuiSetString(rui, "msgText", "")
 }
 // GtJt HUD
 
@@ -908,4 +1202,9 @@ void function ClWeaponStatus_SetWeaponVisible( bool newState )
 {
 	RuiSetBool( file.ammo_counter, "isVisible", newState )
 	file.ammo_counter_visible = newState
+}
+
+vector function GetAccentColor(bool boost = false)
+{
+	return (boost ? GetConVarFloat3("comp_hud_boost_text_color") / 255.0 : GetConVarFloat3("comp_hud_accent_color") / 255.0)
 }
