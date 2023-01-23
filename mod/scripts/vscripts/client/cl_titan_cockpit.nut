@@ -72,7 +72,12 @@ struct
 	bool isFirstBoot = true
 	var scorchHotstreakRui
 
+	// GtJt HUD
+	array< void functionref( float ) > updateCallbacks
+	array< void functionref() > startCallbacks
+	table<string, var> ruis
 	var textRui
+	// GtJt HUD
 } file
 
 function ClTitanCockpit_Init()
@@ -97,6 +102,7 @@ function ClTitanCockpit_Init()
 	if ( !IsModelViewer() && !IsLobby() )
 	{
 		AddCreateCallback( "titan_cockpit", TitanCockpitInit )
+		AddCallback_OnClientScriptInit( ClTitanCockpitAdditionalRuis_AddClient )	// GtJt HUD
 	}
 
 	if ( !reloadingScripts )
@@ -113,6 +119,61 @@ function ClTitanCockpit_Init()
 
 	AddTitanCockpitManagedRUI( Scorch_CreateHotstreakBar, Scorch_DestroyHotstreakBar, Scorch_ShouldCreateHotstreakBar, RUI_DRAW_COCKPIT ) //RUI_DRAW_HUD
 }
+
+// GtJt HUD
+void function AddStartCallback( void functionref() callback )
+{
+	file.startCallbacks.append(callback)
+}
+
+void function AddUpdateCallback( void functionref( float ) callback )
+{
+	file.updateCallbacks.append(callback)
+}
+
+void function Start()
+{
+	foreach(void functionref() f in file.startCallbacks){
+		f()
+	}
+}
+
+void function UpdateThread()
+{
+	float time = Time()
+	while (true)
+	{
+		time = Time()
+		WaitFrame()
+		if (IsWatchingKillReplay()) continue
+		foreach(void functionref(float) f in file.updateCallbacks){
+			f(Time() - time)
+		}
+		//while (IsWatchingKillReplay()) { WaitFrame(); }
+	}
+}
+
+void function ClTitanCockpitAdditionalRuis_AddClient( entity player )
+{
+	AddStartCallback( InitTitanCockpitAdditionalRuis )
+	Start()
+	thread UpdateThread()
+}
+
+void function InitTitanCockpitAdditionalRuis()
+{
+	AddUpdateCallback( UpdateTitanCockpitAdditionalRuis )
+}
+
+void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
+{
+	if(IsValid(file.textRui))
+	{
+		entity player = GetLocalViewPlayer()
+		RuiSetString(file.textRui, "msgText", "Titan Cockpit Message (Center): " + player.GetHealth().tostring())
+	}
+}
+// GtJt HUD
 
 void function UpdateLastPlayerSettings( entity player )
 {
@@ -287,20 +348,21 @@ void function ShowRUIHUD( entity cockpit )
 		RuiSetString( file.cockpitRui, "titanInfo4", GetVanguardCoreString( player, 4 ) )
 	}
 
-	// GtJt
+	// GtJt HUD
 	{
 		file.textRui = RuiCreate( $"ui/cockpit_console_text_center.rpak", clGlobal.topoTitanCockpitHud, RUI_DRAW_COCKPIT, 0 )
 		RuiSetInt( file.textRui, "maxLines", 3 )
 		RuiSetInt( file.textRui, "lineNum", 1 )
 		RuiSetFloat2( file.textRui, "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
-		RuiSetString(file.textRui, "msgText", "Titan Cockpit Message (Center): " + player.GetHealth().tostring())
-		RuiSetFloat( file.textRui, "msgFontSize", 96.0 )
+		RuiSetString(file.textRui, "msgText", "Titan Cockpit Message (Center): ")
+		RuiSetFloat( file.textRui, "msgFontSize", 48.0 )
 		RuiSetFloat( file.textRui, "msgAlpha", 0.9 )
 		RuiSetFloat( file.textRui, "thicken", 0.0 )
 		TitanCockpitRUI tcRUI
 		tcRUI.rui = file.textRui
 		player.p.titanCockpitRUIs.append( tcRUI )
 	}
+	// GtJt HUD
 
 	file.cockpitAdditionalRui = CreateTitanCockpitRui( $"ui/ajax_cockpit_fd.rpak" )
 	RuiSetFloat( file.cockpitAdditionalRui, "ejectManualTimeOut", EJECT_FADE_TIME )
