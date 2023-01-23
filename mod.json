@@ -5,17 +5,6 @@
     "Description": "",
     "Scripts": [
         {
-            "Path": "client/rui/basic_image_bar.gnut",
-            "RunOn": "CLIENT"
-        },
-        {
-            "Path": "cl_damageindicators.gnut",
-            "RunOn": "CLIENT",
-            "ClientCallback": {
-                "After": "Cl_DamageIndicator_Init"
-            }
-        },
-        {
             "Path": "ui/hud_revamp_settings.nut",
             "RunOn": "UI",
             "UICallback": {
@@ -32,15 +21,10 @@
         {
             "Name": "comp_hud_healthbar_overlap",
             "DefaultValue": "0",
-            "Flags": 16777216 // FCVAR_ARCHIVE_PLAYERPROFILE
-        },
-        {
-            "Name": "comp_hud_health_text_color",
-            "DefaultValue": "255 255 255",
             "Flags": 16777216
         },
         {
-            "Name": "comp_hud_health_text_offset", 
+            "Name": "comp_hud_health_text_offset",
             "DefaultValue": "0.0 0.0",
             "Flags": 16777216
         },
@@ -50,7 +34,7 @@
             "Flags": 16777216
         },
         {
-            "Name": "comp_hud_wpd_pos", 
+            "Name": "comp_hud_wpd_pos",
             "DefaultValue": "0.65 0.4",
             "Flags": 16777216
         },
@@ -87,6 +71,21 @@
         {
             "Name": "comp_hud_incoming_damage_indicator_fade_time",
             "DefaultValue": "0.5",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_phase_glitch_indicator",
+            "DefaultValue": "1",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_core_meter_timer",
+            "DefaultValue": "1",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_core_meter_timer_pos",
+            "DefaultValue": "0.0 0.0",
             "Flags": 16777216
         }
     ]
