@@ -39,12 +39,17 @@
         },
         {
             "Name": "comp_hud_wpd_pos",
-            "DefaultValue": "0.65 0.4",
+            "DefaultValue": "0.0 0.0",
             "Flags": 16777216
         },
         {
             "Name": "comp_hud_wpd_size",
             "DefaultValue": "44",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_wpd_color",
+            "DefaultValue": "255 255 255",
             "Flags": 16777216
         },
         {

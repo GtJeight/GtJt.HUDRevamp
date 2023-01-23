@@ -17,6 +17,12 @@ struct
 	bool ammo_counter_visible = true
 
 	int lastSelectedIndex
+
+	// GtJt HUD
+	array< void functionref( float ) > updateCallbacks
+	array< void functionref() > startCallbacks
+	table<string, var> ruis
+	// GtJt HUD
 } file
 
 void function ClWeaponStatus_Init()
@@ -56,6 +62,40 @@ var function ClWeaponStatus_GetWeaponHudRui( entity player, entity weapon )
 
 	return GetRuiForIndex( player, index )
 }
+
+// GtJt HUD
+void function AddStartCallback( void functionref() callback )
+{
+	file.startCallbacks.append(callback)
+}
+
+void function AddUpdateCallback( void functionref( float ) callback )
+{
+	file.updateCallbacks.append(callback)
+}
+
+void function Start()
+{
+	foreach(void functionref() f in file.startCallbacks){
+		f()
+	}
+}
+
+void function UpdateThread()
+{
+	float time = Time()
+	while (true)
+	{
+		time = Time()
+		WaitFrame()
+		if (IsWatchingKillReplay()) continue
+		foreach(void functionref(float) f in file.updateCallbacks){
+			f(Time() - time)
+		}
+		//while (IsWatchingKillReplay()) { WaitFrame(); }
+	}
+}
+// GtJt HUD
 
 void function ClWeaponStatus_AddClient( entity player )
 {
@@ -98,8 +138,75 @@ void function ClWeaponStatus_AddClient( entity player )
 		var rui = CreateCockpitRui( $"ui/ammo_counter.rpak" )
 		file.ammo_counter = rui
 	}
+
+	// GtJt HUD
+	AddStartCallback( InitAdditionalRuis )
+	Start()
+	thread UpdateThread()
 }
 
+// GtJt HUD
+void function InitAdditionalRuis()
+{
+	// speedo
+	{
+		var rui = RuiCreate( $"ui/cockpit_console_text_top_left.rpak", clGlobal.topoCockpitHud, RUI_DRAW_COCKPIT, 5 )
+		RuiSetInt( rui, "maxLines", 1 )
+		RuiSetInt( rui, "lineNum", 1 )
+		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_hud_wpd_pos") )
+		RuiSetFloat3( rui, "msgColor", GetConVarFloat3("comp_hud_wpd_color")/255.0 )
+		RuiSetString( rui, "msgText", "BOOST" )
+		RuiSetFloat( rui, "msgFontSize", GetConVarFloat("comp_hud_wpd_size") )
+		RuiSetFloat( rui, "msgAlpha", 0.9 )
+		RuiSetFloat( rui, "thicken", -0.25 )
+		file.ruis["speed"] <- rui
+	}
+
+	AddUpdateCallback( UpdateAdditionalRuis )
+}
+
+bool isWR = false
+int WRFrames = 0
+float startWRSpeed = 0.0
+float endWRSpeed = 0.0
+float lastSpeed = 0.0
+void function UpdateAdditionalRuis( float deltaTime )
+{
+	entity player = GetLocalViewPlayer()
+	if (!IsValid(player) || !player.IsPlayer()) return
+
+	RuiSetFloat3( file.ruis["speed"], "msgColor", GetConVarFloat3("comp_hud_wpd_color")/255.0 )
+	if (GetConVarBool("comp_hud_wpd") && !player.IsTitan())
+	{
+		RuiSetString(file.ruis["speed"], "msgText", format( "%.1f km/h",  Length( Vector( player.GetVelocity().x, player.GetVelocity().y, 0 ) / 10.9444 ) ) )
+		RuiSetFloat(file.ruis["speed"], "msgFontSize", GetConVarFloat("comp_hud_wpd_size"))
+		RuiSetFloat2(file.ruis["speed"], "msgPos", GetConVarFloat2("comp_hud_wpd_pos"))
+		if (player.IsWallRunning())
+		{
+			if (!isWR)
+			{
+				WRFrames = 0
+				isWR = true
+				startWRSpeed = lastSpeed
+			}
+			WRFrames++
+			RuiSetString(file.ruis["speed"], "msgText", "frames: " + WRFrames + "\n" +
+			format( "%.1f km/h", Length( Vector( player.GetVelocity().x, player.GetVelocity().y, 0 ) / 10.9444 ) ) )
+		}
+		else {
+			if (isWR) endWRSpeed = Length( Vector( player.GetVelocity().x, player.GetVelocity().y, 0 ) )
+			isWR = false
+			RuiSetString(file.ruis["speed"], "msgText", "frames: " + WRFrames + "\n" +
+			format( "%.1f km/h (%+.1f)", Length( Vector( player.GetVelocity().x, player.GetVelocity().y, 0 ) / 10.9444 ), (endWRSpeed - startWRSpeed) / 10.9444 ) )
+
+			lastSpeed = Length( Vector( player.GetVelocity().x, player.GetVelocity().y, 0 ) )
+		}
+		return
+	}
+
+	RuiSetString(file.ruis["speed"], "msgText", "")
+}
+// GtJt HUD
 
 void function OnSelectedWeaponChanged( entity selectedWeapon )
 {

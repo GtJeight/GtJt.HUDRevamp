@@ -76,9 +76,16 @@ struct
 	array< void functionref( float ) > updateCallbacks
 	array< void functionref() > startCallbacks
 	table<string, var> ruis
-	var textRui
 	// GtJt HUD
 } file
+
+// GtJt HUD
+struct {
+	vector healthPos = Vector(0.0, -0.2875, 0.0)
+    vector shieldPos = Vector(0.0, -0.34, 0.0)
+    string abilityText = "%.1f"
+} settings
+// GtJt HUD
 
 function ClTitanCockpit_Init()
 {
@@ -165,12 +172,42 @@ void function InitTitanCockpitAdditionalRuis()
 	AddUpdateCallback( UpdateTitanCockpitAdditionalRuis )
 }
 
+float lastShieldStateChangeTime = -5.0;
+int lastShieldHealth = 0;
 void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 {
 	entity player = GetLocalViewPlayer()
-	if(player.IsTitan()&&IsAlive(player))
+	if(player.IsTitan() && IsAlive(player))	// any degenerate cases?
 	{
-		RuiSetString(file.textRui, "msgText", "Titan Cockpit Message (Center): " + player.GetHealth().tostring())
+		// update titan health
+		RuiSetFloat( file.ruis["health"], "msgAlpha", GetConVarBool("comp_hud_healthbar") ? 0.9 : 0.0 )
+		RuiSetString( file.ruis["health"], "msgText", player.GetHealth().tostring())
+		RuiSetFloat2( file.ruis["health"], "msgPos", settings.healthPos + (GetConVarBool("comp_hud_healthbar_overlap") ? <0.0, -0.0225, 0.0> : <0,0,0>))
+
+		// update titan shield
+		int shieldHealth = 0;
+		if (player.GetTitanSoul() != null) shieldHealth = player.GetTitanSoul().GetShieldHealth()
+		if (shieldHealth > 0 && GetConVarBool("comp_hud_healthbar"))
+		{
+			if (lastShieldHealth <= 0)
+			{
+				lastShieldHealth = 1;
+				lastShieldStateChangeTime = Time()
+			}
+
+			RuiSetFloat( file.ruis["shield"], "msgAlpha", 0.9 )
+		}
+		else
+		{
+			if (lastShieldHealth > 0)
+			{
+				lastShieldHealth = 0;
+				lastShieldStateChangeTime = Time()
+			}
+
+			RuiSetFloat( file.ruis["shield"], "msgAlpha", 0.0 )
+		}
+		RuiSetString(file.ruis["shield"], "msgText", shieldHealth.tostring())
 	}
 }
 // GtJt HUD
@@ -349,17 +386,34 @@ void function ShowRUIHUD( entity cockpit )
 	}
 
 	// GtJt HUD
+	// titan health
 	{
-		file.textRui = RuiCreate( $"ui/cockpit_console_text_center.rpak", clGlobal.topoTitanCockpitHud, RUI_DRAW_COCKPIT, 0 )
-		RuiSetInt( file.textRui, "maxLines", 3 )
-		RuiSetInt( file.textRui, "lineNum", 1 )
-		RuiSetFloat2( file.textRui, "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
-		RuiSetString(file.textRui, "msgText", "Titan Cockpit Message (Center): ")
-		RuiSetFloat( file.textRui, "msgFontSize", 48.0 )
-		RuiSetFloat( file.textRui, "msgAlpha", 0.9 )
-		RuiSetFloat( file.textRui, "thicken", 0.0 )
+		var rui = RuiCreate( $"ui/cockpit_console_text_center.rpak", clGlobal.topoTitanCockpitHud, RUI_DRAW_COCKPIT, 5 )
+		RuiSetInt( rui, "maxLines", 1 )
+		RuiSetInt( rui, "lineNum", 1 )
+		RuiSetFloat2( rui, "msgPos", settings.healthPos )
+		RuiSetString( rui, "msgText", "10000")
+		RuiSetFloat( rui, "msgFontSize", 32.0 )
+		RuiSetFloat( rui, "msgAlpha", 0.9 )
+		RuiSetFloat( rui, "thicken", 0.0 )
+		file.ruis["health"] <- rui
 		TitanCockpitRUI tcRUI
-		tcRUI.rui = file.textRui
+		tcRUI.rui = file.ruis["health"]
+		player.p.titanCockpitRUIs.append( tcRUI )
+	}
+	// titan shield
+	{
+		var rui = RuiCreate( $"ui/cockpit_console_text_center.rpak", clGlobal.topoTitanCockpitHud, RUI_DRAW_COCKPIT, 5 )
+		RuiSetInt( rui, "maxLines", 1 )
+		RuiSetInt( rui, "lineNum", 1 )
+		RuiSetFloat2( rui, "msgPos", settings.shieldPos )
+		RuiSetString( rui, "msgText", "2500")
+		RuiSetFloat( rui, "msgFontSize", 32.0 )
+		RuiSetFloat( rui, "msgAlpha", 0.9 )
+		RuiSetFloat( rui, "thicken", 0.0 )
+		file.ruis["shield"] <- rui
+		TitanCockpitRUI tcRUI
+		tcRUI.rui = file.ruis["shield"]
 		player.p.titanCockpitRUIs.append( tcRUI )
 	}
 	// GtJt HUD

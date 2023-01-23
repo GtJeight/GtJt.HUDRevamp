@@ -15,6 +15,7 @@ void function HudRevampSettings_Init()
         "HUD Revamp - Wallkick Practice Display", [ "No", "Yes" ] )
 	AddConVarSetting("comp_hud_wpd_pos", "Position", "HUD Revamp - Wallkick Practice Display", "float2" )
 	AddConVarSetting("comp_hud_wpd_size", "Font Size", "HUD Revamp - Wallkick Practice Display", "float" )
+	AddConVarSetting("comp_hud_wpd_color", "Color", "HUD Revamp - Wallkick Practice Display", "float3" )
 
 	AddConVarSettingEnum( "comp_hud_damage_indicator", "Enabled", "HUD Revamp - Damage Indicator", [ "No", "Yes" ] )
 	AddConVarSetting( "comp_hud_damage_indicator_duration", "Duration", "HUD Revamp - Damage Indicator", "float" )
