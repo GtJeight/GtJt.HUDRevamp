@@ -1,0 +1,199 @@
+{
+    "Name": "HUD Revamp",
+    "LoadPriority": 6,
+    "Version": "1.0.0",
+    "Description": "pAIN\ntest",
+    "Scripts": [
+        {
+            "Path": "client/rui/basic_image_bar.gnut",
+            "RunOn": "CLIENT"
+        },
+        {
+            "Path": "cl_damageindicators.gnut",
+            "RunOn": "CLIENT",
+            "ClientCallback": {
+                "After": "Cl_DamageIndicator_Init"
+            }
+        },
+        {
+            "Path": "ui/hud_revamp_settings.nut",
+            "RunOn": "UI",
+            "UICallback": {
+                "Before": "HudRevampSettings_Init"
+            }
+        }
+    ],
+    "ConVars": [
+        {
+            "Name": "comp_hud_healthbar",
+            "DefaultValue": "1",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_healthbar_overlap",
+            "DefaultValue": "0",
+            "Flags": 16777216 // FCVAR_ARCHIVE_PLAYERPROFILE
+        },
+        {
+            "Name": "comp_hud_vertical_side_bar",
+            "DefaultValue": "1",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_tactical_position",
+            "DefaultValue": "-0.3338 0.445",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_ordnance_position",
+            "DefaultValue": "-0.2785 0.445",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_utility_position",
+            "DefaultValue": "-0.2236 0.445",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_ability_ui_scale",
+            "DefaultValue": "0.9",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_ability_cooldown_pos_offset",
+            "DefaultValue": "0 0.06",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_ability_bg_alpha",
+            "DefaultValue": "0.4",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_ammo_pos",
+            "DefaultValue": "0.25 0.2",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_holstered_weapons_pos",
+            "DefaultValue": "0.7 0.9",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_accent_color",
+            "DefaultValue": "255 255 255",
+            "Flags": 16777216
+        },
+        {
+            "Name":"comp_hud_ability_bar_empty_color",
+            "DefaultValue": "255 0 0",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_ability_bg_bar_empty_color",
+            "DefaultValue": "191 25 25",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_ability_bg_color",
+            "DefaultValue": "128 128 128",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_ability_icon_scale",
+            "DefaultValue": "0.9",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_ability_bar_thickness",
+            "DefaultValue": "0.1",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_boost_text_color",
+            "DefaultValue": "255 178 76",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_health_text_color",
+            "DefaultValue": "255 255 255",
+            "Flags": 16777216
+        }
+        ,
+        {
+            "Name": "comp_hud_pilot_healthbar",
+            "DefaultValue": "0",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_boost_position",
+            "DefaultValue": "-0.2785 0.3425",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_titan_meter_offset",
+            "DefaultValue": "0 0",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_titan_meter_scale",
+            "DefaultValue": "1 1",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_pilot_healthbar_pos",
+            "DefaultValue": "0.25 0.4",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_pilot_healthbar_size",
+            "DefaultValue": "0.2 0.025",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_wpd",
+            "DefaultValue": "1",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_wpd_pos", 
+            "DefaultValue": "0.65 0.4",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_wpd_size",
+            "DefaultValue": "44",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_damage_indicator",
+            "DefaultValue": "1",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_damage_indicator_duration",
+            "DefaultValue": "1.6",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_damage_indicator_fade_time",
+            "DefaultValue": "0.5",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_incoming_damage_indicator",
+            "DefaultValue": "1",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_incoming_damage_indicator_duration",
+            "DefaultValue": "1.6",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_incoming_damage_indicator_fade_time",
+            "DefaultValue": "0.5",
+            "Flags": 16777216
+        }
+    ]
+}
