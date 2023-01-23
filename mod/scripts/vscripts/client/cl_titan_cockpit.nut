@@ -167,9 +167,9 @@ void function InitTitanCockpitAdditionalRuis()
 
 void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 {
-	if(IsValid(file.textRui))
+	entity player = GetLocalViewPlayer()
+	if(player.IsTitan()&&IsAlive(player))
 	{
-		entity player = GetLocalViewPlayer()
 		RuiSetString(file.textRui, "msgText", "Titan Cockpit Message (Center): " + player.GetHealth().tostring())
 	}
 }
