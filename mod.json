@@ -9,6 +9,13 @@
             "RunOn": "CLIENT"
         },
         {
+            "Path": "cl_damageindicators.gnut",
+            "RunOn": "CLIENT",
+            "ClientCallback": {
+                "After": "Cl_DamageIndicator_Init"
+            }
+        },
+        {
             "Path": "ui/hud_revamp_settings.nut",
             "RunOn": "UI",
             "UICallback": {
