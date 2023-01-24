@@ -12,6 +12,8 @@ void function HudRevampSettings_Init()
         "HUD Revamp - General", [ "No", "Yes" ] )
 	AddConVarSetting("comp_hud_health_text_offset", "Health Number Offset", "HUD Revamp - General", "float2" )
 
+	AddConVarSettingEnum("comp_hud_ability_cooldown", "Show Cooldown Time",
+	"HUD Revamp - Utilities", [ "No", "Yes" ] )
 	AddConVarSetting("comp_hud_tactical_position", "First Utility Position", "HUD Revamp - Utilities", "float2")
 	AddConVarSetting("comp_hud_ordnance_position", "Second Utility Position", "HUD Revamp - Utilities", "float2")
 	AddConVarSetting("comp_hud_utility_position", "Third Utility Position", "HUD Revamp - Utilities", "float2")

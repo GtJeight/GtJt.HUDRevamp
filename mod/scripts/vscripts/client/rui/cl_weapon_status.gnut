@@ -301,6 +301,7 @@ void function UpdateAdditionalRuis( float deltaTime )
 	{
 		var rui = file.ruis["offhand" + i]
 		RuiSetFloat3(rui, "msgColor", GetAccentColor() )
+		RuiSetFloat( rui, "msgAlpha", GetConVarBool("comp_hud_ability_cooldown") ? 0.9 : 0.0 )
 		if (!IsValid(player.GetOffhandWeapon(i)))
 		{
 			RuiSetString(rui, "msgText", "")
