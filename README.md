@@ -2,9 +2,16 @@
 Alternative version of HUDRevamp
 
 为解决原HUDR图标难看写的mod
-需要最早版本modsettings的支持（见我的repos）
+需要最早版本[modsettings](https://github.com/GtJeight/ModSettings)的支持
 
-计划加入：
-1.相位bug检测
-2.核心时间指示（饼）
-3.高级伤害显示（大饼）
+新特性：
+
+- 建议剑核心剩余时间指示
+
+计划（饼）：
+
+- 连续相位警示
+- 数字效果改善
+- 镭射核心剩余时间指示
+
+更新本模组前请注意保存自己的mod.json，因为更新可能往mod.json写入新的变量
