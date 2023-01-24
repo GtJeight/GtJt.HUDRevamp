@@ -57,7 +57,7 @@ void function AddDamageToStackingDamageFlyoutText(float damage, bool isCrit, ent
 {
 	accumulatedOutgoingDamage += damage
 	if (stackingOutgoingDamageTextRui == null) return
-	RuiSetString( stackingOutgoingDamageTextRui, "msgText", accumulatedOutgoingDamage.tointeger().tostring() )
+	RuiSetString( stackingOutgoingDamageTextRui, "msgText", accumulatedOutgoingDamage.tointeger().tostring()  + "\n" + CalculateVictimHP(damage, victim) + " HP")
 	float msgFontSize = GraphCapped( accumulatedOutgoingDamage, victim.IsTitan() ? 500 : 50, victim.IsTitan() ? 10000 : 200, 36, victim.IsTitan() ? 56 : 48 )
 	RuiSetFloat( stackingOutgoingDamageTextRui, "msgFontSize", msgFontSize)
 	RuiSetFloat2( stackingOutgoingDamageTextRui, "msgPos", OUTGOING_DAMAGE_TEXT_BEGIN_POS - <0, GraphCapped(msgFontSize, 36, 72, 0.0, 0.05), 0> )
@@ -89,6 +89,12 @@ void function AddSmallDamageTextFlyout(float damage, bool isCrit)
 		WaitFrame()
 	}
 	RuiDestroyIfAlive(rui)
+}
+
+string function CalculateVictimHP(float damage, entity victim)
+{
+	float totalhealth = victim.GetHealth() - damage;
+	return totalhealth < 0 ? "0" : totalhealth.tointeger().tostring();
 }
 
 void function Thread_StackingDamageFlyoutText()
