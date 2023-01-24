@@ -233,6 +233,8 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 				else
 					RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
 			}
+			else
+				RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
 		}
 	}
 }
