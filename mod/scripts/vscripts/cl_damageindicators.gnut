@@ -46,7 +46,6 @@ void function ResetStackingDamageFlyoutText(float damage, bool isCrit, entity vi
 {
 	accumulatedOutgoingDamage = damage
 	if (stackingOutgoingDamageTextRui == null) return
-	printt(accumulatedOutgoingDamage.tointeger().tostring()+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 	RuiSetString( stackingOutgoingDamageTextRui, "msgText", accumulatedOutgoingDamage.tointeger().tostring() )
 	float msgFontSize = GraphCapped( accumulatedOutgoingDamage, victim.IsTitan() ? 500 : 50, victim.IsTitan() ? 10000 : 200, 36, victim.IsTitan() ? 56 : 48 )
 	RuiSetFloat( stackingOutgoingDamageTextRui, "msgFontSize", msgFontSize)
@@ -58,7 +57,6 @@ void function AddDamageToStackingDamageFlyoutText(float damage, bool isCrit, ent
 {
 	accumulatedOutgoingDamage += damage
 	if (stackingOutgoingDamageTextRui == null) return
-	printt(accumulatedOutgoingDamage.tointeger().tostring()+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 	RuiSetString( stackingOutgoingDamageTextRui, "msgText", accumulatedOutgoingDamage.tointeger().tostring() )
 	float msgFontSize = GraphCapped( accumulatedOutgoingDamage, victim.IsTitan() ? 500 : 50, victim.IsTitan() ? 10000 : 200, 36, victim.IsTitan() ? 56 : 48 )
 	RuiSetFloat( stackingOutgoingDamageTextRui, "msgFontSize", msgFontSize)
@@ -190,7 +188,6 @@ void function MenuOpen()
 			RuiSetFloat2( stackingOutgoingDamageTextRui, "msgPos", OUTGOING_DAMAGE_TEXT_BEGIN_POS - <0, GraphCapped(msgFontSize, 36, 72, 0.0, 0.05), 0> )
 			RuiSetString( stackingOutgoingDamageTextRui, "msgText", accumulatedOutgoingDamage.tointeger().tostring() )
 			RuiSetString( stackingIncomingDamageTextRui, "msgText", format( "-%i", int( accumulatedIncomingDamage ) ) )
-			printt(accumulatedOutgoingDamage.tointeger().tostring()+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 		}
 		wait max(GetConVarFloat("comp_hud_damage_indicator_duration"), GetConVarFloat("comp_hud_incoming_damage_indicator_duration"))
 	}
