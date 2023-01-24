@@ -52,7 +52,7 @@ void function SetOutgoingDamageTextRui(float damage, bool isCrit, entity victim)
 	RuiSetFloat3( stackingOutgoingDamageTextRui, "msgColor", GetDamageTextColor(isCrit, victim) )
 }
 
-void function AddSmallDamageTextFlyout(float damage, bool isCrit)
+void function AddSmallDamageTextFlyout(float damage, bool isCrit, entity victim)
 {
 	var rui = RuiCreate( $"ui/cockpit_console_text_top_left.rpak", clGlobal.topoCockpitHudPermanent, RUI_DRAW_COCKPIT, 0)
 	RuiSetInt( rui, "maxLines", 1 );
@@ -206,7 +206,7 @@ void function PlayerDidDamageText( float damage, vector damagePosition, entity v
 		accumulatedOutgoingDamage += damage
 	}
 	SetOutgoingDamageTextRui(damage, isCrit, victim)
-	thread AddSmallDamageTextFlyout( damage, isCrit )
+	thread AddSmallDamageTextFlyout( damage, isCrit, victim )
 
 	lastOutgoingDamageTextHitTime = Time()
 }
