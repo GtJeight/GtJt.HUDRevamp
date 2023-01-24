@@ -41,6 +41,7 @@ void function HudRevampSettings_Init()
 	AddConVarSetting("comp_phase_glitch_detector_size", "Font Size", "HUD Revamp - Phase Glitch Detector", "float" )
 
 	AddConVarSettingEnum( "comp_core_meter_timer", "Enable", "HUD Revamp - Core Meter Timer", [ "No", "Yes" ] )
+	AddConVarSettingEnum( "comp_core_meter_timer_style", "Style", "HUD Revamp - Core Meter Timer", [ "Number", "Text" ] )
 	AddConVarSetting("comp_core_meter_timer_pos", "Timer Position", "HUD Revamp - Core Meter Timer", "float2" )
 	AddConVarSetting("comp_core_meter_timer_size", "Font Size", "HUD Revamp - Core Meter Timer", "float" )
 	//AddConVarSetting("")

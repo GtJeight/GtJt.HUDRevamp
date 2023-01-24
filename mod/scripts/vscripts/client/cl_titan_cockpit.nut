@@ -217,8 +217,11 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 		// update core timer
 		if(GetConVarBool("comp_core_meter_timer"))
 		{
-			RuiSetFloat2( file.ruis["core"], "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
-			RuiSetFloat( file.ruis["core"], "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
+			if (!GetConVarBool("comp_core_meter_timer_style"))	//number
+			{
+				RuiSetFloat2( file.ruis["core"], "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
+				RuiSetFloat( file.ruis["core"], "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
+			}
 			string titanName = GetTitanCharacterName( player )
 			if ( titanName == "ronin" )
 			{
@@ -227,14 +230,61 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 				float remainingTime = soul.GetCoreChargeExpireTime() - curTime
 				if (remainingTime >= 0.0)
 				{
-					RuiSetFloat( file.ruis["core"], "msgAlpha", GetConVarBool("comp_core_meter_timer") ? 0.9 : 0.0 )
-					RuiSetString( file.ruis["core"], "msgText", "Sword Core Expires in "+format("%.2f", remainingTime)+"s")
+					if (!GetConVarBool("comp_core_meter_timer_style"))
+					{
+						RuiSetFloat( file.ruis["core"], "msgAlpha", GetConVarBool("comp_core_meter_timer") ? 0.9 : 0.0 )
+						RuiSetString( file.ruis["core"], "msgText", format("%.2f", remainingTime))
+					}
+					else
+					{
+						RuiSetString( file.ruis["core2"], "lockMessage", "Sword Core Expires in "+format("%.2f", remainingTime)+"s")
+						RuiSetBool( file.ruis["core2"], "isVisible", true )
+					}
 				}
 				else
+				{
 					RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
+					RuiSetBool( file.ruis["core2"], "isVisible", false )
+				}
+			}
+			else if ( titanName == "ion" )
+			{
+				entity soul = player.GetTitanSoul()
+				float curTime = Time()
+				float remainingTime = soul.GetCoreChargeExpireTime() - curTime
+				if (remainingTime >= 0.0)
+				{
+					entity weapon = player.GetOffhandWeapon( OFFHAND_EQUIPMENT )
+					float duration
+					if ( weapon.HasMod( "pas_ion_lasercannon") )
+						duration = 5.0
+					else
+						duration = 3.0
+					float coreFrac = min( 1.0, remainingTime / duration )
+					remainingTime = coreFrac * remainingTime
+
+					if (!GetConVarBool("comp_core_meter_timer_style"))
+					{
+						RuiSetFloat( file.ruis["core"], "msgAlpha", GetConVarBool("comp_core_meter_timer") ? 0.9 : 0.0 )
+						RuiSetString( file.ruis["core"], "msgText", format("%.2f", remainingTime))
+					}
+					else
+					{
+						RuiSetString( file.ruis["core2"], "lockMessage", "Laser Core Expires in "+format("%.2f", remainingTime)+"s")
+						RuiSetBool( file.ruis["core2"], "isVisible", true )
+					}
+				}
+				else
+				{
+					RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
+					RuiSetBool( file.ruis["core2"], "isVisible", false )
+				}
 			}
 			else
+			{
 				RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
+				RuiSetBool( file.ruis["core2"], "isVisible", false )
+			}
 		}
 	}
 }
@@ -255,10 +305,20 @@ void function MenuOpen()
 	}
 	// core timer
 	{
-		RuiSetFloat2( file.ruis["core"], "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
-		RuiSetString( file.ruis["core"], "msgText", "Sword Core Expires in "+format("%.2f", 8.88)+"s")
-		RuiSetFloat( file.ruis["core"], "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
-		RuiSetFloat( file.ruis["core"], "msgAlpha", 0.9 )
+		if (!GetConVarBool("comp_core_meter_timer_style"))	//number
+		{
+			RuiSetFloat2( file.ruis["core"], "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
+			RuiSetString( file.ruis["core"], "msgText", format("%.2f", 88.88))
+			RuiSetFloat( file.ruis["core"], "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
+			RuiSetFloat( file.ruis["core"], "msgAlpha", 0.9 )
+			RuiSetBool( file.ruis["core2"], "isVisible", true )
+		}
+	}
+	// core timer text
+	{
+
+		RuiSetString( file.ruis["core2"], "lockMessage", "Core Expires in "+format("%.2f", 8.88)+"s")
+		RuiSetBool( file.ruis["core2"], "isVisible", true )
 	}
 }
 // GtJt HUD
@@ -469,13 +529,13 @@ void function ShowRUIHUD( entity cockpit )
 		tcRUI.rui = file.ruis["shield"]
 		player.p.titanCockpitRUIs.append( tcRUI )
 	}
-	// core timer
+	// core timer number only
 	{
 		var rui = RuiCreate( $"ui/cockpit_console_text_center.rpak", clGlobal.topoTitanCockpitHud, RUI_DRAW_COCKPIT, 5 )
 		RuiSetInt( rui, "maxLines", 1 )
 		RuiSetInt( rui, "lineNum", 1 )
 		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
-		RuiSetString( rui, "msgText", "0.0")
+		RuiSetString( rui, "msgText", "")
 		RuiSetFloat( rui, "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
 		RuiSetFloat3( rui, "msgColor", GetAccentColor(true) )
 		RuiSetFloat( rui, "msgAlpha", 0.9 )
@@ -483,6 +543,20 @@ void function ShowRUIHUD( entity cockpit )
 		file.ruis["core"] <- rui
 		TitanCockpitRUI tcRUI
 		tcRUI.rui = file.ruis["core"]
+		player.p.titanCockpitRUIs.append( tcRUI )
+	}
+	{
+		var rui = CreateCockpitRui( $"ui/lockon_hud.rpak" )
+		RuiSetString( rui, "lockMessage", "")
+		RuiSetGameTime( rui, "lockEndTime", 0.0 )
+		RuiSetBool( rui, "isVisible", true )
+		RuiSetBool( rui, "northLock", false )
+		RuiSetBool( rui, "southLock", false )
+		RuiSetBool( rui, "westLock", false )
+		RuiSetBool( rui, "eastLock", false )
+		file.ruis["core2"] <- rui
+		TitanCockpitRUI tcRUI
+		tcRUI.rui = file.ruis["core2"]
 		player.p.titanCockpitRUIs.append( tcRUI )
 	}
 	// GtJt HUD
