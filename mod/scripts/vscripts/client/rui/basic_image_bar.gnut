@@ -1,6 +1,10 @@
 untyped
+global function BasicImageBar_CreateRuiTopo
+global function BasicImageBar_UpdatePosition
 global function GetConVarFloat2
 global function GetConVarFloat3
+
+bool enableVerbosePrinting = false
 
 vector function GetConVarFloat2(string convar)
 {
@@ -26,4 +30,166 @@ vector function GetConVarFloat3(string convar)
         throw "Invalid convar " + convar + "! make sure it is a float3 and formatted as \"X Y Z\""
     }
     unreachable
+}
+
+BarTopoData function BasicImageBar_CreateRuiTopo(vector posOffset, vector angles, float hudWidth, float hudHeight, int direction = eDirection.right, bool createRui = true, int order = -1)
+{
+    if (hudWidth < 0 || hudHeight < 0)
+    {
+        throw "hudWidth and hudHeight must be positive! They were " + hudWidth + " and " + hudHeight
+    }
+    float height = COCKPIT_RUI_HEIGHT * hudHeight
+    float width = COCKPIT_RUI_WIDTH * hudWidth
+    // we keep roll as-is in case we want a bar that goes down/up or right to left.
+    vector _angles = Vector( angles.y * COCKPIT_RUI_HEIGHT, -angles.x * COCKPIT_RUI_WIDTH, angles.z )
+
+    var topo = CreateBar( posOffset, _angles, width, height )
+
+    BarTopoData data
+    data.position = posOffset
+    data.size = Vector( width, height, 0.0 )
+    data.angles = _angles
+
+    TopoData topoData
+    topoData.position = posOffset
+    topoData.size = Vector( width, height, 0.0 )
+    topoData.angles = _angles
+    topoData.topo = topo
+    data.direction = direction
+
+    data.topoData = [ topoData ]
+    data.fill = 1
+
+    if (createRui)
+    {
+        var rui = RuiCreate( $"ui/basic_image.rpak", data.topoData[0].topo, RUI_DRAW_COCKPIT, order )
+        data.imageRuis.append(rui)
+    }
+
+    return data
+}
+
+// Updates the position and topo, for topologies that don't get updated much
+BarTopoData function BasicImageBar_UpdatePosition( BarTopoData data, vector newPos, float newXSize, float newYSize )
+{
+
+    //printt("ok", newPos, newXSize, newYSize)
+    float height = COCKPIT_RUI_HEIGHT * newYSize
+    float width = COCKPIT_RUI_WIDTH * newXSize
+
+    if (newPos == data.position && width == data.size.x && height == data.size.y)
+        return data
+
+    vector _angles = Vector( newPos.y * COCKPIT_RUI_HEIGHT, -newPos.x * COCKPIT_RUI_WIDTH, newPos.z )
+
+    data.size = Vector( width, height, 0.0 )
+    data.angles = _angles
+
+    if (data.segments > 1)
+    {
+        // data.size.x -  total size of topo
+        // (segmentCount - 1) * segmentDistance - total size taken up by distances
+        // data.size.x - totalGaps - total size taken up by actual segments
+        // totalFill
+        // 30deg, 15seg, 1dis
+        // 2deg/seg, 1 dis
+        // 1 / 15
+        // 2 - (1/15)
+        //printt(data.segmentDistance)
+        float segmentDistance = data.segmentDistance / data.size.x
+        if (data.direction == eDirection.down || data.direction == eDirection.up)
+            segmentDistance = data.segmentDistance / data.size.y
+
+        array<float> starts
+        array<float> ends
+        starts.append(0)
+        for (int i = 0; i < data.segments; i++)
+        {
+            ends.append(float(i + 1) / data.segments - segmentDistance / 2)
+            starts.append(float(i + 1) / data.segments + segmentDistance / 2)
+        }
+
+
+        float scale = 1 / ends[data.segments - 1]
+
+        for (int i = 0; i < data.segments; i++)
+        {
+            ends[i] *= scale
+            // don't need to do the first one since 0 * anything = 0, and we have segmentCount + 1 values in the array.
+            starts[i + 1] *= scale
+        }
+        for (int i = 0; i < ends.len(); i++)
+            printt("Start:", starts[i], "End:", ends[i])
+
+        // 5seg, 5deg
+        // 0, 1, 2, 3, 4
+
+        switch (data.direction)
+        {
+            case eDirection.left:
+            case eDirection.right:
+                for (int i = 0; i < data.segments; i++)
+                {
+                    data.topoData[i].position = data.position
+                    data.topoData[i].angles = data.angles + <0, starts[i] * data.size.x + (ends[i] - starts[i]) * data.size.x / 2 - data.size.x / 2, 0>
+                    data.topoData[i].size = <(ends[i] - starts[i]) * data.size.x, data.size.y, 0>
+                    TopoData topoData = data.topoData[i]
+
+                    RuiTopology_UpdatePos( topoData.topo, COCKPIT_RUI_OFFSET + data.position, AnglesToRight( topoData.angles ), AnglesToUp( topoData.angles ) * -1)
+
+                    RuiTopology_UpdateSphereArcs( topoData.topo, topoData.size.x, topoData.size.y, 3 )
+                }
+                break
+            case eDirection.up:
+            case eDirection.down:
+                for (int i = 0; i < data.segments; i++)
+                {
+
+                    data.topoData[i].position = data.position
+                    data.topoData[i].angles = data.angles + <starts[i] * data.size.y + (ends[i] - starts[i]) * data.size.y / 2 - data.size.y / 2, 0, 0>
+                    data.topoData[i].size = <data.size.x, (ends[i] - starts[i]) * data.size.y, 0>
+                    TopoData topoData = data.topoData[i]
+
+                    RuiTopology_UpdatePos( topoData.topo, COCKPIT_RUI_OFFSET + topoData.position, AnglesToRight( topoData.angles ),
+                        AnglesToUp( topoData.angles ) * -1)
+
+                    RuiTopology_UpdateSphereArcs( topoData.topo, topoData.size.x, topoData.size.y, 3 )
+
+                }
+        }
+    }
+    else
+    {
+        data.size = Vector( width, height, 0.0 )
+        data.angles = _angles
+        data.topoData[0].size = Vector( width, height, 0.0 )
+        data.topoData[0].angles = _angles
+
+        RuiTopology_UpdatePos( data.topoData[0].topo, COCKPIT_RUI_OFFSET + data.position, AnglesToRight( data.angles ),
+                        AnglesToUp( data.angles ) * -1)
+
+        RuiTopology_UpdateSphereArcs( data.topoData[0].topo, data.size.x, data.size.y, 3 )
+    }
+    return data
+}
+
+var function CreateBar( vector posOffset, vector angles, float hudWidth, float hudHeight )
+{
+    if (hudWidth < 0 || hudHeight < 0)
+    {
+        throw "hudWidth and hudHeight must be positive! They were " + hudWidth + " and " + hudHeight
+    }
+    if (enableVerbosePrinting)
+    {
+        printt("Creating bar at " + posOffset + " with angles " + angles + " and size " + hudWidth + "x" + hudHeight)
+    }
+    return RuiTopology_CreateSphere(
+        COCKPIT_RUI_OFFSET + posOffset, //
+        AnglesToRight( angles ), // right
+        AnglesToUp( angles ) * -1, // down
+        COCKPIT_RUI_RADIUS,
+        hudWidth,
+        hudHeight,
+        COCKPIT_RUI_SUBDIV // 3.5
+    )
 }

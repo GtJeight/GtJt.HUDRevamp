@@ -83,7 +83,6 @@ struct
 struct {
 	vector healthPos = Vector(0.0, -0.2875, 0.0)
     vector shieldPos = Vector(0.0, -0.34, 0.0)
-	string abilityText = "%.1f"
 } settings
 // GtJt HUD
 
@@ -223,7 +222,7 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 				if (remainingTime >= 0.0)
 				{
 					RuiSetFloat( file.ruis["core"], "msgAlpha", GetConVarBool("comp_core_meter_timer") ? 0.9 : 0.0 )
-					RuiSetString( file.ruis["core"], "msgText", "Sword Core Expires in "+format(settings.abilityText, remainingTime)+"s")
+					RuiSetString( file.ruis["core"], "msgText", "Sword Core Expires in "+format("%.2f", remainingTime)+"s")
 				}
 				else
 					RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )

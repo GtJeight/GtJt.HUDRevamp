@@ -50,6 +50,16 @@
             "Flags": 16777216
         },
         {
+            "Name": "comp_hud_titan_meter_offset",
+            "DefaultValue": "0 0",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_titan_meter_scale",
+            "DefaultValue": "1 1",
+            "Flags": 16777216
+        },
+        {
             "Name": "comp_hud_tactical_position",
             "DefaultValue": "-0.3338 0.445",
             "Flags": 16777216

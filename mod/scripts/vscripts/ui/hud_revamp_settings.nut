@@ -12,10 +12,13 @@ void function HudRevampSettings_Init()
         "HUD Revamp - General", [ "No", "Yes" ] )
 	AddConVarSetting("comp_hud_health_text_offset", "Health Number Offset", "HUD Revamp - General", "float2" )
 
-	AddConVarSetting("comp_hud_tactical_position", "Left Utility Position", "HUD Revamp - Utilities", "float2")
-	AddConVarSetting("comp_hud_ordnance_position", "Middle Utility Position", "HUD Revamp - Utilities", "float2")
-	AddConVarSetting("comp_hud_utility_position", "Right Utility Position", "HUD Revamp - Utilities", "float2")
+	AddConVarSetting("comp_hud_tactical_position", "First Utility Position", "HUD Revamp - Utilities", "float2")
+	AddConVarSetting("comp_hud_ordnance_position", "Second Utility Position", "HUD Revamp - Utilities", "float2")
+	AddConVarSetting("comp_hud_utility_position", "Third Utility Position", "HUD Revamp - Utilities", "float2")
 	AddConVarSetting("comp_hud_ability_cooldown_pos_offset", "Cooldown Text Position Offset", "HUD Revamp - Utilities", "float2")
+
+	AddConVarSetting("comp_hud_titan_meter_offset", "Core Meter Offset", "HUD Revamp - Titan Meter", "float2" )
+	AddConVarSetting( "comp_hud_titan_meter_scale", "Scale", "HUD Revamp - Titan Meter", "float2" )
 
 	AddConVarSettingEnum("comp_hud_wpd", "Enable",
         "HUD Revamp - Wallkick Practice Display", [ "No", "Yes" ] )

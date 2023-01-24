@@ -27,6 +27,34 @@ struct
 } file
 
 // GtJt HUD
+global enum eDirection
+{
+    down,
+    up,
+    left,
+    right
+}
+
+global struct TopoData {
+    vector position = Vector( 0.0, 0.0, 0.0 )
+    vector size = Vector( 0.0, 0.0, 0.0 )
+    vector angles = Vector( 0.0, 0.0, 0.0 )
+    var topo
+}
+
+global struct BarTopoData {
+    vector position = Vector( 0.0, 0.0, 0.0 )
+    vector size = Vector( 0.0, 0.0, 0.0 )
+    vector angles = Vector( 0.0, 0.0, 0.0 )
+    int segments = 1
+	float segmentDistance
+    array<var> imageRuis
+    array<TopoData> topoData
+    int direction
+	float fill
+	bool isFlat = false
+}
+
 struct {
     string abilityText = "%.1f"
 } settings
