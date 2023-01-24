@@ -120,8 +120,18 @@
             "Flags": 16777216
         },
         {
-            "Name": "comp_phase_glitch_indicator",
+            "Name": "comp_phase_glitch_detector",
             "DefaultValue": "1",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_phase_glitch_detector_pos",
+            "DefaultValue": "0.0 0.0",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_phase_glitch_detector_size",
+            "DefaultValue": "40",
             "Flags": 16777216
         },
         {

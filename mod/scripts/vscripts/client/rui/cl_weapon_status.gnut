@@ -30,6 +30,7 @@ struct
 struct {
     string abilityText = "%.1f"
 } settings
+string detectMsg
 // GtJt HUD
 
 void function ClWeaponStatus_Init()
@@ -209,6 +210,20 @@ void function InitAdditionalRuis()
 		file.ruis["speed"] <- rui
 	}
 
+	// phase glitch detector
+	{
+		var rui = RuiCreate( $"ui/cockpit_console_text_top_left.rpak", clGlobal.topoCockpitHud, RUI_DRAW_COCKPIT, 5 )
+		RuiSetInt( rui, "maxLines", 1 )
+		RuiSetInt( rui, "lineNum", 1 )
+		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_phase_glitch_detector_pos") )
+		RuiSetString( rui, "msgText", "Glitch" )
+		RuiSetFloat( rui, "msgFontSize", GetConVarFloat("comp_phase_glitch_detector_size") )
+		RuiSetFloat3( rui, "msgColor", <1.0, 0.0, 0.0> )
+		RuiSetFloat( rui, "msgAlpha", 0.9 )
+		RuiSetFloat( rui, "thicken", -0.25 )
+		file.ruis["glitch"] <- rui
+	}
+
 	AddUpdateCallback( UpdateAdditionalRuis )
 }
 
@@ -295,6 +310,32 @@ void function UpdateAdditionalRuis( float deltaTime )
 			UpdateOffhandRui(rui, player, player.GetOffhandWeapon(i))
 		}
 	}
+
+	// update phase glitch detector
+	RuiSetFloat( file.ruis["glitch"], "msgAlpha", GetConVarBool("comp_phase_glitch_detector") ? 0.9 : 0.0 )
+	if (!GetConVarBool("comp_phase_glitch_detector"))
+		return
+	array<entity> players = GetPlayerArray()
+	detectMsg = ""
+	// printt("detecting phase glitch")
+	for(int i=0; i<players.len(); i++)
+	{
+		entity player_ = players[i]
+		if ( IsValid( player_ ) && player_.IsPlayer() )
+		{
+			printt(player_.GetPlayerName())
+			printt(player_.GetNoTarget())
+			if(player_.GetNoTarget())
+			{
+				printt(player_.GetPlayerName()+"notarget")
+				if (player.GetPlayerName() == player_.GetPlayerName())
+					detectMsg = "You are in phase-glitch state\n" + detectMsg
+				else
+					detectMsg = detectMsg + "[" + player_.GetPlayerName() + "] is in phase-glitch state"
+			}
+		}
+	}
+	RuiSetString(file.ruis["glitch"], "msgText", detectMsg)
 }
 
 void function UpdateOffhandRui( var rui, entity player, entity weapon )
@@ -307,7 +348,6 @@ void function UpdateOffhandRui( var rui, entity player, entity weapon )
 	float ammoFrac = 0
 	if (weapon.IsChargeWeapon()) ammoFrac = 1 - weapon.GetWeaponChargeFraction()
 	if (weapon.GetWeaponPrimaryClipCountMax() > 0) ammoFrac = float(weapon.GetWeaponPrimaryClipCount()) / weapon.GetWeaponPrimaryClipCountMax()
-	// RuiSetImage( bar["icon"].imageRuis[0], "basicImage", GetWeaponInfoFileKeyFieldAsset_WithMods_Global( weapon.GetWeaponClassName(), weapon.GetMods(), "hud_icon" ) )
 	switch ( weapon.GetWeaponInfoFileKeyField( "cooldown_type" ) )
 	{
 		case "ammo_swordblock":
@@ -415,12 +455,10 @@ void function UpdateOffhandRui( var rui, entity player, entity weapon )
 			{
 				if (timeUntilNextAttack > 1 / weapon.GetWeaponSettingFloat( eWeaponVar.fire_rate ))
 				{
-					// RuiSetFloat3( bar["bg"].imageRuis[0], "basicImageColor", <1, 0.5, 0.0> )
 					timeUntilNextCharge = timeUntilNextAttack - 1 / weapon.GetWeaponSettingFloat( eWeaponVar.fire_rate )
 					break
 				}
 			}
-			// RuiSetFloat3( bar["bg"].imageRuis[0], "basicImageColor", <0, 0, 0> )
 			if (timeUntilNextAttack > altCooldown)
 			{
 				altCooldown = timeUntilNextAttack
@@ -464,35 +502,6 @@ void function UpdateOffhandRui( var rui, entity player, entity weapon )
 	}
 
 	float cooldown = max(timeUntilNextCharge, altCooldown)
-	// maxCharges = int( max(1, maxCharges) )
-	// if (maxCharges > 5) maxCharges = 1
-
-	// if (maxCharges != bar["bar"].segments)
-	// {
-	// 	BasicImageBar_UpdateSegmentCount(bar["bar"], maxCharges, 0.05)
-	// 	//BasicImageBar_UpdateSegmentCount(bar["bgBar"], maxCharges, 0.05)
-	// }
-	// foreach (var rui in bar["bgBar"].imageRuis)
-	// {
-	// 	RuiSetFloat3( rui, "basicImageColor", GetAccentColor() * 0.5)
-	// 	RuiSetFloat( rui, "basicImageAlpha", 0.1)
-	// }
-	// foreach(var rui in bar["bar"].imageRuis)
-	// {
-	// 	RuiSetFloat3(rui, "basicImageColor", GetAccentColor() )
-	// }
-	// BasicImageBar_SetFillFrac(bar["bar"], ammoFrac)
-	// BasicImageBar_SetFillFrac(bar["bgBar"], ammoFrac % 1.0)
-	// if (ammoFrac < minFracToUse)
-	// {
-	// 	RuiSetFloat3(bar["bgBar"].imageRuis[0], "basicImageColor", GetConVarFloat3("comp_hud_ability_bg_bar_empty_color") / 255.0)
-	// 	RuiSetFloat3(bar["bar"].imageRuis[maxCharges - 1], "basicImageColor", GetConVarFloat3("comp_hud_ability_bar_empty_color") / 255.0)
-	// }
-	// else {
-	// 	RuiSetFloat3(bar["bgBar"].imageRuis[0], "basicImageColor", GetAccentColor() * 0.5)
-	// 	RuiSetFloat3(bar["bar"].imageRuis[maxCharges - 1], "basicImageColor", GetAccentColor() )
-	// }
-	// RuiSetFloat(bar["bg"].imageRuis[0], "basicImageAlpha", GetConVarFloat("comp_hud_ability_bg_alpha"))
 
 	if (!doNotSetText) RuiSetString(rui, "msgText", format(settings.abilityText, cooldown))
 

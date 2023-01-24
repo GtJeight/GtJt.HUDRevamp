@@ -31,7 +31,10 @@ void function HudRevampSettings_Init()
 	AddConVarSetting( "comp_hud_incoming_damage_indicator_duration", "Duration", "HUD Revamp - Incoming Damage Indicator", "float" )
 	AddConVarSetting( "comp_hud_incoming_damage_indicator_fade_time", "Fade Time", "HUD Revamp - Incoming Damage Indicator", "float" )
 
-	AddConVarSettingEnum( "comp_phase_glitch_indicator", "Enable", "HUD Revamp - Phase Glitch Detector", [ "No", "Yes" ] )
+	AddConVarSettingEnum( "comp_phase_glitch_detector", "Enable", "HUD Revamp - Phase Glitch Detector", [ "No", "Yes" ] )
+	AddConVarSetting("comp_phase_glitch_detector_pos", "Detector Position", "HUD Revamp - Phase Glitch Detector", "float2")
+	AddConVarSetting("comp_phase_glitch_detector_size", "Font Size", "HUD Revamp - Phase Glitch Detector", "float" )
+
 	AddConVarSettingEnum( "comp_core_meter_timer", "Enable", "HUD Revamp - Core Meter Timer", [ "No", "Yes" ] )
 	AddConVarSetting("comp_core_meter_timer_pos", "Timer Position", "HUD Revamp - Core Meter Timer", "float2" )
 	//AddConVarSetting("")
