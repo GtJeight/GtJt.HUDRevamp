@@ -42,20 +42,8 @@ void function PlayerTookDamage( float damage, vector pos, int damageType, int da
 	RuiSetString( stackingIncomingDamageTextRui, "msgText", format( "-%i", int( accumulatedIncomingDamage ) ) )
 }
 
-void function ResetStackingDamageFlyoutText(float damage, bool isCrit, entity victim)
+void function SetOutgoingDamageTextRui(float damage, bool isCrit, entity victim)
 {
-	accumulatedOutgoingDamage = damage
-	if (stackingOutgoingDamageTextRui == null) return
-	RuiSetString( stackingOutgoingDamageTextRui, "msgText", accumulatedOutgoingDamage.tointeger().tostring() )
-	float msgFontSize = GraphCapped( accumulatedOutgoingDamage, victim.IsTitan() ? 500 : 50, victim.IsTitan() ? 10000 : 200, 36, victim.IsTitan() ? 56 : 48 )
-	RuiSetFloat( stackingOutgoingDamageTextRui, "msgFontSize", msgFontSize)
-	RuiSetFloat2( stackingOutgoingDamageTextRui, "msgPos", OUTGOING_DAMAGE_TEXT_BEGIN_POS - <0, GraphCapped(msgFontSize, 36, 72, 0.0, 0.05), 0> )
-	RuiSetFloat3( stackingOutgoingDamageTextRui, "msgColor", GetMessageColor(isCrit) )
-}
-
-void function AddDamageToStackingDamageFlyoutText(float damage, bool isCrit, entity victim)
-{
-	accumulatedOutgoingDamage += damage
 	if (stackingOutgoingDamageTextRui == null) return
 	RuiSetString( stackingOutgoingDamageTextRui, "msgText", accumulatedOutgoingDamage.tointeger().tostring()  + "\n" + CalculateVictimHP(damage, victim) + " HP")
 	float msgFontSize = GraphCapped( accumulatedOutgoingDamage, victim.IsTitan() ? 500 : 50, victim.IsTitan() ? 10000 : 200, 36, victim.IsTitan() ? 56 : 48 )
@@ -205,12 +193,15 @@ void function PlayerDidDamageText( float damage, vector damagePosition, entity v
 	if (!GetConVarBool("comp_hud_damage_indicator")) return
 	if (Time() - lastOutgoingDamageTextHitTime > GetConVarFloat("comp_hud_damage_indicator_duration"))
 	{
-		ResetStackingDamageFlyoutText( damage, isCrit, victim )
+		// Reset stack
+		accumulatedOutgoingDamage = damage
 	}
 	else
 	{
-		AddDamageToStackingDamageFlyoutText( damage, isCrit, victim )
+		// Add to stack
+		accumulatedOutgoingDamage += damage
 	}
+	SetOutgoingDamageTextRui(damage, isCrit, victim)
 	thread AddSmallDamageTextFlyout( damage, isCrit )
 
 	lastOutgoingDamageTextHitTime = Time()
