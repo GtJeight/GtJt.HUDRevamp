@@ -178,6 +178,12 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 	entity player = GetLocalViewPlayer()
 	if(player.IsTitan() && IsAlive(player))	// any degenerate cases?
 	{
+		if (clGlobal.isMenuOpen)
+		{
+			MenuOpen()
+			return
+		}
+
 		// update titan health
 		RuiSetFloat( file.ruis["health"], "msgAlpha", GetConVarBool("comp_hud_healthbar") ? 0.9 : 0.0 )
 		RuiSetString( file.ruis["health"], "msgText", player.GetHealth().tostring())
@@ -228,6 +234,29 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 					RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
 			}
 		}
+	}
+}
+
+void function MenuOpen()
+{
+	// titan health
+	{
+		RuiSetFloat2( file.ruis["health"], "msgPos", settings.healthPos + (GetConVarBool("comp_hud_healthbar_overlap") ? <0.0, -0.0225, 0.0> : <0,0,0>))
+		RuiSetString( file.ruis["health"], "msgText", "10000")
+		RuiSetFloat3( file.ruis["health"], "msgColor", GetAccentColor() )
+		RuiSetFloat( file.ruis["health"], "msgAlpha", 0.9 )
+	}
+	// titan shield
+	{
+		RuiSetString( file.ruis["shield"], "msgText", "2500")
+		RuiSetFloat( file.ruis["shield"], "msgAlpha", 0.9 )
+	}
+	// core timer
+	{
+		RuiSetFloat2( file.ruis["core"], "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
+		RuiSetString( file.ruis["core"], "msgText", "Sword Core Expires in "+format("%.2f", 8.88)+"s")
+		RuiSetFloat( file.ruis["core"], "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
+		RuiSetFloat( file.ruis["core"], "msgAlpha", 0.9 )
 	}
 }
 // GtJt HUD
