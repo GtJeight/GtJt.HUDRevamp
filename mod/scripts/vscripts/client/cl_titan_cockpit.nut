@@ -83,6 +83,7 @@ struct
 struct {
 	vector healthPos = Vector(0.0, -0.2875, 0.0)
     vector shieldPos = Vector(0.0, -0.34, 0.0)
+	string abilityText = "%.1f"
 } settings
 // GtJt HUD
 
@@ -207,6 +208,27 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 			RuiSetFloat( file.ruis["shield"], "msgAlpha", 0.0 )
 		}
 		RuiSetString(file.ruis["shield"], "msgText", shieldHealth.tostring())
+
+		// update core timer
+		if(GetConVarBool("comp_core_meter_timer"))
+		{
+			RuiSetFloat2( file.ruis["core"], "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
+			RuiSetFloat( file.ruis["core"], "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
+			string titanName = GetTitanCharacterName( player )
+			if ( titanName == "ronin" )
+			{
+				entity soul = player.GetTitanSoul()
+				float curTime = Time()
+				float remainingTime = soul.GetCoreChargeExpireTime() - curTime
+				if (remainingTime >= 0.0)
+				{
+					RuiSetFloat( file.ruis["core"], "msgAlpha", GetConVarBool("comp_core_meter_timer") ? 0.9 : 0.0 )
+					RuiSetString( file.ruis["core"], "msgText", "Sword Core Expires in "+format(settings.abilityText, remainingTime)+"s")
+				}
+				else
+					RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
+			}
+		}
 	}
 }
 // GtJt HUD
@@ -415,6 +437,22 @@ void function ShowRUIHUD( entity cockpit )
 		file.ruis["shield"] <- rui
 		TitanCockpitRUI tcRUI
 		tcRUI.rui = file.ruis["shield"]
+		player.p.titanCockpitRUIs.append( tcRUI )
+	}
+	// core timer
+	{
+		var rui = RuiCreate( $"ui/cockpit_console_text_center.rpak", clGlobal.topoTitanCockpitHud, RUI_DRAW_COCKPIT, 5 )
+		RuiSetInt( rui, "maxLines", 1 )
+		RuiSetInt( rui, "lineNum", 1 )
+		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
+		RuiSetString( rui, "msgText", "0.0")
+		RuiSetFloat( rui, "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
+		RuiSetFloat3( rui, "msgColor", GetAccentColor(true) )
+		RuiSetFloat( rui, "msgAlpha", 0.9 )
+		RuiSetFloat( rui, "thicken", 0.0 )
+		file.ruis["core"] <- rui
+		TitanCockpitRUI tcRUI
+		tcRUI.rui = file.ruis["core"]
 		player.p.titanCockpitRUIs.append( tcRUI )
 	}
 	// GtJt HUD

@@ -37,5 +37,6 @@ void function HudRevampSettings_Init()
 
 	AddConVarSettingEnum( "comp_core_meter_timer", "Enable", "HUD Revamp - Core Meter Timer", [ "No", "Yes" ] )
 	AddConVarSetting("comp_core_meter_timer_pos", "Timer Position", "HUD Revamp - Core Meter Timer", "float2" )
+	AddConVarSetting("comp_core_meter_timer_size", "Font Size", "HUD Revamp - Core Meter Timer", "float" )
 	//AddConVarSetting("")
 }

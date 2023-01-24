@@ -76,7 +76,7 @@
         },
         {
             "Name": "comp_hud_wpd_pos",
-            "DefaultValue": "0.0 0.0",
+            "DefaultValue": "0.65 0.4",
             "Flags": 16777216
         },
         {
@@ -121,7 +121,7 @@
         },
         {
             "Name": "comp_phase_glitch_detector",
-            "DefaultValue": "1",
+            "DefaultValue": "0",
             "Flags": 16777216
         },
         {
@@ -142,6 +142,11 @@
         {
             "Name": "comp_core_meter_timer_pos",
             "DefaultValue": "0.0 0.0",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_core_meter_timer_size",
+            "DefaultValue": "40",
             "Flags": 16777216
         }
     ]
