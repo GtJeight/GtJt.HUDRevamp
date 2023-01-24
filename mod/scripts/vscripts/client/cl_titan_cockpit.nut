@@ -261,7 +261,7 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 					else
 						duration = 3.0
 					float coreFrac = min( 1.0, remainingTime / duration )
-					remainingTime = coreFrac * remainingTime
+					remainingTime = coreFrac * duration
 
 					if (!GetConVarBool("comp_core_meter_timer_style"))
 					{
