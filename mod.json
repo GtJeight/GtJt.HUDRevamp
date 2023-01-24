@@ -135,6 +135,26 @@
             "Flags": 16777216
         },
         {
+            "Name": "comp_hud_incoming_damage_indicator_color",
+            "DefaultValue": "217 0 0",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_damage_indicator_color",
+            "DefaultValue": "230 230 230",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_damage_indicator_victim_hp",
+            "DefaultValue": "0",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_damage_indicator_color_crit",
+            "DefaultValue": "230 140 77",
+            "Flags": 16777216
+        },
+        {
             "Name": "comp_phase_glitch_detector",
             "DefaultValue": "0",
             "Flags": 16777216

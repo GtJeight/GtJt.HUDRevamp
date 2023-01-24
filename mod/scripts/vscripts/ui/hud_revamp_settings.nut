@@ -38,14 +38,19 @@ void function HudRevampSettings_Init()
 	// Damage Indicator
 	AddModCategory("Damage Indicator")
 	AddConVarSettingEnum( "comp_hud_damage_indicator", "Enabled",  [ "No", "Yes" ] )
+	AddConVarSettingEnum( "comp_hud_damage_indicator_victim_hp", "Show Victim HP",  [ "No", "Yes" ] )
 	AddConVarSetting( "comp_hud_damage_indicator_duration", "Duration",  "float" )
 	AddConVarSetting( "comp_hud_damage_indicator_fade_time", "Fade Time",  "float" )
+	AddConVarSetting( "comp_hud_damage_indicator_color", "Color",  "float3" )
+	AddConVarSetting( "comp_hud_damage_indicator_color_crit", "Color on critical hits",  "float3" )
+	// AddConVarSetting( "comp_hud_damage_indicator_color_doom_hp", "Doom state HP color",  "float3" )
 
 	// Incoming Damage Indicator
 	AddModCategory("Incoming Damage Indicator")
 	AddConVarSettingEnum( "comp_hud_incoming_damage_indicator", "Enabled", [ "No", "Yes" ] )
 	AddConVarSetting( "comp_hud_incoming_damage_indicator_duration", "Duration", "float" )
 	AddConVarSetting( "comp_hud_incoming_damage_indicator_fade_time", "Fade Time", "float" )
+	AddConVarSetting( "comp_hud_incoming_damage_indicator_color", "Color", "float3" )
 
 	// Core Meter Timer
 	AddModCategory("Core Meter Timer")
