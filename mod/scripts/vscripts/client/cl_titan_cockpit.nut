@@ -171,10 +171,6 @@ void function InitTitanCockpitAdditionalRuis()
 	AddUpdateCallback( UpdateTitanCockpitAdditionalRuis )
 }
 
-float remainingTimeReal
-float lastRemainingTimeFake = 100.0
-float LaserCoreEndTime
-bool timingLaserCore = false
 float lastShieldStateChangeTime = -5.0;
 int lastShieldHealth = 0;
 void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
@@ -236,7 +232,7 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 				{
 					if (!GetConVarBool("comp_core_meter_timer_style"))
 					{
-						RuiSetFloat( file.ruis["core"], "msgAlpha", GetConVarBool("comp_core_meter_timer") ? 0.9 : 0.0 )
+						RuiSetFloat( file.ruis["core"], "msgAlpha", 0.9 )
 						RuiSetString( file.ruis["core"], "msgText", format("%.2f", remainingTime))
 					}
 					else
@@ -253,58 +249,28 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 			}
 			else if ( titanName == "ion" )
 			{
-				entity soul = player.GetTitanSoul()
-				float curTime = Time()
-				float remainingTimeFake = soul.GetCoreChargeExpireTime() - curTime
-
-				if (remainingTimeFake >= 0.0)
+				entity weapon = player.GetOffhandWeapon( OFFHAND_EQUIPMENT )
+				float coreFrac = weapon.GetSustainedDischargeFraction()
+				if (coreFrac > 0.0)
 				{
-					if(!timingLaserCore)
-						LaserCoreEndTime = curTime + remainingTimeFake
-
-					entity weapon = player.GetOffhandWeapon( OFFHAND_EQUIPMENT )
-					float capacity
-					if ( weapon.HasMod( "pas_ion_lasercannon") )
-						capacity = 5.0
-					else
-						capacity = 3.0 // keep consistent with wrong server call
-					float coreFrac = min( 1.0, remainingTimeFake / capacity )
-
-					if (remainingTimeFake > lastRemainingTimeFake && timingLaserCore)	// get kill and add core time
+					float duration = weapon.GetSustainedDischargeDuration()
+					float remainingTime = coreFrac * duration
+					if (!GetConVarBool("comp_core_meter_timer_style"))
 					{
-						remainingTimeReal = coreFrac * capacity
-						LaserCoreEndTime = curTime + remainingTimeReal
-					}
-					else	// no kill, core keep draining
-						remainingTimeReal = LaserCoreEndTime - curTime
-
-					if (remainingTimeReal >= 0.0)
-					{
-						if (!GetConVarBool("comp_core_meter_timer_style"))
-						{
-							RuiSetFloat( file.ruis["core"], "msgAlpha", 0.9)
-							RuiSetString( file.ruis["core"], "msgText", format("%.2f", remainingTimeReal))
-						}
-						else
-						{
-							RuiSetString( file.ruis["core2"], "lockMessage", format("Laser Core Expires in %.2fs", remainingTimeReal))
-							RuiSetBool( file.ruis["core2"], "isVisible", true )
-						}
+						RuiSetFloat( file.ruis["core"], "msgAlpha", 0.9)
+						RuiSetString( file.ruis["core"], "msgText", format("%.2f", remainingTime))
 					}
 					else
 					{
-						RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
-						RuiSetBool( file.ruis["core2"], "isVisible", false )
+						RuiSetString( file.ruis["core2"], "lockMessage", format("Laser Core Expires in %.2fs", remainingTime))
+						RuiSetBool( file.ruis["core2"], "isVisible", true )
 					}
-					timingLaserCore = true
 				}
 				else
 				{
 					RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
 					RuiSetBool( file.ruis["core2"], "isVisible", false )
-					timingLaserCore = false
 				}
-				lastRemainingTimeFake = remainingTimeFake
 			}
 			else
 			{
