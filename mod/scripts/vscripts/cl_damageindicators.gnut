@@ -42,36 +42,24 @@ void function PlayerTookDamage( float damage, vector pos, int damageType, int da
 	RuiSetString( stackingIncomingDamageTextRui, "msgText", format( "-%i", int( accumulatedIncomingDamage ) ) )
 }
 
-void function ResetStackingDamageFlyoutText(float damage, bool isCrit, entity victim)
+void function SetOutgoingDamageTextRui(float damage, bool isCrit, entity victim)
 {
-	accumulatedOutgoingDamage = damage
 	if (stackingOutgoingDamageTextRui == null) return
 	RuiSetString( stackingOutgoingDamageTextRui, "msgText", accumulatedOutgoingDamage.tointeger().tostring() )
 	float msgFontSize = GraphCapped( accumulatedOutgoingDamage, victim.IsTitan() ? 500 : 50, victim.IsTitan() ? 10000 : 200, 36, victim.IsTitan() ? 56 : 48 )
 	RuiSetFloat( stackingOutgoingDamageTextRui, "msgFontSize", msgFontSize)
 	RuiSetFloat2( stackingOutgoingDamageTextRui, "msgPos", OUTGOING_DAMAGE_TEXT_BEGIN_POS - <0, GraphCapped(msgFontSize, 36, 72, 0.0, 0.05), 0> )
-	RuiSetFloat3( stackingOutgoingDamageTextRui, "msgColor", isCrit ? <0.9, 0.55, 0.3> : <0.9, 0.9, 0.9> )
+	RuiSetFloat3( stackingOutgoingDamageTextRui, "msgColor", GetDamageTextColor(isCrit, victim) )
 }
 
-void function AddDamageToStackingDamageFlyoutText(float damage, bool isCrit, entity victim)
-{
-	accumulatedOutgoingDamage += damage
-	if (stackingOutgoingDamageTextRui == null) return
-	RuiSetString( stackingOutgoingDamageTextRui, "msgText", accumulatedOutgoingDamage.tointeger().tostring() )
-	float msgFontSize = GraphCapped( accumulatedOutgoingDamage, victim.IsTitan() ? 500 : 50, victim.IsTitan() ? 10000 : 200, 36, victim.IsTitan() ? 56 : 48 )
-	RuiSetFloat( stackingOutgoingDamageTextRui, "msgFontSize", msgFontSize)
-	RuiSetFloat2( stackingOutgoingDamageTextRui, "msgPos", OUTGOING_DAMAGE_TEXT_BEGIN_POS - <0, GraphCapped(msgFontSize, 36, 72, 0.0, 0.05), 0> )
-	RuiSetFloat3( stackingOutgoingDamageTextRui, "msgColor", isCrit ? <0.9, 0.55, 0.3> : <0.9, 0.9, 0.9> )
-}
-
-void function AddSmallDamageTextFlyout(float damage, bool isCrit)
+void function AddSmallDamageTextFlyout(float damage, bool isCrit, entity victim)
 {
 	var rui = RuiCreate( $"ui/cockpit_console_text_top_left.rpak", clGlobal.topoCockpitHudPermanent, RUI_DRAW_COCKPIT, 0)
 	RuiSetInt( rui, "maxLines", 1 );
 	RuiSetInt( rui, "lineNum", 1 );
 	RuiSetFloat2( rui, "msgPos", OUTGOING_DAMAGE_TEXT_BEGIN_POS )
 	RuiSetString( rui, "msgText",  damage.tointeger().tostring() )
-	RuiSetFloat3( rui, "msgColor", isCrit ? <0.9, 0.55, 0.3> : <0.9, 0.9, 0.9> )
+	RuiSetFloat3( rui, "msgColor",  GetDamageTextColor(isCrit, victim))
 	RuiSetFloat( rui, "msgFontSize", 24.0)
 	RuiSetFloat( rui, "msgAlpha", 0.5 )
 	RuiSetFloat( rui, "thicken", 0.0 )
@@ -91,6 +79,13 @@ void function AddSmallDamageTextFlyout(float damage, bool isCrit)
 	RuiDestroyIfAlive(rui)
 }
 
+string function CalculateVictimHP(float damage, entity victim)
+{
+	int totalhealth = int(victim.GetHealth() - damage);
+	totalhealth = totalhealth < 0 ? 0 : totalhealth;
+	return GetConVarBool("comp_hud_damage_indicator_victim_hp") ? format( "\n%i HP", totalhealth) : ""
+}
+
 void function Thread_StackingDamageFlyoutText()
 {
 	// outgoing damage text
@@ -100,7 +95,7 @@ void function Thread_StackingDamageFlyoutText()
 	RuiSetFloat2( stackingOutgoingDamageTextRui, "msgPos", OUTGOING_DAMAGE_TEXT_BEGIN_POS )
 	RuiSetFloat( stackingOutgoingDamageTextRui, "thicken", 0.0 )
 	RuiSetFloat( stackingOutgoingDamageTextRui, "msgFontSize", 36.0)
-	RuiSetFloat3( stackingOutgoingDamageTextRui, "msgColor", <0.9, 0.9, 0.9> )
+	RuiSetFloat3( stackingOutgoingDamageTextRui, "msgColor", GetConVarFloat3("comp_hud_damage_indicator_color") / 255.0 )
 	RuiSetFloat( stackingOutgoingDamageTextRui, "msgAlpha", 0.9 )
 	RuiSetFloat( stackingOutgoingDamageTextRui, "thicken", 0.0 )
 
@@ -111,7 +106,7 @@ void function Thread_StackingDamageFlyoutText()
 	RuiSetFloat2( stackingIncomingDamageTextRui, "msgPos", INCOMING_DAMAGE_TEXT_BEGIN_POS )
 	RuiSetFloat( stackingIncomingDamageTextRui, "thicken", 0.0 )
 	RuiSetFloat( stackingIncomingDamageTextRui, "msgFontSize", 40.0)
-	RuiSetFloat3( stackingIncomingDamageTextRui, "msgColor", <0.85, 0.0, 0.0> )
+	RuiSetFloat3( stackingIncomingDamageTextRui, "msgColor", GetConVarFloat3("comp_hud_incoming_damage_indicator_color") / 255.0 )
 	RuiSetFloat( stackingIncomingDamageTextRui, "msgAlpha", 0.9 )
 	RuiSetFloat( stackingIncomingDamageTextRui, "thicken", 0.0 )
 
@@ -182,12 +177,15 @@ void function MenuOpen()
 			lastIncomingDamageTextHitTime = Time()
 			lastOutgoingDamageTextHitTime = Time()
 			isCrit = !isCrit
-			RuiSetFloat3( stackingOutgoingDamageTextRui, "msgColor", isCrit ? <0.9, 0.55, 0.3> : <0.9, 0.9, 0.9> )
+			RuiSetFloat3( stackingOutgoingDamageTextRui, "msgColor", <0.9, 0.9, 0.9> )
 			float msgFontSize = GraphCapped( accumulatedOutgoingDamage, 50, 200, 36, 48 )
 			RuiSetFloat( stackingOutgoingDamageTextRui, "msgFontSize", msgFontSize)
 			RuiSetFloat2( stackingOutgoingDamageTextRui, "msgPos", OUTGOING_DAMAGE_TEXT_BEGIN_POS - <0, GraphCapped(msgFontSize, 36, 72, 0.0, 0.05), 0> )
 			RuiSetString( stackingOutgoingDamageTextRui, "msgText", accumulatedOutgoingDamage.tointeger().tostring() )
-			RuiSetString( stackingIncomingDamageTextRui, "msgText", format( "-%i", int( accumulatedIncomingDamage ) ) )
+			if (accumulatedIncomingDamage > 1)
+			{
+				RuiSetString( stackingIncomingDamageTextRui, "msgText", format( "-%i", int( accumulatedIncomingDamage ) ) )
+			}
 		}
 		wait max(GetConVarFloat("comp_hud_damage_indicator_duration"), GetConVarFloat("comp_hud_incoming_damage_indicator_duration"))
 	}
@@ -199,13 +197,20 @@ void function PlayerDidDamageText( float damage, vector damagePosition, entity v
 	if (!GetConVarBool("comp_hud_damage_indicator")) return
 	if (Time() - lastOutgoingDamageTextHitTime > GetConVarFloat("comp_hud_damage_indicator_duration"))
 	{
-		ResetStackingDamageFlyoutText( damage, isCrit, victim )
+		// Reset stack
+		accumulatedOutgoingDamage = damage
 	}
 	else
 	{
-		AddDamageToStackingDamageFlyoutText( damage, isCrit, victim )
+		// Add to stack
+		accumulatedOutgoingDamage += damage
 	}
-	thread AddSmallDamageTextFlyout( damage, isCrit )
+	SetOutgoingDamageTextRui(damage, isCrit, victim)
+	thread AddSmallDamageTextFlyout( damage, isCrit, victim )
 
 	lastOutgoingDamageTextHitTime = Time()
+}
+
+vector function GetDamageTextColor( bool isCrit, entity victim) {
+	return ( isCrit ? GetConVarFloat3("comp_hud_damage_indicator_color_crit") : GetConVarFloat3("comp_hud_damage_indicator_color") ) / 255.0
 }
