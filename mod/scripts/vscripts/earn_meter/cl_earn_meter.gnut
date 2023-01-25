@@ -80,7 +80,7 @@ void function EarnMeterTopo_Update()
 {
 	while (true)
 	{
-		BasicImageBar_UpdatePosition( file.earnMeterTopo, GetConVarFloat2( "comp_hud_titan_meter_offset" ), 
+		BasicImageBar_UpdatePosition( file.earnMeterTopo, GetConVarFloat2( "comp_hud_titan_meter_offset" ),
 			GetConVarFloat2("comp_hud_titan_meter_scale").x, GetConVarFloat2("comp_hud_titan_meter_scale").y )
 		WaitFrame()
 	}

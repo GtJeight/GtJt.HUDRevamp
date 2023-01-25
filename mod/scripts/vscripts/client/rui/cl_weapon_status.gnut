@@ -23,6 +23,7 @@ struct
 	array< void functionref( float ) > updateCallbacks
 	array< void functionref() > startCallbacks
 	table<string, var> ruis
+	table<string, int> phaseState
 	// GtJt HUD
 } file
 
@@ -356,6 +357,7 @@ void function UpdateAdditionalRuis( float deltaTime )
 	for(int i=0; i<players.len(); i++)
 	{
 		entity player_ = players[i]
+		printt(file.phaseState[player_.GetPlayerName()])
 		if ( IsValid( player_ ) && player_.IsPlayer() )
 		{
 			if(player_.IsPhaseShifted())
