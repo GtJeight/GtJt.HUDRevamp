@@ -255,22 +255,22 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 				if (remainingTime >= 0.0)
 				{
 					entity weapon = player.GetOffhandWeapon( OFFHAND_EQUIPMENT )
-					float duration
+					float capacity
 					if ( weapon.HasMod( "pas_ion_lasercannon") )
-						duration = 5.0
+						capacity = 5.0
 					else
-						duration = 3.0
-					float coreFrac = min( 1.0, remainingTime / duration )
-					remainingTime = coreFrac * duration
+						capacity = 3.0 // keep consistent with wrong server call
+					// float coreFrac = min( 1.0, remainingTime / duration )
+					remainingTime = remainingTime > capacity ? capacity : remainingTime
 
 					if (!GetConVarBool("comp_core_meter_timer_style"))
 					{
-						RuiSetFloat( file.ruis["core"], "msgAlpha", GetConVarBool("comp_core_meter_timer") ? 0.9 : 0.0 )
+						RuiSetFloat( file.ruis["core"], "msgAlpha", 0.9)
 						RuiSetString( file.ruis["core"], "msgText", format("%.2f", remainingTime))
 					}
 					else
 					{
-						RuiSetString( file.ruis["core2"], "lockMessage", "Laser Core Expires in "+format("%.2f", remainingTime)+"s")
+						RuiSetString( file.ruis["core2"], "lockMessage", format("Laser Core Expires in %.2fs", remainingTime))
 						RuiSetBool( file.ruis["core2"], "isVisible", true )
 					}
 				}
