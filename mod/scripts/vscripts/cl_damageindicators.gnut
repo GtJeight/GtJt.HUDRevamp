@@ -48,7 +48,7 @@ void function SetOutgoingDamageTextRui(float damage, bool isCrit, entity victim)
 	RuiSetString( stackingOutgoingDamageTextRui, "msgText", accumulatedOutgoingDamage.tointeger().tostring() )
 	float msgFontSize = GraphCapped( accumulatedOutgoingDamage, victim.IsTitan() ? 500 : 50, victim.IsTitan() ? 10000 : 200, 36, victim.IsTitan() ? 56 : 48 )
 	RuiSetFloat( stackingOutgoingDamageTextRui, "msgFontSize", msgFontSize)
-	RuiSetFloat2( stackingOutgoingDamageTextRui, "msgPos", OUTGOING_DAMAGE_TEXT_BEGIN_POS - <0, GraphCapped(msgFontSize, 36, 72, 0.0, 0.05), 0> )
+	RuiSetFloat2( stackingOutgoingDamageTextRui, "msgPos", GetConVarFloat2("comp_hud_damage_indicator_pos") - <0, GraphCapped(msgFontSize, 36, 72, 0.0, 0.05), 0> )
 	RuiSetFloat3( stackingOutgoingDamageTextRui, "msgColor", GetDamageTextColor(isCrit, victim) )
 }
 
@@ -57,7 +57,7 @@ void function AddSmallDamageTextFlyout(float damage, bool isCrit, entity victim)
 	var rui = RuiCreate( $"ui/cockpit_console_text_top_left.rpak", clGlobal.topoCockpitHudPermanent, RUI_DRAW_COCKPIT, 0)
 	RuiSetInt( rui, "maxLines", 1 );
 	RuiSetInt( rui, "lineNum", 1 );
-	RuiSetFloat2( rui, "msgPos", OUTGOING_DAMAGE_TEXT_BEGIN_POS )
+	RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_hud_damage_indicator_pos") )
 	RuiSetString( rui, "msgText",  damage.tointeger().tostring() )
 	RuiSetFloat3( rui, "msgColor",  GetDamageTextColor(isCrit, victim))
 	RuiSetFloat( rui, "msgFontSize", 24.0)
@@ -70,7 +70,7 @@ void function AddSmallDamageTextFlyout(float damage, bool isCrit, entity victim)
 	while ( Time() - startTime < OUTGOING_DAMAGE_TEXT_SMALL_FADE_TIME )
 	{
 		float alpha = Graph( Time() - startTime, 0, OUTGOING_DAMAGE_TEXT_SMALL_FADE_TIME, 0.5, 0 )
-		vector posOffset = OUTGOING_DAMAGE_TEXT_BEGIN_POS
+		vector posOffset = GetConVarFloat2("comp_hud_damage_indicator_pos")
 		posOffset.y += Graph( Time() - startTime, 0, OUTGOING_DAMAGE_TEXT_SMALL_FADE_TIME, 0, -0.05 )
 		RuiSetFloat( rui, "msgAlpha", alpha )
 		RuiSetFloat2( rui, "msgPos", posOffset )
@@ -92,7 +92,7 @@ void function Thread_StackingDamageFlyoutText()
 	stackingOutgoingDamageTextRui = RuiCreate( $"ui/cockpit_console_text_top_left.rpak", clGlobal.topoCockpitHudPermanent, RUI_DRAW_COCKPIT, 1)
 	RuiSetInt( stackingOutgoingDamageTextRui, "maxLines", 1 );
 	RuiSetInt( stackingOutgoingDamageTextRui, "lineNum", 1 );
-	RuiSetFloat2( stackingOutgoingDamageTextRui, "msgPos", OUTGOING_DAMAGE_TEXT_BEGIN_POS )
+	RuiSetFloat2( stackingOutgoingDamageTextRui, "msgPos", GetConVarFloat2("comp_hud_damage_indicator_pos") )
 	RuiSetFloat( stackingOutgoingDamageTextRui, "thicken", 0.0 )
 	RuiSetFloat( stackingOutgoingDamageTextRui, "msgFontSize", 36.0)
 	RuiSetFloat3( stackingOutgoingDamageTextRui, "msgColor", GetConVarFloat3("comp_hud_damage_indicator_color") / 255.0 )
@@ -180,7 +180,7 @@ void function MenuOpen()
 			RuiSetFloat3( stackingOutgoingDamageTextRui, "msgColor", <0.9, 0.9, 0.9> )
 			float msgFontSize = GraphCapped( accumulatedOutgoingDamage, 50, 200, 36, 48 )
 			RuiSetFloat( stackingOutgoingDamageTextRui, "msgFontSize", msgFontSize)
-			RuiSetFloat2( stackingOutgoingDamageTextRui, "msgPos", OUTGOING_DAMAGE_TEXT_BEGIN_POS - <0, GraphCapped(msgFontSize, 36, 72, 0.0, 0.05), 0> )
+			RuiSetFloat2( stackingOutgoingDamageTextRui, "msgPos", GetConVarFloat2("comp_hud_damage_indicator_pos") - <0, GraphCapped(msgFontSize, 36, 72, 0.0, 0.05), 0> )
 			RuiSetString( stackingOutgoingDamageTextRui, "msgText", accumulatedOutgoingDamage.tointeger().tostring() )
 			if (accumulatedIncomingDamage > 1)
 			{
