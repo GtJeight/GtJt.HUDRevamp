@@ -45,7 +45,7 @@ void function PlayerTookDamage( float damage, vector pos, int damageType, int da
 void function SetOutgoingDamageTextRui(float damage, bool isCrit, entity victim)
 {
 	if (stackingOutgoingDamageTextRui == null) return
-	RuiSetString( stackingOutgoingDamageTextRui, "msgText", accumulatedOutgoingDamage.tointeger().tostring() )
+	RuiSetString( stackingOutgoingDamageTextRui, "msgText", format("%i%s", accumulatedOutgoingDamage.tointeger(), CalculateVictimHP(damage, victim)))
 	float msgFontSize = GraphCapped( accumulatedOutgoingDamage, victim.IsTitan() ? 500 : 50, victim.IsTitan() ? 10000 : 200, 36, victim.IsTitan() ? 56 : 48 )
 	RuiSetFloat( stackingOutgoingDamageTextRui, "msgFontSize", msgFontSize)
 	RuiSetFloat2( stackingOutgoingDamageTextRui, "msgPos", GetConVarFloat2("comp_hud_damage_indicator_pos") - <0, GraphCapped(msgFontSize, 36, 72, 0.0, 0.05), 0> )
@@ -81,9 +81,11 @@ void function AddSmallDamageTextFlyout(float damage, bool isCrit, entity victim)
 
 string function CalculateVictimHP(float damage, entity victim)
 {
+	if (!GetConVarBool("comp_hud_damage_indicator_victim_hp"))
+		return ""
 	int totalhealth = int(victim.GetHealth() - damage);
 	totalhealth = totalhealth < 0 ? 0 : totalhealth;
-	return GetConVarBool("comp_hud_damage_indicator_victim_hp") ? format( "\n%i HP", totalhealth) : ""
+	return format( "\n%i HP", totalhealth)
 }
 
 void function Thread_StackingDamageFlyoutText()
