@@ -9,6 +9,8 @@ Alternative version of HUDRevamp
 
 更新本模组前请注意保存自己的mod.json，因为更新可能往mod.json写入新的变量
 
+默认设置数值不一定适用于其它分辨率，请进入Mod Settings自行修改；私房进入泰坦争斗模式，降下泰坦后进入Mod Settings，配合F1开关菜单，可以方便地将相应数字项调整到想要的位置
+
 新特性：
 
 - 剑核心、镭射核心剩余时间指示
