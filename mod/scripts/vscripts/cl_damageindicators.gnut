@@ -177,7 +177,7 @@ void function MenuOpen()
 			lastIncomingDamageTextHitTime = Time()
 			lastOutgoingDamageTextHitTime = Time()
 			isCrit = !isCrit
-			RuiSetFloat3( stackingOutgoingDamageTextRui, "msgColor", GetDamageTextColor(isCrit, victim) )
+			RuiSetFloat3( stackingOutgoingDamageTextRui, "msgColor", <0.9, 0.9, 0.9> )
 			float msgFontSize = GraphCapped( accumulatedOutgoingDamage, 50, 200, 36, 48 )
 			RuiSetFloat( stackingOutgoingDamageTextRui, "msgFontSize", msgFontSize)
 			RuiSetFloat2( stackingOutgoingDamageTextRui, "msgPos", OUTGOING_DAMAGE_TEXT_BEGIN_POS - <0, GraphCapped(msgFontSize, 36, 72, 0.0, 0.05), 0> )
