@@ -1,9 +1,11 @@
 # GtJt.HUDRevamp
+
 Alternative version of HUDRevamp
 
 为解决原HUDR图标难看写的mod
 
-需要最早版本[modsettings](https://github.com/GtJeight/ModSettings)的支持
+~~需要最早版本[modsettings](https://github.com/GtJeight/ModSettings)的支持~~
+需要ModSettings v2的支持
 
 更新本模组前请注意保存自己的mod.json，因为更新可能往mod.json写入新的变量
 
