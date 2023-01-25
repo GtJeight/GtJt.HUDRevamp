@@ -2,7 +2,7 @@ global function HudRevampSettings_Init
 
 void function HudRevampSettings_Init()
 {
-	AddModTitle("HUD Revamp ver GtJ8")
+	AddModTitle("HUD Revamp by Asymmetr")
 
 	// General
 	AddModCategory("General")
@@ -56,8 +56,8 @@ void function HudRevampSettings_Init()
 	AddModCategory("Core Meter Timer")
 	AddConVarSettingEnum( "comp_core_meter_timer", "Enable", [ "No", "Yes" ] )
 	AddConVarSettingEnum( "comp_core_meter_timer_style", "Style", [ "Number", "Text" ] )
-	AddConVarSetting("comp_core_meter_timer_pos", "Timer Position", "float2" )
-	AddConVarSetting("comp_core_meter_timer_size", "Font Size", "float" )
+	AddConVarSetting("comp_core_meter_timer_pos", "Number Timer Position", "float2" )
+	AddConVarSetting("comp_core_meter_timer_size", "Number Size", "float" )
 
 	// Phase Glitch Detector
 	AddModCategory("Phase Glitch Detector")
