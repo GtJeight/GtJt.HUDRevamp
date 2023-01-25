@@ -23,4 +23,4 @@ Alternative version of HUDRevamp
 已知bug：
 
 - 核心图标偏置输入0.0 0.0后不会更新坐标
-- 镭射核心剩余时间有误
+- ~~镭射核心剩余时间有误~~

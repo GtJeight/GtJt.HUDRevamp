@@ -61,17 +61,17 @@
         },
         {
             "Name": "comp_hud_tactical_position",
-            "DefaultValue": "-0.3338 0.445",
+            "DefaultValue": "-0.3338 0.432",
             "Flags": 16777216
         },
         {
             "Name": "comp_hud_ordnance_position",
-            "DefaultValue": "-0.2785 0.445",
+            "DefaultValue": "-0.2785 0.432",
             "Flags": 16777216
         },
         {
             "Name": "comp_hud_utility_position",
-            "DefaultValue": "-0.2236 0.445",
+            "DefaultValue": "-0.2236 0.432",
             "Flags": 16777216
         },
         {
@@ -166,7 +166,7 @@
         },
         {
             "Name": "comp_phase_glitch_detector_pos",
-            "DefaultValue": "0.05 0.3",
+            "DefaultValue": "0.05 0.38",
             "Flags": 16777216
         },
         {
