@@ -23,7 +23,9 @@ struct
 	array< void functionref( float ) > updateCallbacks
 	array< void functionref() > startCallbacks
 	table<string, var> ruis
-	table<string, int> phaseState
+	table<string, bool> phaseState // is player phaseShifting
+	table<string, bool> phaseGlitching
+	table<string, float> estimatedPSEndTime
 	// GtJt HUD
 } file
 
@@ -59,7 +61,6 @@ global struct BarTopoData {
 struct {
     string abilityText = "%.1f"
 } settings
-string detectMsg
 // GtJt HUD
 
 void function ClWeaponStatus_Init()
@@ -348,28 +349,73 @@ void function UpdateAdditionalRuis( float deltaTime )
 	}
 
 	// update phase glitch detector
-	RuiSetFloat( file.ruis["glitch"], "msgAlpha", GetConVarBool("comp_phase_glitch_detector") ? 0.9 : 0.0 )
-	RuiSetFloat( file.ruis["glitch"], "msgFontSize", GetConVarFloat("comp_phase_glitch_detector_size"))
-	if (!GetConVarBool("comp_phase_glitch_detector"))
-		return
-	array<entity> players = GetPlayerArray()
-	detectMsg = ""
-	for(int i=0; i<players.len(); i++)
+	if (GetConVarBool("comp_phase_glitch_detector"))
 	{
-		entity player_ = players[i]
-		printt(file.phaseState[player_.GetPlayerName()])
-		if ( IsValid( player_ ) && player_.IsPlayer() )
+		RuiSetFloat( file.ruis["glitch"], "msgAlpha", 0.9)
+		RuiSetFloat( file.ruis["glitch"], "msgFontSize", GetConVarFloat("comp_phase_glitch_detector_size"))
+		array<entity> players = GetPlayerArray()
+		string detectMsg = ""
+		foreach ( thisPlayer in players )
 		{
-			if(player_.IsPhaseShifted())
+			string playerName_ = thisPlayer.GetPlayerName()
+			if (IsValid(thisPlayer) && thisPlayer.IsPlayer())
 			{
-				if (player.GetPlayerName() == player_.GetPlayerName())
-					detectMsg = "You are in phase-glitch state\n" + detectMsg
+				if (IsAlive(thisPlayer))
+				{
+					if (thisPlayer.IsPhaseShifted())
+					{
+						float curTime = Time()
+						if (!file.phaseState[playerName_])
+						{
+							printt(format("%s is phase shifting at %.3f!", playerName_, curTime))
+							file.phaseState[playerName_] <- true // start counting
+							if (player.IsTitan())
+							{
+								// TODO 瞬间反应？
+								file.estimatedPSEndTime[playerName_] <- curTime + 1.0
+							}
+							else
+							{
+								file.estimatedPSEndTime[playerName_] <- curTime + 2.0
+							}
+						}
+						else if (curTime > file.estimatedPSEndTime[playerName_])
+						{
+							printt(format("%s is phase glitching at %.3f!", playerName_, curTime))
+							file.phaseGlitching[playerName_] <- true
+						}
+					}
+					else
+					{
+						// if (file.phaseState[playerName_])
+						// {
+						// 	float curTime = Time()
+						// 	printt(format("%s exits phase shifting at %.3f!", playerName_, curTime))
+						// }
+						file.phaseState[playerName_] <- false
+						file.phaseGlitching[playerName_] <- false // init
+					}
+				}
 				else
-					detectMsg = detectMsg + "[" + player_.GetPlayerName() + "] is in phase-glitch state\n"
+				{
+					// printt(format("%s is dead!\n", playerName_))
+					file.phaseGlitching[playerName_] <- false // clear on death
+				}
+				if (playerName_ in file.phaseGlitching)
+				{
+					if (file.phaseGlitching[playerName_])
+					{
+						detectMsg += format("%s is phase glitching!\n", playerName_)
+					}
+				}
 			}
 		}
+		RuiSetString(file.ruis["glitch"], "msgText", detectMsg)
 	}
-	RuiSetString(file.ruis["glitch"], "msgText", detectMsg)
+	else
+	{
+		RuiSetFloat( file.ruis["glitch"], "msgAlpha", 0.0 )
+	}
 }
 
 void function MenuOpen()
