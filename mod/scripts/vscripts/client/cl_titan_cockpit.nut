@@ -254,7 +254,7 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 				if (coreFrac > 0.0)
 				{
 					float duration = weapon.GetSustainedDischargeDuration()
-					float remainingTime = coreFrac * duration
+					float remainingTime = (1 - coreFrac) * duration
 					if (!GetConVarBool("comp_core_meter_timer_style"))
 					{
 						RuiSetFloat( file.ruis["core"], "msgAlpha", 0.9)
