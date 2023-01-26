@@ -443,7 +443,7 @@ void function UpdateOffhandRui( var rui, entity player, entity weapon )
 			int curCharges = int( energy ) / curCost
 			int targetAmmo = (curCharges + 1) * curCost
 			timeUntilNextCharge = (targetAmmo - energy) / energyRegenRate
-			ammoFrac = (energy / curCost)
+			ammoFrac = (energy / curCost / maxCharges)
 
 			// Ability - 2/2 | 2.5s
 			break
