@@ -498,13 +498,19 @@ void function UpdateOffhandRui( var rui, entity player, entity weapon )
 				grappleRegenRate *= 1.35
 			}
 
-			maxCharges = 2
-			minFracToUse = 0.5
+			try
+			{
+				maxCharges = ammoClipSize / int(ammoMinToFire)
+			}
+			catch (ex) { maxCharges = 1 }
+			minFracToUse = ammoMinToFire / ammoClipSize
 			if (ammoMinToFire > 0) maxCharges = ammoClipSize / int( ammoMinToFire )
 			int curCharges = 0;
 			if (ammoMinToFire > 0) curCharges = int( grapplePower ) / int( ammoMinToFire )
 			int targetAmmo = (curCharges + 1) * int( ammoMinToFire )
 			timeUntilNextCharge = (targetAmmo - grapplePower) / grappleRegenRate
+			if (GameRules_GetGameMode() == "econ")
+				timeUntilNextCharge = 0.0
 			if (ammoClipSize == grapplePower) timeUntilNextCharge = 0
 			ammoFrac = grapplePower / ammoClipSize
 
