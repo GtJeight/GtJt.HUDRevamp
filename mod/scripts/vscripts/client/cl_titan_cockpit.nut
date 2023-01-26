@@ -303,14 +303,14 @@ void function MenuOpen()
 			RuiSetString( file.ruis["core"], "msgText", format("%.2f", 88.88))
 			RuiSetFloat( file.ruis["core"], "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
 			RuiSetFloat( file.ruis["core"], "msgAlpha", 0.9 )
+			RuiSetBool( file.ruis["core2"], "isVisible", false )
+		}
+		else
+		{
+			RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
+			RuiSetString( file.ruis["core2"], "lockMessage", "Core Expires in "+format("%.2f", 8.88)+"s")
 			RuiSetBool( file.ruis["core2"], "isVisible", true )
 		}
-	}
-	// core timer text
-	{
-
-		RuiSetString( file.ruis["core2"], "lockMessage", "Core Expires in "+format("%.2f", 8.88)+"s")
-		RuiSetBool( file.ruis["core2"], "isVisible", true )
 	}
 }
 // GtJt HUD
@@ -537,6 +537,7 @@ void function ShowRUIHUD( entity cockpit )
 		tcRUI.rui = file.ruis["core"]
 		player.p.titanCockpitRUIs.append( tcRUI )
 	}
+	// core timer text
 	{
 		var rui = CreateCockpitRui( $"ui/lockon_hud.rpak" )
 		RuiSetString( rui, "lockMessage", "")
