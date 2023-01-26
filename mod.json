@@ -110,6 +110,11 @@
             "Flags": 16777216
         },
         {
+            "Name": "comp_hud_damage_indicator_style",
+            "DefaultValue": "0",
+            "Flags": 16777216
+        },
+        {
             "Name": "comp_hud_damage_indicator_pos",
             "DefaultValue": "0.525 0.4",
             "Flags": 16777216

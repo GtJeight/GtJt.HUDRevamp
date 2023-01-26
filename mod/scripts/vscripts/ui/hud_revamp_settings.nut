@@ -38,6 +38,7 @@ void function HudRevampSettings_Init()
 	// Damage Indicator
 	AddModCategory("Damage Indicator")
 	AddConVarSettingEnum( "comp_hud_damage_indicator", "Enabled",  [ "No", "Yes" ] )
+	AddConVarSettingEnum( "comp_hud_damage_indicator_style", "Enabled",  [ "Classic", "Flashy" ] )
 	AddConVarSettingEnum( "comp_hud_damage_indicator_victim_hp", "Show Victim HP",  [ "No", "Yes" ] )
 	AddConVarSetting( "comp_hud_damage_indicator_pos", "Position",  "float2" )
 	AddConVarSetting( "comp_hud_damage_indicator_duration", "Duration",  "float" )

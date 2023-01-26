@@ -208,7 +208,19 @@ void function PlayerDidDamageText( float damage, vector damagePosition, entity v
 		accumulatedOutgoingDamage += damage
 	}
 	SetOutgoingDamageTextRui(damage, isCrit, victim)
-	thread AddSmallDamageTextFlyout( damage, isCrit, victim )
+	if (!GetConVarBool("comp_hud_damage_indicator_style"))
+		thread AddSmallDamageTextFlyout( damage, isCrit, victim )
+	else
+	{
+		vector randDir2D = < RandomFloatRange( -1, 1 ), 1, 0 >
+		randDir2D = Normalize( randDir2D )
+		var rui = CreateCockpitRui( $"ui/at_score_popup.rpak", 100 )
+		RuiSetInt( rui, "scoreVal", int(damage) )
+		RuiSetGameTime( rui, "startTime", Time() )
+		RuiSetFloat3( rui, "pos", damagePosition )
+		RuiSetFloat2( rui, "driftDir", randDir2D )
+		RuiSetBool( rui, "showNormalPoints", !isCrit )
+	}
 
 	lastOutgoingDamageTextHitTime = Time()
 }
