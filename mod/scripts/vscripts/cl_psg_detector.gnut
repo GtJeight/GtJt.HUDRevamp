@@ -1,0 +1,91 @@
+global function Cl_PSG_Detector_Init
+global function GetPSG_State
+
+struct
+{
+	table< entity, float > EstimatedPSEndTime
+	table< entity, bool> PSGlitching
+} file
+
+void function Cl_PSG_Detector_Init()
+{
+	//AddCallback_OnPlayerConnected( PlayerJoinTheGame )
+	AddCallback_GameStateEnter( eGameState.Playing, PlayerClientScriptInit )
+}
+
+void function PlayerClientScriptInit()
+{
+	foreach( entity player in GetPlayerArray() )
+	{
+		if( !( player in file.EstimatedPSEndTime ) )
+			thread PSG_Monitor_Thread( player )
+	}
+}
+/*
+void function PlayerJoinTheGame( entity player, int state )
+{
+	if( !( player in file.EstimatedPSEndTime ) )
+		thread PSG_Monitor_Thread( player )
+}
+*/
+void function PSG_Monitor( entity player )
+{
+	file.EstimatedPSEndTime[ player ] <- 0.0
+	file.PSGlitching[ player ] <- false
+	//player.EndSignal( "OnDestroy" )
+
+	while(true)
+	{
+		WaitFrame()
+		if ( IsValid( player ) && player.IsPlayer() )
+		{
+			if ( IsAlive( player ) )
+			{
+				if( player.IsPhaseShifted() )
+				{
+					float curTime = Time()
+					if( curTime < file.EstimatedPSEndTime[ player ] )
+					{
+						file.PSGlitching[ player ] <- true
+						print(player.GetPlayerName()+" BUG!!!!!!")
+					}
+					float PSTimeRemaining = player.PhaseShiftTimeRemaining()
+					file.EstimatedPSEndTime[ player ] <- curTime + PSTimeRemaining
+					wait PSTimeRemaining
+				}
+			}
+			else if ( file.PSGlitching[ player ] )
+			{
+				file.PSGlitching[ player ] <- false
+			}
+		}
+	}
+}
+
+void function GetEstimatedPhaseShiftDuration( entity player ) {
+	if ( player.IsTitan() )
+	{
+		return 1.0
+	}
+	else
+	{
+		return 2.0
+	}
+	unreachable
+}
+
+bool function GetPSG_State( entity player) {
+	if (player.IsPlayer())
+	{
+		if (player in file.PSGlitching)
+		{
+			return file.PSGlitching[ player ]
+		}
+		printt("Waring: player %s not found in GetPSG_State", player.GetPlayerName())
+	}
+	else
+	{
+		printt("Waring: entity is not player! GetPSG_State")
+	}
+	return false
+}
