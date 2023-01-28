@@ -21,6 +21,10 @@
             "UICallback": {
                 "Before": "HudRevampSettings_Init"
             }
+        },
+        {
+            "Path": "client/cl_psg_detector.gnut",
+            "RunOn": "CLIENT"
         }
     ],
     "ConVars": [
