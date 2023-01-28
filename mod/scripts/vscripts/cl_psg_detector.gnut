@@ -18,14 +18,14 @@ void function PlayerClientScriptInit()
 	foreach( entity player in GetPlayerArray() )
 	{
 		if( !( player in file.EstimatedPSEndTime ) )
-			thread PSG_Monitor_Thread( player )
+			thread PSG_Monitor( player )
 	}
 }
 /*
 void function PlayerJoinTheGame( entity player, int state )
 {
 	if( !( player in file.EstimatedPSEndTime ) )
-		thread PSG_Monitor_Thread( player )
+		thread PSG_Monitor( player )
 }
 */
 void function PSG_Monitor( entity player )
@@ -62,7 +62,7 @@ void function PSG_Monitor( entity player )
 	}
 }
 
-void function GetEstimatedPhaseShiftDuration( entity player ) {
+float function GetEstimatedPhaseShiftDuration( entity player ) {
 	if ( player.IsTitan() )
 	{
 		return 1.0

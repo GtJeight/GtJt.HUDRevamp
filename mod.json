@@ -23,8 +23,11 @@
             }
         },
         {
-            "Path": "client/cl_psg_detector.gnut",
-            "RunOn": "CLIENT"
+            "Path": "cl_psg_detector.gnut",
+            "RunOn": "CLIENT",
+            "ClientCallback": {
+                "After": "Cl_PSG_Detector_Init"
+            }
         }
     ],
     "ConVars": [

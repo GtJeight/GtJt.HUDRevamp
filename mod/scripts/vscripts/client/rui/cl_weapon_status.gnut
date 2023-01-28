@@ -356,7 +356,7 @@ void function UpdateAdditionalRuis( float deltaTime )
 		{
 			if (GetPSG_State(currentPlayer))
 			{
-				detectMsg += format("%s is phase glitching!\n", playerName_)
+				detectMsg += format("%s is phase glitching!\n", currentPlayer.GetPlayerName())
 			}
 		}
 		RuiSetString(file.ruis["glitch"], "msgText", detectMsg)
