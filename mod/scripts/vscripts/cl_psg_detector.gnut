@@ -3,18 +3,17 @@ global function GetPSG_State
 
 struct
 {
-	table< string, float > NextPSTime
-	table< string, float > LastPSEnd
-	table< string, bool > PSGlitching
-	table< string, bool > PhaseShifting
-	table< string, bool > Initialized
+	table< entity, float > EstimatedPSEndTime
+	table< entity, float > PSTime
+
+	table< entity, bool> PSGlitching
+	table< entity, bool> PhaseShifting
 } file
 
 bool printed = false
 
 void function Cl_PSG_Detector_Init()
 {
-	RegisterSignal( "LocalPlayerDisconnected" )
 	AddCallback_OnPlayerConnected( PlayerJoinTheGame )
 	AddCallback_GameStateEnter( eGameState.Playing, PlayerClientScriptInit )
 	AddCallback_OnPlayerDisconnected( PlayerDisconnected )
@@ -45,16 +44,11 @@ void function PlayerDisconnected( entity player )
 
 void function PSG_Monitor( entity player )
 {
-
-	// player.EndSignal( "OnDestroy" )
-	player.EndSignal( "LocalPlayerDisconnected" )
-
-	OnThreadEnd(
-		function() : ()
-		{
-			ClearStatus()
-		}
-	)
+	file.EstimatedPSEndTime[ player ] <- 0.0
+	file.PSGlitching[ player ] <- false
+	file.PSTime[player] <- 0.0
+	printt("Start monitoring" + player.GetPlayerName())
+	player.EndSignal( "OnDestroy" )
 
 	while(true)
 	{
@@ -87,18 +81,22 @@ void function CheckPlayer( entity player )
 				float curTime = Time()
 				if ( curTime < file.NextPSTime[ pname ])
 				{
-					file.PSGlitching[ pname ] <- true
-					printt(" BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +player.GetPlayerName()+"\n BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-					printt(format("%.6f %.6f", curTime, file.NextPSTime[ pname ]) )
-					printt(format("delta time %.6f", curTime - file.NextPSTime[ pname ]))
-				}
-				if (fabs(curTime - file.LastPSEnd[ pname ]) < 0.1)
-				{
-					file.PSGlitching[ pname ] <- true
-					printt("###################### Gap between PS")
-					printt(" BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +player.GetPlayerName()+"\n BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-					printt(format("%.6f %.6f", curTime, file.LastPSEnd[ pname ]) )
-					printt(format("delta time %.6f", curTime - file.LastPSEnd[ pname ]))
+					float curTime = Time()
+					if( curTime < file.EstimatedPSEndTime[ player ] )
+					{
+						file.PSGlitching[ player ] <- true
+						printt(player.GetPlayerName()+" BUG!!!!!!")
+					}
+					float t = curTime - file.PSTime[player]
+					if (t < GetEstimatedPhaseShiftDuration(player))
+					{
+						printt(player.GetPlayerName()+" BUG!!!!!! by pandora")
+					}
+
+					file.PSTime[player] <- curTime
+					float PSTimeRemaining = player.PhaseShiftTimeRemaining()
+					file.EstimatedPSEndTime[ player ] <- curTime + PSTimeRemaining
+					wait PSTimeRemaining
 				}
 
 				file.PhaseShifting[ pname ] <- true
@@ -132,12 +130,10 @@ void function CheckPlayer( entity player )
 				printt("\n\n\n\n\n\n\n\n\n")
 
 			}
-
 		}
-		else if ( file.PSGlitching[ pname ] || file.PhaseShifting[ pname ])
+		else
 		{
-			file.PSGlitching[ pname ] <- false
-			file.PhaseShifting[ pname ] <- false
+			printt("Warning: player invalid")
 		}
 	}
 	else
@@ -183,6 +179,11 @@ bool function GetPSG_State( entity player ) {
 		{
 			file.PSGlitching[ pname ] <- false
 			printt(format("Waring: player %s not found in GetPSG_State", pname))
+		}
+		else
+		{
+			file.PSGlitching[ player ] <- false
+			printt("Waring: player %s not found in GetPSG_State", player.GetPlayerName())
 		}
 	}
 	else
