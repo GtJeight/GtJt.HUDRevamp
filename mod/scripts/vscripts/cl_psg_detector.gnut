@@ -4,12 +4,15 @@ global function GetPSG_State
 struct
 {
 	table< entity, float > EstimatedPSEndTime
+	table< entity, float > PSTime
+
 	table< entity, bool> PSGlitching
+	table< entity, bool> PhaseShifting
 } file
 
 void function Cl_PSG_Detector_Init()
 {
-	//AddCallback_OnPlayerConnected( PlayerJoinTheGame )
+	AddCallback_OnPlayerConnected( PlayerJoinTheGame )
 	AddCallback_GameStateEnter( eGameState.Playing, PlayerClientScriptInit )
 }
 
@@ -21,18 +24,20 @@ void function PlayerClientScriptInit()
 			thread PSG_Monitor( player )
 	}
 }
-/*
+
 void function PlayerJoinTheGame( entity player, int state )
 {
 	if( !( player in file.EstimatedPSEndTime ) )
 		thread PSG_Monitor( player )
 }
-*/
+
 void function PSG_Monitor( entity player )
 {
 	file.EstimatedPSEndTime[ player ] <- 0.0
 	file.PSGlitching[ player ] <- false
-	//player.EndSignal( "OnDestroy" )
+	file.PSTime[player] <- 0.0
+	printt("Start monitoring" + player.GetPlayerName())
+	player.EndSignal( "OnDestroy" )
 
 	while(true)
 	{
@@ -47,8 +52,15 @@ void function PSG_Monitor( entity player )
 					if( curTime < file.EstimatedPSEndTime[ player ] )
 					{
 						file.PSGlitching[ player ] <- true
-						print(player.GetPlayerName()+" BUG!!!!!!")
+						printt(player.GetPlayerName()+" BUG!!!!!!")
 					}
+					float t = curTime - file.PSTime[player]
+					if (t < GetEstimatedPhaseShiftDuration(player))
+					{
+						printt(player.GetPlayerName()+" BUG!!!!!! by pandora")
+					}
+
+					file.PSTime[player] <- curTime
 					float PSTimeRemaining = player.PhaseShiftTimeRemaining()
 					file.EstimatedPSEndTime[ player ] <- curTime + PSTimeRemaining
 					wait PSTimeRemaining
@@ -58,6 +70,10 @@ void function PSG_Monitor( entity player )
 			{
 				file.PSGlitching[ player ] <- false
 			}
+		}
+		else
+		{
+			printt("Warning: player invalid")
 		}
 	}
 }
@@ -74,14 +90,18 @@ float function GetEstimatedPhaseShiftDuration( entity player ) {
 	unreachable
 }
 
-bool function GetPSG_State( entity player) {
+bool function GetPSG_State( entity player ) {
 	if (player.IsPlayer())
 	{
 		if (player in file.PSGlitching)
 		{
 			return file.PSGlitching[ player ]
 		}
-		printt("Waring: player %s not found in GetPSG_State", player.GetPlayerName())
+		else
+		{
+			file.PSGlitching[ player ] <- false
+			printt("Waring: player %s not found in GetPSG_State", player.GetPlayerName())
+		}
 	}
 	else
 	{
