@@ -33,11 +33,11 @@ void function PlayerJoinTheGame( entity player, int state )
 
 void function PSG_Monitor( entity player )
 {
-	file.EstimatedPSEndTime[ player ] <- 0.0
+	file.EstimatedPSEndTime[ player ] <- 99999999.0
 	file.PSGlitching[ player ] <- false
 	file.PSTime[player] <- 0.0
 	printt("Start monitoring" + player.GetPlayerName())
-	player.EndSignal( "OnDestroy" )
+	// player.EndSignal( "OnDestroy" )
 
 	while(true)
 	{
@@ -49,21 +49,26 @@ void function PSG_Monitor( entity player )
 				if( player.IsPhaseShifted() )
 				{
 					float curTime = Time()
-					if( curTime < file.EstimatedPSEndTime[ player ] )
-					{
-						file.PSGlitching[ player ] <- true
-						printt(player.GetPlayerName()+" BUG!!!!!!")
-					}
-					float t = curTime - file.PSTime[player]
-					if (t < GetEstimatedPhaseShiftDuration(player))
-					{
-						printt(player.GetPlayerName()+" BUG!!!!!! by pandora")
-					}
+					// float t = curTime - file.PSTime[player]
+					// if (t < GetEstimatedPhaseShiftDuration(player))
+					// {
+					// 	printt(player.GetPlayerName()+" BUG!!!!!! by pandora")
+					// }
 
-					file.PSTime[player] <- curTime
+					// file.PSTime[player] <- curTime
 					float PSTimeRemaining = player.PhaseShiftTimeRemaining()
 					file.EstimatedPSEndTime[ player ] <- curTime + PSTimeRemaining
 					wait PSTimeRemaining
+
+					if (player.IsPhaseShifted())
+					{
+						if( Time() > file.EstimatedPSEndTime[ player ] )
+						{
+							file.PSGlitching[ player ] <- true
+							printt(" BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +player.GetPlayerName()+"\n BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+						}
+					}
+					file.EstimatedPSEndTime[ player ] <- 99999999.0
 				}
 			}
 			else if ( file.PSGlitching[ player ] )
