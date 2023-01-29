@@ -3,94 +3,139 @@ global function GetPSG_State
 
 struct
 {
-	table< entity, float > EstimatedPSEndTime
-	table< entity, float > PSTime
-
-	table< entity, bool> PSGlitching
-	table< entity, bool> PhaseShifting
+	table< string, float > NextPSTime
+	table< string, bool > PSGlitching
+	table< string, bool > PhaseShifting
+	table< string, bool > Initialized
 } file
 
 void function Cl_PSG_Detector_Init()
 {
+	RegisterSignal( "LocalPlayerDisconnected" )
 	AddCallback_OnPlayerConnected( PlayerJoinTheGame )
 	AddCallback_GameStateEnter( eGameState.Playing, PlayerClientScriptInit )
+	AddCallback_OnPlayerDisconnected( PlayerDisconnected )
 }
 
 void function PlayerClientScriptInit()
 {
 	foreach( entity player in GetPlayerArray() )
 	{
-		if( !( player in file.EstimatedPSEndTime ) )
-			thread PSG_Monitor( player )
+		InitPlayerStatus( player )
 	}
+	thread PSG_Monitor( GetLocalViewPlayer() )
 }
 
 void function PlayerJoinTheGame( entity player, int state )
 {
-	if( !( player in file.EstimatedPSEndTime ) )
-		thread PSG_Monitor( player )
+	InitPlayerStatus( entity player )
+}
+
+void function PlayerDisconnected( entity player )
+{
+	if ( player == GetLocalViewPlayer() )
+	{
+		player.Signal( "LocalPlayerDisconnected" )
+		printt("\n#################\n" + "LocalPlayerDisconnected" + "\n#################\n") // TODO check log
+	}
 }
 
 void function PSG_Monitor( entity player )
 {
-	file.EstimatedPSEndTime[ player ] <- 99999999.0
-	file.PSGlitching[ player ] <- false
-	file.PSTime[player] <- 0.0
-	printt("Start monitoring" + player.GetPlayerName())
+
 	// player.EndSignal( "OnDestroy" )
+	player.EndSignal( "LocalPlayerDisconnected" )
+
+	OnThreadEnd(
+		function() : ()
+		{
+			ClearStatus()
+		}
+	)
 
 	while(true)
 	{
+		foreach ( entity currentPlayer in GetPlayerArray() ) {
+			CheckPlayer( currentPlayer )
+		}
 		WaitFrame()
-		if ( IsValid( player ) && player.IsPlayer() )
-		{
-			if ( IsAlive( player ) )
-			{
-				if( player.IsPhaseShifted() )
-				{
-					float curTime = Time()
-					// float t = curTime - file.PSTime[player]
-					// if (t < GetEstimatedPhaseShiftDuration(player))
-					// {
-					// 	printt(player.GetPlayerName()+" BUG!!!!!! by pandora")
-					// }
-
-					// file.PSTime[player] <- curTime
-					float PSTimeRemaining = player.PhaseShiftTimeRemaining()
-					file.EstimatedPSEndTime[ player ] <- curTime + PSTimeRemaining
-					wait PSTimeRemaining
-
-					if (player.IsPhaseShifted())
-					{
-						if( Time() > file.EstimatedPSEndTime[ player ] )
-						{
-							file.PSGlitching[ player ] <- true
-							printt(" BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +player.GetPlayerName()+"\n BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-						}
-					}
-					file.EstimatedPSEndTime[ player ] <- 99999999.0
-				}
-			}
-			else if ( file.PSGlitching[ player ] )
-			{
-				file.PSGlitching[ player ] <- false
-			}
-		}
-		else
-		{
-			printt("Warning: player invalid")
-		}
 	}
 }
 
-float function GetEstimatedPhaseShiftDuration( entity player ) {
-	if ( player.IsTitan() )
+void function CheckPlayer( entity player )
+{
+	if ( IsValid( player ) && player.IsPlayer() )
 	{
-		return 1.0
+		string pname = player.GetPlayerName()
+		if ( !( pname in file.Initialized ) )
+		{
+			// printt("#################")
+			// printt(format("Warning: %s not initialized!", pname)) // TODO check log
+			// printt("#################")
+			InitPlayerStatus( player )
+		}
+		if ( IsAlive( player ) )
+		{
+			if( player.IsPhaseShifted() )
+			{
+				if (file.PhaseShifting[ pname ])
+					continue
+
+				if ( curTime < file.NextPSTime[ pname ])
+				{
+					file.PSGlitching[ pname ] <- true
+					printt(" BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +player.GetPlayerName()+"\n BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+					printt(format("%.6f %.6f", curTime, file.NextPSTime[ pname ]) )
+					printt(format("delta time %.6f", curTime - file.NextPSTime[ pname ]))
+				}
+				file.PhaseShifting[ pname ] <- true
+				float curTime = Time()
+				float PSRemainingTime = player.PhaseShiftTimeRemaining()
+				file.NextPSTime[ pname ] <- curTime + GetEstimatePSThreshold(player, PSRemainingTime)
+				printt(pname + " starts phase shift--------------------------------------------")
+				printt(format("%.6f %.6f %.6f", curTime, PSRemainingTime, curTime + PSRemainingTime ))
+			}
+			else if ( file.PhaseShifting[ pname ] )
+			{
+				file.PhaseShifting[ pname ] <- false
+				float curTime = Time()
+				printt(pname + " exits phase shift--------------------------------------------")
+				printt(format("%.6f %.6f", curTime, file.NextPSTime[ pname ]) )
+				printt(format("delta time %.6f", curTime - file.NextPSTime[ pname ]))
+			}
+		}
+		else if ( file.PSGlitching[ pname ] || file.PhaseShifting[ pname ])
+		{
+			file.PSGlitching[ pname ] <- false
+			file.PhaseShifting[ pname ] <- false
+		}
 	}
 	else
 	{
-		return 2.0
+		// printt("Warning: player invalid")
+	}
+}
+
+void function InitPlayerStatus( entity player )
+{
+	string pname = player.GetPlayerName()
+	file.NextPSTime[ pname ] <- 0.0
+	file.PSGlitching[ pname ] <- false
+	file.PhaseShifting[ pname ] <- false
+	file.Initialized[ pname ]<- true
+	printt("Start monitoring " + player.GetPlayerName() + "#####################################################")
+}
+
+float function GetEstimatePSThreshold( entity player, float remaining) {
+	if ( player.IsTitan() )
+	{
+		if (remaining > 2.1)
+			return 3.3 // autoshift
+		return 1.3
+	}
+	else
+	{
+		return 2.5
 	}
 	unreachable
 }
@@ -98,14 +143,15 @@ float function GetEstimatedPhaseShiftDuration( entity player ) {
 bool function GetPSG_State( entity player ) {
 	if (player.IsPlayer())
 	{
-		if (player in file.PSGlitching)
+		string pname = player.GetPlayerName()
+		if ( pname in file.PSGlitching )
 		{
-			return file.PSGlitching[ player ]
+			return file.PSGlitching[ pname ]
 		}
 		else
 		{
-			file.PSGlitching[ player ] <- false
-			printt("Waring: player %s not found in GetPSG_State", player.GetPlayerName())
+			file.PSGlitching[ pname ] <- false
+			printt(format("Waring: player %s not found in GetPSG_State", pname))
 		}
 	}
 	else
@@ -113,4 +159,12 @@ bool function GetPSG_State( entity player ) {
 		printt("Waring: entity is not player! GetPSG_State")
 	}
 	return false
+}
+
+void function ClearStatus()
+{
+	file.NextPSTime.clear()
+	file.PSGlitching.clear()
+	file.PhaseShifting.clear()
+	file.Initialized.clear()
 }
