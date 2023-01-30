@@ -121,7 +121,7 @@ void function CheckPlayer( entity player )
 			if (player.IsTitan())
 			{
 				entity soul = GetSoulFromPlayer(player)
-				if (player.+(ePassives.PAS_RONIN_AUTOSHIFT))
+				if (player.HasPassive(ePassives.PAS_RONIN_AUTOSHIFT))
 				{
 					printt(format("%s has auto shift", pname))
 				}
@@ -153,7 +153,7 @@ void function InitPlayerStatus( entity player )
 	file.PSGlitching[ pname ] <- false
 	file.PhaseShifting[ pname ] <- false
 	file.Initialized[ pname ]<- true
-	file.LastPSEnd[ pname ] <- 0.0
+	file.LastPSEnd[ pname ] <- -100.0
 	printt("Start monitoring " + player.GetPlayerName() + "#####################################################")
 }
 
