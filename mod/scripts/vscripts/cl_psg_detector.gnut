@@ -49,7 +49,7 @@ void function PlayerJoinTheGame( entity player, int state )
 
 void function PlayerDisconnected( entity player )
 {
-	if ( player == GetLocalViewPlayer() )
+	if ( player == GetLocalViewPlayer() || player.GetPlayerName() == GetLocalViewPlayer().GetPlayerName() )
 	{
 		player.Signal( "LocalPlayerDisconnected" )
 		printt("\n#################\n" + "LocalPlayerDisconnected" + "\n#################\n") // TODO check log
@@ -99,34 +99,39 @@ void function CheckPlayer( entity player )
 
 				printt(pname + " starts phase shift--------------------------------------------")
 				float curTime = Time()
-				if ( curTime < file.NextPSTime[ pname ])
+				file.PhaseShifting[ pname ] <- true
+				float PSRemainingTime = player.PhaseShiftTimeRemaining()
+				float estimatedStartTime = GetEstimatedPSStart( player.IsTitan(), PSRemainingTime, curTime )
+
+				if ( estimatedStartTime < file.NextPSTime[ pname ])
 				{
 					file.PSGlitching[ pname ] <- true
 					printt(" BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +player.GetPlayerName()+"\nNextPSTime")
-					printt(format("%.6f %.6f", curTime, file.NextPSTime[ pname ]) )
-					printt(format("curTime - file.NextPSTime %.6f < 0", curTime - file.NextPSTime[ pname ]))
+					printt("curTime estimatedStartTime nextPSTime")
+					printt(format("%.6f %.6f %.6f", curTime, estimatedStartTime, file.NextPSTime[ pname ]) )
+					printt(format("estimatedStartTime - file.NextPSTime %.6f < 0", estimatedStartTime - file.NextPSTime[ pname ]))
 				}
 				else
 				{
-					printt(format("curTime - file.NextPSTime %.6f", curTime - file.NextPSTime[ pname ]))
+					printt(format("estimatedStartTime - file.NextPSTime %.6f", estimatedStartTime - file.NextPSTime[ pname ]))
 				}
-				if (fabs(curTime - file.LastPSEnd[ pname ]) < 0.1)
+				if (fabs(estimatedStartTime - file.LastPSEnd[ pname ]) < 0.05)
 				{
 					file.PSGlitching[ pname ] <- true
 					printt(" BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +player.GetPlayerName()+"\n Gap between PS")
-					printt(format("%.6f %.6f", curTime, file.LastPSEnd[ pname ]) )
-					printt(format("curTime - file.LastPSEnd %.6f < 0.1", curTime - file.LastPSEnd[ pname ]))
+					printt("curTime estimatedStartTime nextPSTime")
+					printt(format("%.6f %.6f %.6f", curTime, estimatedStartTime, file.LastPSEnd[ pname ]) )
+					printt(format("|estimatedStartTime - file.LastPSEnd| %.6f < 0.05", estimatedStartTime - file.LastPSEnd[ pname ]))
 				}
 				else
 				{
-					printt(format("curTime - file.LastPSEnd %.6f", curTime - file.LastPSEnd[ pname ]))
+					printt(format("estimatedStartTime - file.LastPSEnd %.6f", estimatedStartTime - file.LastPSEnd[ pname ]))
 				}
 
-				file.PhaseShifting[ pname ] <- true
-				float PSRemainingTime = player.PhaseShiftTimeRemaining()
-				file.NextPSTime[ pname ] <- curTime + GetEstimatePSThreshold(player, PSRemainingTime)
-				file.LastPSStart[ pname ] <- curTime
-				printt(format("%.6f %.6f %.6f", curTime, PSRemainingTime, curTime + PSRemainingTime ))
+				file.NextPSTime[ pname ] <- estimatedStartTime + GetEstimatePSThreshold(player.IsTitan(), PSRemainingTime)
+				file.LastPSStart[ pname ] <- estimatedStartTime
+				printt("curTime estimatedStartTime remaining end")
+				printt(format("%.6f %.6f %.6f", estimatedStartTime, curTime, PSRemainingTime, curTime + PSRemainingTime) )
 			}
 			else if ( file.PhaseShifting[ pname ] )
 			{
@@ -182,19 +187,38 @@ void function InitPlayerStatus( entity player )
 	printt("Start monitoring " + player.GetPlayerName() + "#####################################################")
 }
 
-float function GetEstimatePSThreshold( entity player, float remaining ) {
-	if ( player.IsTitan() )
+float function GetEstimatePSThreshold( bool isTitan, float remaining ) {
+	if ( isTitan )
 	{
 		if (remaining > 1.8)
 		{
-			return 3.1 // autoshift
+			return 3.08 // autoshift
 		}
-		// 根据剩余时间反推真正开始时间？
-		return 1.1
+		return 1.08
 	}
 	else
 	{
-		return 2.5
+		return 2.2
+	}
+	unreachable
+}
+
+float function GetEstimatedPSStart( bool isTitan, float remaining, float curTime ) {
+
+	if ( isTitan )
+	{
+		if (remaining > 1.8)
+		{
+			return curTime - ( 3.0 - remaining ) // autoshift
+		}
+		else
+		{
+			return curTime - ( 1.0 - remaining )
+		}
+	}
+	else
+	{
+		return curTime - ( 2.0 - remaining )
 	}
 	unreachable
 }
