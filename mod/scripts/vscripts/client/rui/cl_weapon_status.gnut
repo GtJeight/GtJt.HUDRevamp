@@ -225,6 +225,20 @@ void function InitAdditionalRuis()
 		file.ruis["offhand2"] <- rui
 	}
 
+	// pilot health
+	{
+		var rui = RuiCreate( $"ui/cockpit_console_text_top_left.rpak", clGlobal.topoCockpitHud, RUI_DRAW_COCKPIT, 5 )
+		RuiSetInt( rui, "maxLines", 1 )
+		RuiSetInt( rui, "lineNum", 1 )
+		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_hud_pilot_healthbar_pos") )
+		RuiSetFloat3( rui, "msgColor", GetConVarFloat3("comp_hud_pilot_healthbar_color") / 255.0 )
+		RuiSetString( rui, "msgText", "100" )
+		RuiSetFloat( rui, "msgFontSize", GetConVarFloat("comp_hud_pilot_healthbar_size") )
+		RuiSetFloat( rui, "msgAlpha", 0.9 )
+		RuiSetFloat( rui, "thicken", 0.0 )
+		file.ruis["pilotHealth"] <- rui
+	}
+
 	// speedo
 	{
 		var rui = RuiCreate( $"ui/cockpit_console_text_top_left.rpak", clGlobal.topoCockpitHud, RUI_DRAW_COCKPIT, 5 )
@@ -270,6 +284,19 @@ void function UpdateAdditionalRuis( float deltaTime )
 	{
 		MenuOpen()
 		return
+	}
+
+	// update pilot health
+	if (player.IsTitan() || !GetConVarBool("comp_hud_pilot_healthbar"))
+	{
+		RuiSetFloat(file.ruis["pilotHealth"], "msgAlpha", 0.0 )
+	}
+	else
+	{
+		RuiSetFloat(file.ruis["pilotHealth"], "msgAlpha", 0.9 )
+		RuiSetFloat(file.ruis["pilotHealth"], "msgFontSize", GetConVarFloat("comp_hud_pilot_healthbar_size"))
+		RuiSetFloat2(file.ruis["pilotHealth"], "msgPos", GetConVarFloat2("comp_hud_pilot_healthbar_pos"))
+		RuiSetString(file.ruis["pilotHealth"], "msgText", player.GetHealth().tostring() )
 	}
 
 	// update speedometer
@@ -379,21 +406,29 @@ void function MenuOpen()
 			RuiSetFloat2( file.ruis["offhand0"], "msgPos", GetConVarFloat2("comp_hud_ordnance_position") + GetConVarFloat2("comp_hud_ability_cooldown_pos_offset") )
 			RuiSetString( file.ruis["offhand0"], "msgText", "2.0" )
 			RuiSetFloat3( file.ruis["offhand0"], "msgColor", GetAccentColor() )
-			RuiSetFloat( file.ruis["offhand0"], "msgAlpha", 0.9 )
+			RuiSetFloat( file.ruis["offhand0"], "msgAlpha", GetConVarBool("comp_hud_ability_cooldown") ? 0.9 : 0.0 )
 		}
 
 		{
 			RuiSetFloat2( file.ruis["offhand1"], "msgPos", GetConVarFloat2("comp_hud_tactical_position") + GetConVarFloat2("comp_hud_ability_cooldown_pos_offset") )
 			RuiSetString( file.ruis["offhand1"], "msgText", "1.0" )
 			RuiSetFloat3( file.ruis["offhand1"], "msgColor", GetAccentColor() )
-			RuiSetFloat( file.ruis["offhand1"], "msgAlpha", 0.9 )
+			RuiSetFloat( file.ruis["offhand1"], "msgAlpha", GetConVarBool("comp_hud_ability_cooldown") ? 0.9 : 0.0 )
 		}
 
 		{
 			RuiSetFloat2( file.ruis["offhand2"], "msgPos", GetConVarFloat2("comp_hud_utility_position") + GetConVarFloat2("comp_hud_ability_cooldown_pos_offset") )
 			RuiSetString( file.ruis["offhand2"], "msgText", "3.0" )
 			RuiSetFloat3( file.ruis["offhand2"], "msgColor", GetAccentColor() )
-			RuiSetFloat( file.ruis["offhand2"], "msgAlpha", 0.9 )
+			RuiSetFloat( file.ruis["offhand2"], "msgAlpha", GetConVarBool("comp_hud_ability_cooldown") ? 0.9 : 0.0 )
+		}
+
+		// pilot health
+		{
+			RuiSetFloat(file.ruis["pilotHealth"], "msgAlpha", GetConVarBool("comp_hud_pilot_healthbar") ? 0.9 : 0.0  )
+			RuiSetFloat(file.ruis["pilotHealth"], "msgFontSize", GetConVarFloat("comp_hud_pilot_healthbar_size"))
+			RuiSetFloat2(file.ruis["pilotHealth"], "msgPos", GetConVarFloat2("comp_hud_pilot_healthbar_pos"))
+			RuiSetString(file.ruis["pilotHealth"], "msgText", "100" )
 		}
 
 		// speedo
@@ -402,7 +437,7 @@ void function MenuOpen()
 			RuiSetString( file.ruis["speed"], "msgText", "frames: " + 59 + "\n" + format( "%.1f km/h (%+.1f)", 33.33, 8.88 ))
 			RuiSetFloat( file.ruis["speed"], "msgFontSize", GetConVarFloat("comp_hud_wpd_size") )
 			RuiSetFloat3( file.ruis["speed"], "msgColor", GetConVarFloat3("comp_hud_wpd_color")/255.0 )
-			RuiSetFloat( file.ruis["speed"], "msgAlpha", 0.9 )
+			RuiSetFloat( file.ruis["speed"], "msgAlpha", GetConVarBool("comp_hud_wpd") ? 0.9 : 0.0 )
 		}
 
 		// phase glitch detector
@@ -410,7 +445,7 @@ void function MenuOpen()
 			RuiSetFloat2( file.ruis["glitch"], "msgPos", GetConVarFloat2("comp_phase_glitch_detector_pos") )
 			RuiSetString( file.ruis["glitch"], "msgText", "[Player] Possible Phase Glitch Detected" )
 			RuiSetFloat( file.ruis["glitch"], "msgFontSize", GetConVarFloat("comp_phase_glitch_detector_size") )
-			RuiSetFloat( file.ruis["glitch"], "msgAlpha", 0.9 )
+			RuiSetFloat( file.ruis["glitch"], "msgAlpha", GetConVarBool("comp_phase_glitch_detector") ? 0.9 : 0.0 )
 		}
 }
 
