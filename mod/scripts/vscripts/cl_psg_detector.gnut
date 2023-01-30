@@ -28,7 +28,7 @@ void function PlayerClientScriptInit()
 
 void function PlayerJoinTheGame( entity player, int state )
 {
-	InitPlayerStatus( entity player )
+	InitPlayerStatus( player )
 }
 
 void function PlayerDisconnected( entity player )
@@ -79,8 +79,9 @@ void function CheckPlayer( entity player )
 			if( player.IsPhaseShifted() )
 			{
 				if (file.PhaseShifting[ pname ])
-					continue
+					return
 
+				float curTime = Time()
 				if ( curTime < file.NextPSTime[ pname ])
 				{
 					file.PSGlitching[ pname ] <- true
@@ -89,7 +90,6 @@ void function CheckPlayer( entity player )
 					printt(format("delta time %.6f", curTime - file.NextPSTime[ pname ]))
 				}
 				file.PhaseShifting[ pname ] <- true
-				float curTime = Time()
 				float PSRemainingTime = player.PhaseShiftTimeRemaining()
 				file.NextPSTime[ pname ] <- curTime + GetEstimatePSThreshold(player, PSRemainingTime)
 				printt(pname + " starts phase shift--------------------------------------------")
@@ -130,8 +130,8 @@ float function GetEstimatePSThreshold( entity player, float remaining) {
 	if ( player.IsTitan() )
 	{
 		if (remaining > 2.1)
-			return 3.3 // autoshift
-		return 1.3
+			return 3.15 // autoshift
+		return 1.15
 	}
 	else
 	{
@@ -167,4 +167,7 @@ void function ClearStatus()
 	file.PSGlitching.clear()
 	file.PhaseShifting.clear()
 	file.Initialized.clear()
+	printt("#################")
+	printt("Clearing status") // TODO check log
+	printt("#################")
 }
