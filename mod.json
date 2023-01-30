@@ -92,6 +92,26 @@
             "Flags": 16777216
         },
         {
+            "Name": "comp_hud_pilot_healthbar",
+            "DefaultValue": "0",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_pilot_healthbar_pos",
+            "DefaultValue": "0.7 0.7",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_pilot_healthbar_size",
+            "DefaultValue": "100",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_pilot_healthbar_color",
+            "DefaultValue": "255 255 255",
+            "Flags": 16777216
+        },
+        {
             "Name": "comp_hud_wpd",
             "DefaultValue": "1",
             "Flags": 16777216
