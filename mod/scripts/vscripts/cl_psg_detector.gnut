@@ -9,6 +9,7 @@ struct
 	table< string, bool > PSGlitching
 	table< string, bool > PhaseShifting
 	table< string, bool > Initialized
+	bool running
 } file
 
 // table<string, bool> printed
@@ -19,6 +20,7 @@ void function Cl_PSG_Detector_Init()
 	AddCallback_OnPlayerConnected( PlayerJoinTheGame )
 	AddCallback_GameStateEnter( eGameState.Playing, PlayerClientScriptInit )
 	AddCallback_OnPlayerDisconnected( PlayerDisconnected )
+	file.running = false
 }
 
 void function PlayerClientScriptInit()
@@ -28,7 +30,17 @@ void function PlayerClientScriptInit()
 	{
 		InitPlayerStatus( player )
 	}
-	thread PSG_Monitor( GetLocalViewPlayer() )
+	if (!file.running)
+	{
+		thread PSG_Monitor( GetLocalClientPlayer() )
+	}
+	else
+	{
+		printt("#####################################")
+		printt("Warning: Already running PSG monitor")
+		printt("#####################################")
+		// thread PSG_Monitor( GetLocalViewPlayer() ) // run anyway
+	}
 }
 
 void function PlayerJoinTheGame( entity player, int state )
@@ -50,9 +62,9 @@ void function PSG_Monitor( entity player )
 
 	// player.EndSignal( "OnDestroy" )
 	player.EndSignal( "LocalPlayerDisconnected" )
-
+	file.running = true
 	OnThreadEnd(
-		function() : ()
+		function() : ( )
 		{
 			ClearStatus()
 		}
@@ -172,11 +184,14 @@ void function InitPlayerStatus( entity player )
 	printt("Start monitoring " + player.GetPlayerName() + "#####################################################")
 }
 
-float function GetEstimatePSThreshold( entity player, float remaining) {
+float function GetEstimatePSThreshold( entity player, float remaining ) {
 	if ( player.IsTitan() )
 	{
-		if (remaining > 2.1)
+		if (remaining > 1.8)
+		{
 			return 3.1 // autoshift
+		}
+		// 根据剩余时间反推真正开始时间？
 		return 1.1
 	}
 	else
@@ -215,6 +230,7 @@ void function ClearStatus()
 	file.PSGlitching.clear()
 	file.PhaseShifting.clear()
 	file.Initialized.clear()
+	file.running = false
 	printt("#################")
 	printt("Clearing status") // TODO check log
 	printt("#################")
