@@ -50,15 +50,12 @@ void function PlayerJoinTheGame( entity player, int state )
 
 void function PlayerDisconnected( entity player )
 {
-	if (!IsValid( player ) || player == null)
+	if (!IsValid( player ) || player == null || GetLocalClientPlayer() == null)
 		return
-	if (GetLocalClientPlayer() != null)
+	if ( player == GetLocalClientPlayer() || player.GetPlayerName() == GetLocalClientPlayer().GetPlayerName() )
 	{
-		if ( player == GetLocalClientPlayer() || player.GetPlayerName() == GetLocalClientPlayer().GetPlayerName() )
-		{
-			player.Signal( "LocalPlayerDisconnected" )
-			printt("\n#################\n" + "LocalPlayerDisconnected" + "\n#################\n") // TODO check log
-		}
+		player.Signal( "LocalPlayerDisconnected" )
+		printt("\n#################\n" + "LocalPlayerDisconnected" + "\n#################\n") // TODO check log
 	}
 }
 
