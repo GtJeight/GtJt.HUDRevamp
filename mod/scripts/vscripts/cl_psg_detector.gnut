@@ -27,6 +27,8 @@ void function PlayerClientScriptInit()
 	ClearStatus()
 	foreach( entity player in GetPlayerArray() )
 	{
+		if (!IsValid( player ) || player == null)
+			continue
 		InitPlayerStatus( player )
 	}
 	if (!file.running)
@@ -49,6 +51,8 @@ void function PlayerJoinTheGame( entity player, int state )
 
 void function PlayerDisconnected( entity player )
 {
+	if (!IsValid( player ) || player == null)
+		return
 	if ( player == GetLocalViewPlayer() || player.GetPlayerName() == GetLocalViewPlayer().GetPlayerName() )
 	{
 		player.Signal( "LocalPlayerDisconnected" )
