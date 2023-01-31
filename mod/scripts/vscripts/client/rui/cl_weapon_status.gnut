@@ -296,6 +296,7 @@ void function UpdateAdditionalRuis( float deltaTime )
 		RuiSetFloat(file.ruis["pilotHealth"], "msgAlpha", 0.9 )
 		RuiSetFloat(file.ruis["pilotHealth"], "msgFontSize", GetConVarFloat("comp_hud_pilot_healthbar_size"))
 		RuiSetFloat2(file.ruis["pilotHealth"], "msgPos", GetConVarFloat2("comp_hud_pilot_healthbar_pos"))
+		RuiSetFloat3(file.ruis["pilotHealth"], "msgColor", GetConVarFloat3("comp_hud_pilot_healthbar_color") / 255.0)
 		RuiSetString(file.ruis["pilotHealth"], "msgText", player.GetHealth().tostring() )
 	}
 
@@ -428,6 +429,7 @@ void function MenuOpen()
 			RuiSetFloat(file.ruis["pilotHealth"], "msgAlpha", GetConVarBool("comp_hud_pilot_healthbar") ? 0.9 : 0.0  )
 			RuiSetFloat(file.ruis["pilotHealth"], "msgFontSize", GetConVarFloat("comp_hud_pilot_healthbar_size"))
 			RuiSetFloat2(file.ruis["pilotHealth"], "msgPos", GetConVarFloat2("comp_hud_pilot_healthbar_pos"))
+			RuiSetFloat3(file.ruis["pilotHealth"], "msgColor", GetConVarFloat3("comp_hud_pilot_healthbar_color") / 255.0)
 			RuiSetString(file.ruis["pilotHealth"], "msgText", "100" )
 		}
 
