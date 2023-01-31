@@ -12,8 +12,6 @@ struct
 	bool running
 } file
 
-// table<string, bool> printed
-
 void function Cl_PSG_Detector_Init()
 {
 	AddCallback_OnPlayerConnected( PlayerJoinTheGame )
@@ -53,10 +51,13 @@ void function PlayerDisconnected( entity player )
 {
 	if (!IsValid( player ) || player == null)
 		return
-	if ( player == GetLocalViewPlayer() || player.GetPlayerName() == GetLocalViewPlayer().GetPlayerName() )
+	if (GetLocalClientPlayer() != null)
 	{
-		player.Signal( "LocalPlayerDisconnected" )
-		printt("\n#################\n" + "LocalPlayerDisconnected" + "\n#################\n") // TODO check log
+		if ( player == GetLocalClientPlayer() || player.GetPlayerName() == GetLocalClientPlayer().GetPlayerName() )
+		{
+			player.Signal( "LocalPlayerDisconnected" )
+			printt("\n#################\n" + "LocalPlayerDisconnected" + "\n#################\n") // TODO check log
+		}
 	}
 }
 
