@@ -173,17 +173,17 @@
         },
         {
             "Name": "comp_phase_glitch_detector",
-            "DefaultValue": "0",
+            "DefaultValue": "1",
             "Flags": 16777216
         },
         {
             "Name": "comp_phase_glitch_detector_pos",
-            "DefaultValue": "0.05 0.38",
+            "DefaultValue": "0.7 0.0",
             "Flags": 16777216
         },
         {
             "Name": "comp_phase_glitch_detector_size",
-            "DefaultValue": "35",
+            "DefaultValue": "24",
             "Flags": 16777216
         },
         {
