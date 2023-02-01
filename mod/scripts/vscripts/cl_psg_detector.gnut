@@ -141,26 +141,26 @@ void function CheckPlayer( entity player )
 				printt(format("%.6f %.6f", curTime, file.NextPSTime[ pname ]) )
 				printt(format("time in ps %.6f", curTime - file.LastPSStart[ pname ]))
 				// TODO: record estimated ps duration
-				if (player.IsTitan())
-				{
-					if (curTime - file.LastPSStart[ pname ] > 1.5 )
-					{
-						file.PSGlitching[ pname ] <- true
-						printt(" BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +player.GetPlayerName()+"\n Suspicious PS duration")
-						printt(format("%.6f %.6f", curTime, file.LastPSStart[ pname ]) )
-						printt(format("delta time %.6f > 1.5", curTime - file.LastPSStart[ pname ]))
-					}
-				}
-				else
-				{
-					if (curTime - file.LastPSStart[ pname ] > 2.5 )
-					{
-						file.PSGlitching[ pname ] <- true
-						printt(" BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +player.GetPlayerName()+"\n Suspicious PS duration")
-						printt(format("%.6f %.6f", curTime, file.LastPSStart[ pname ]) )
-						printt(format("delta time %.6f > 2.5", curTime - file.LastPSStart[ pname ]))
-					}
-				}
+				// if (player.IsTitan())
+				// {
+				// 	if (curTime - file.LastPSStart[ pname ] > 1.5 )
+				// 	{
+				// 		file.PSGlitching[ pname ] <- true
+				// 		printt(" BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +player.GetPlayerName()+"\n Suspicious PS duration")
+				// 		printt(format("%.6f %.6f", curTime, file.LastPSStart[ pname ]) )
+				// 		printt(format("delta time %.6f > 1.5", curTime - file.LastPSStart[ pname ]))
+				// 	}
+				// }
+				// else
+				// {
+				// 	if (curTime - file.LastPSStart[ pname ] > 2.5 )
+				// 	{
+				// 		file.PSGlitching[ pname ] <- true
+				// 		printt(" BUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +player.GetPlayerName()+"\n Suspicious PS duration")
+				// 		printt(format("%.6f %.6f", curTime, file.LastPSStart[ pname ]) )
+				// 		printt(format("delta time %.6f > 2.5", curTime - file.LastPSStart[ pname ]))
+				// 	}
+				// }
 			}
 		}
 		else
