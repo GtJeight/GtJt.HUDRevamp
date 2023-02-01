@@ -49,9 +49,9 @@ void function PlayerJoinTheGame( entity player, int state )
 
 void function PlayerDisconnected( entity player )
 {
-	if (!IsValid( player ) || player == null || GetLocalClientPlayer() == null)
+	if (!IsValid( player ) || player == null || GetLocalViewPlayer() == null)
 		return
-	if ( player == GetLocalClientPlayer() || player.GetPlayerName() == GetLocalClientPlayer().GetPlayerName() )
+	if ( player == GetLocalViewPlayer() || player.GetPlayerName() == GetLocalViewPlayer().GetPlayerName() )
 	{
 		player.Signal( "LocalPlayerDisconnected" )
 		printt("\n#################\n" + "LocalPlayerDisconnected" + "\n#################\n") // TODO check log
