@@ -252,6 +252,7 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 			}
 			else if ( titanName == "ion" )
 			{
+				entity soul = player.GetTitanSoul()
 				entity weapon = player.GetOffhandWeapon( OFFHAND_EQUIPMENT )
 				float coreFrac = weapon.GetSustainedDischargeFraction()
 				float curTime = Time()
