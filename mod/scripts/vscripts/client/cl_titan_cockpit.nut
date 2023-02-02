@@ -254,6 +254,8 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 			{
 				entity weapon = player.GetOffhandWeapon( OFFHAND_EQUIPMENT )
 				float coreFrac = weapon.GetSustainedDischargeFraction()
+				float curTime = Time()
+				float remainingTimeFake = soul.GetCoreChargeExpireTime() - curTime
 				if (coreFrac > 0.0)
 				{
 					float duration = weapon.GetSustainedDischargeDuration()
@@ -268,6 +270,12 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 						RuiSetString( file.ruis["core2"], "lockMessage", format("Laser Core Expires in %.2fs", remainingTime))
 						RuiSetBool( file.ruis["core2"], "isVisible", true )
 					}
+				}
+				else if (remainingTimeFake > 0.0)
+				{
+					string text = format("Fake Core Expires in %.2fs", remainingTimeFake)
+					RuiSetString( file.ruis["core2"], "lockMessage", text)
+					RuiSetBool( file.ruis["core2"], "isVisible", true )
 				}
 				else
 				{
