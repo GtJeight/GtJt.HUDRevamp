@@ -31,7 +31,7 @@ void function PlayerClientScriptInit()
 	}
 	if (!file.running)
 	{
-		thread PSG_Monitor( GetLocalClientPlayer() )
+		thread PSG_Monitor( GetLocalViewPlayer() )
 	}
 	else
 	{
