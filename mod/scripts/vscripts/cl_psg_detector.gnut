@@ -17,6 +17,7 @@ struct
 
 void function Cl_PSG_Detector_Init()
 {
+	RegisterSignal( "LocalPlayerDisconnected" )
 	AddCallback_OnPlayerConnected( PlayerJoinTheGame )
 	AddCallback_GameStateEnter( eGameState.Playing, PlayerClientScriptInit )
 	AddCallback_OnPlayerDisconnected( PlayerDisconnected )
@@ -229,11 +230,6 @@ bool function GetPSG_State( entity player ) {
 		{
 			file.PSGlitching[ pname ] <- 0.0
 			printt(format("Waring: player %s not found in GetPSG_State", pname))
-		}
-		else
-		{
-			file.PSGlitching[ player ] <- false
-			printt("Waring: player %s not found in GetPSG_State", player.GetPlayerName())
 		}
 	}
 	// else
