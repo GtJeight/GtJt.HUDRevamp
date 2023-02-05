@@ -356,10 +356,16 @@ void function UpdateAdditionalRuis( float deltaTime )
 		{
 			if (GetPSG_State(currentPlayer))
 			{
-				detectMsg += format("%s is phase glitching!\n", currentPlayer.GetPlayerName())
+				detectMsg += GetPSG_Message(currentPlayer)
 			}
 		}
 		RuiSetString(file.ruis["glitch"], "msgText", detectMsg)
+	}
+	else if (GetPSG_State(GetLocalViewPlayer()))
+	{
+		RuiSetFloat( file.ruis["glitch"], "msgAlpha", 0.9)
+		RuiSetFloat( file.ruis["glitch"], "msgFontSize", GetConVarFloat("comp_phase_glitch_detector_size"))
+		RuiSetString(file.ruis["glitch"], "msgText", GetPSG_Message(GetLocalViewPlayer()))
 	}
 	else
 	{
