@@ -130,7 +130,7 @@ void function CheckPlayer( entity player )
 				file.NextPSTime[ pname ] <- estimatedStartTime + GetEstimatePSThreshold(player.IsTitan(), PSRemainingTime)
 				file.LastPSStart[ pname ] <- estimatedStartTime
 				printt("curTime estimatedStartTime remaining end")
-				printt(format("%.6f %.6f %.6f %.6f", estimatedStartTime, curTime, PSRemainingTime, curTime + PSRemainingTime) )
+				printt(format("%.6f %.6f %.6f %.6f", curTime, estimatedStartTime, PSRemainingTime, curTime + PSRemainingTime) )
 			}
 			else if ( file.PhaseShifting[ pname ] )
 			{
