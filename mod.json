@@ -226,5 +226,8 @@
             "DefaultValue": "60",
             "Flags": 16777216
         }
-    ]
+    ],
+    "Localisation": [
+        "resource/hudrevamp_%language%.txt"
+      ]
 }
