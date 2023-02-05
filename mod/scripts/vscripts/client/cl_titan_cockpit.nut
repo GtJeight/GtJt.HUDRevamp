@@ -178,6 +178,9 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 	entity player = GetLocalViewPlayer()
 	if(player.IsTitan() && IsAlive(player))	// any degenerate cases?
 	{
+		// if (file.ruis["health"] == null || file.ruis["shield"] == null || file.ruis["core"] == null || file.ruis["core2"] == null)
+		if (file.ruis["health"] == null)
+			return
 		if (clGlobal.isMenuOpen)
 		{
 			MenuOpen()
@@ -249,8 +252,11 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 			}
 			else if ( titanName == "ion" )
 			{
+				entity soul = player.GetTitanSoul()
 				entity weapon = player.GetOffhandWeapon( OFFHAND_EQUIPMENT )
 				float coreFrac = weapon.GetSustainedDischargeFraction()
+				float curTime = Time()
+				float remainingTimeFake = soul.GetCoreChargeExpireTime() - curTime
 				if (coreFrac > 0.0)
 				{
 					float duration = weapon.GetSustainedDischargeDuration()
@@ -265,6 +271,12 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 						RuiSetString( file.ruis["core2"], "lockMessage", format("Laser Core Expires in %.2fs", remainingTime))
 						RuiSetBool( file.ruis["core2"], "isVisible", true )
 					}
+				}
+				else if (remainingTimeFake > 0.0)
+				{
+					string text = format("Fake Core Expires in %.2fs", remainingTimeFake)
+					RuiSetString( file.ruis["core2"], "lockMessage", text)
+					RuiSetBool( file.ruis["core2"], "isVisible", true )
 				}
 				else
 				{

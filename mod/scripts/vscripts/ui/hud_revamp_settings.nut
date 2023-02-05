@@ -28,6 +28,13 @@ void function HudRevampSettings_Init()
 	AddConVarSetting("comp_hud_titan_meter_offset", "Core Meter Offset", "float2" )
 	AddConVarSetting("comp_hud_titan_meter_scale", "Scale", "float2" )
 
+	// Pilot Health Display
+	AddModCategory("Pilot Health Display")
+	AddConVarSettingEnum("comp_hud_pilot_healthbar", "Enable", [ "No", "Yes" ] )
+	AddConVarSetting("comp_hud_pilot_healthbar_pos", "Position", "float2" )
+	AddConVarSetting("comp_hud_pilot_healthbar_size", "Font Size", "float" )
+	AddConVarSetting("comp_hud_pilot_healthbar_color", "Color", "float3" )
+
 	// Wallkick Practice Display
 	AddModCategory("Wallkick Practice Display")
 	AddConVarSettingEnum("comp_hud_wpd", "Enable", [ "No", "Yes" ] )
