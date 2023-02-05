@@ -5,71 +5,71 @@ void function HudRevampSettings_Init()
 	AddModTitle("HUD Revamp by Asymmetr")
 
 	// General
-	AddModCategory("General")
-	AddConVarSetting("comp_hud_accent_color", "Accent Color", "float3")
-	AddConVarSetting("comp_hud_boost_text_color", "Amped/Boost Display Color", "float3")
+	AddModCategory("#General")
+	AddConVarSetting("comp_hud_accent_color", "#comp_hud_accent_color", "float3")
+	AddConVarSetting("comp_hud_boost_text_color", "#comp_hud_boost_text_color", "float3")
 
-	AddConVarSettingEnum("comp_hud_healthbar", "Titan Numerical Healthbar",
-        [ "No", "Yes" ] )
-	AddConVarSettingEnum("comp_hud_healthbar_overlap", "Health Number Overlap With Bar",
-        [ "No", "Yes" ] )
-	AddConVarSetting("comp_hud_health_text_offset", "Health Number Offset", "float2" )
+	AddConVarSettingEnum("comp_hud_healthbar", "#comp_hud_healthbar",
+        [ "#hud_no", "#hud_yes" ] )
+	AddConVarSettingEnum("comp_hud_healthbar_overlap", "#comp_hud_healthbar_overlap",
+        [ "#hud_no", "#hud_yes" ] )
+	AddConVarSetting("comp_hud_health_text_offset", "#comp_hud_health_text_offset", "float2" )
 
 	// Utilities
-	AddModCategory("Utilities")
-	AddConVarSetting("comp_hud_tactical_position", "Left Utility Position", "float2")
-	AddConVarSetting("comp_hud_ordnance_position", "Middle Utility Position", "float2")
-	AddConVarSetting("comp_hud_utility_position", "Right Utility Position", "float2")
-	AddConVarSettingEnum("comp_hud_ability_cooldown", "Show Cooldown Time", [ "No", "Yes" ] )
-	AddConVarSetting("comp_hud_ability_cooldown_pos_offset", "Cooldown Text Position Offset", "float2")
+	AddModCategory("#Utilities")
+	AddConVarSetting("comp_hud_tactical_position", "#comp_hud_tactical_position", "float2")
+	AddConVarSetting("comp_hud_ordnance_position", "#comp_hud_ordnance_position", "float2")
+	AddConVarSetting("comp_hud_utility_position", "#comp_hud_utility_position", "float2")
+	AddConVarSettingEnum("comp_hud_ability_cooldown", "#comp_hud_ability_cooldown", [ "#hud_no", "#hud_yes" ] )
+	AddConVarSetting("comp_hud_ability_cooldown_pos_offset", "#comp_hud_ability_cooldown_pos_offset", "float2")
 
 	// Core/Titam Meter
-	AddModCategory("Core/Titan Meter")
-	AddConVarSetting("comp_hud_titan_meter_offset", "Core Meter Offset", "float2" )
-	AddConVarSetting("comp_hud_titan_meter_scale", "Scale", "float2" )
+	AddModCategory("#Core_Titan_Meter")
+	AddConVarSetting("comp_hud_titan_meter_offset", "#comp_hud_titan_meter_offset", "float2" )
+	AddConVarSetting("comp_hud_titan_meter_scale", "#comp_hud_titan_meter_scale", "float2" )
 
 	// Pilot Health Display
-	AddModCategory("Pilot Health Display")
-	AddConVarSettingEnum("comp_hud_pilot_healthbar", "Enable", [ "No", "Yes" ] )
-	AddConVarSetting("comp_hud_pilot_healthbar_pos", "Position", "float2" )
-	AddConVarSetting("comp_hud_pilot_healthbar_size", "Font Size", "float" )
-	AddConVarSetting("comp_hud_pilot_healthbar_color", "Color", "float3" )
+	AddModCategory("#Pilot_Health_Display")
+	AddConVarSettingEnum("comp_hud_pilot_healthbar", "#comp_hud_pilot_healthbar", [ "#hud_no", "#hud_yes" ] )
+	AddConVarSetting("comp_hud_pilot_healthbar_pos", "#comp_hud_pilot_healthbar_pos", "float2" )
+	AddConVarSetting("comp_hud_pilot_healthbar_size", "#comp_hud_pilot_healthbar_size", "float" )
+	AddConVarSetting("comp_hud_pilot_healthbar_color", "#comp_hud_pilot_healthbar_color", "float3" )
 
 	// Wallkick Practice Display
-	AddModCategory("Wallkick Practice Display")
-	AddConVarSettingEnum("comp_hud_wpd", "Enable", [ "No", "Yes" ] )
-	AddConVarSetting("comp_hud_wpd_pos", "Position", "float2" )
-	AddConVarSetting("comp_hud_wpd_size", "Font Size", "float" )
-	AddConVarSetting("comp_hud_wpd_color", "Color", "float3" )
+	AddModCategory("#Wallkick_Practice_Display")
+	AddConVarSettingEnum("comp_hud_wpd", "#comp_hud_wpd", [ "#hud_no", "#hud_yes" ] )
+	AddConVarSetting("comp_hud_wpd_pos", "#comp_hud_wpd_pos", "float2" )
+	AddConVarSetting("comp_hud_wpd_size", "#comp_hud_wpd_size", "float" )
+	AddConVarSetting("comp_hud_wpd_color", "#comp_hud_wpd_color", "float3" )
 
 	// Damage Indicator
-	AddModCategory("Damage Indicator")
-	AddConVarSettingEnum( "comp_hud_damage_indicator", "Enabled",  [ "No", "Yes" ] )
-	AddConVarSettingEnum( "comp_hud_damage_indicator_style", "Enabled",  [ "Classic", "Flashy" ] )
-	AddConVarSettingEnum( "comp_hud_damage_indicator_victim_hp", "Show Victim HP",  [ "No", "Yes" ] )
-	AddConVarSetting( "comp_hud_damage_indicator_pos", "Position",  "float2" )
-	AddConVarSetting( "comp_hud_damage_indicator_duration", "Duration",  "float" )
-	AddConVarSetting( "comp_hud_damage_indicator_fade_time", "Fade Time",  "float" )
-	AddConVarSetting( "comp_hud_damage_indicator_color", "Color",  "float3" )
-	AddConVarSetting( "comp_hud_damage_indicator_color_crit", "Color on critical hits",  "float3" )
+	AddModCategory("#Damage_Indicator")
+	AddConVarSettingEnum( "comp_hud_damage_indicator", "#comp_hud_damage_indicator",  [ "#hud_no", "#hud_yes" ] )
+	AddConVarSettingEnum( "comp_hud_damage_indicator_style", "#comp_hud_damage_indicator_style",  [ "#Classic", "#Flashy" ] )
+	AddConVarSettingEnum( "comp_hud_damage_indicator_victim_hp", "#comp_hud_damage_indicator_victim_hp",  [ "#hud_no", "#hud_yes" ] )
+	AddConVarSetting( "comp_hud_damage_indicator_pos", "#comp_hud_damage_indicator_pos",  "float2" )
+	AddConVarSetting( "comp_hud_damage_indicator_duration", "#comp_hud_damage_indicator_duration",  "float" )
+	AddConVarSetting( "comp_hud_damage_indicator_fade_time", "#comp_hud_damage_indicator_fade_time",  "float" )
+	AddConVarSetting( "comp_hud_damage_indicator_color", "#comp_hud_damage_indicator_color",  "float3" )
+	AddConVarSetting( "comp_hud_damage_indicator_color_crit", "#comp_hud_damage_indicator_color_crit",  "float3" )
 
 	// Incoming Damage Indicator
-	AddModCategory("Incoming Damage Indicator")
-	AddConVarSettingEnum( "comp_hud_incoming_damage_indicator", "Enabled", [ "No", "Yes" ] )
-	AddConVarSetting( "comp_hud_incoming_damage_indicator_duration", "Duration", "float" )
-	AddConVarSetting( "comp_hud_incoming_damage_indicator_fade_time", "Fade Time", "float" )
-	AddConVarSetting( "comp_hud_incoming_damage_indicator_color", "Color", "float3" )
+	AddModCategory("#Incoming_Damage_Indicator")
+	AddConVarSettingEnum( "comp_hud_incoming_damage_indicator", "#comp_hud_incoming_damage_indicator", [ "#hud_no", "#hud_yes" ] )
+	AddConVarSetting( "comp_hud_incoming_damage_indicator_duration", "#comp_hud_incoming_damage_indicator_duration", "float" )
+	AddConVarSetting( "comp_hud_incoming_damage_indicator_fade_time", "#comp_hud_incoming_damage_indicator_fade_time", "float" )
+	AddConVarSetting( "comp_hud_incoming_damage_indicator_color", "#comp_hud_incoming_damage_indicator_color", "float3" )
 
 	// Core Meter Timer
-	AddModCategory("Core Meter Timer")
-	AddConVarSettingEnum( "comp_core_meter_timer", "Enable", [ "No", "Yes" ] )
-	AddConVarSettingEnum( "comp_core_meter_timer_style", "Style", [ "Number", "Text" ] )
-	AddConVarSetting("comp_core_meter_timer_pos", "Number Timer Position", "float2" )
-	AddConVarSetting("comp_core_meter_timer_size", "Number Size", "float" )
+	AddModCategory("#Core_Meter_Timer")
+	AddConVarSettingEnum( "comp_core_meter_timer", "#comp_core_meter_timer", [ "#hud_no", "#hud_yes" ] )
+	AddConVarSettingEnum( "comp_core_meter_timer_style", "#comp_core_meter_timer_style", [ "#hud_Number", "#hud_Text" ] )
+	AddConVarSetting("comp_core_meter_timer_pos", "#comp_core_meter_timer_pos", "float2" )
+	AddConVarSetting("comp_core_meter_timer_size", "#comp_core_meter_timer_size", "float" )
 
 	// Phase Glitch Detector
-	AddModCategory("Phase Glitch Detector")
-	AddConVarSettingEnum( "comp_phase_glitch_detector_enabled", "Enable", [ "No", "Yes" ] )
-	AddConVarSetting("comp_phase_glitch_detector_pos", "Detector Position", "float2")
-	AddConVarSetting("comp_phase_glitch_detector_size", "Font Size", "float" )
+	AddModCategory("#Phase_Glitch_Detector")
+	AddConVarSettingEnum( "comp_phase_glitch_detector_enabled", "#comp_phase_glitch_detector_enabled", [ "#hud_no", "#hud_yes" ] )
+	AddConVarSetting("comp_phase_glitch_detector_pos", "#comp_phase_glitch_detector_pos", "float2")
+	AddConVarSetting("comp_phase_glitch_detector_size", "#comp_phase_glitch_detector_size", "float" )
 }
