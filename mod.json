@@ -1,7 +1,7 @@
 {
     "Name": "HUD Revamp Gt ver.",
     "LoadPriority": 6,
-    "Version": "1.0.0",
+    "Version": "1.1.0",
     "Description": "",
     "Scripts": [
         {
@@ -20,6 +20,13 @@
             "RunOn": "UI",
             "UICallback": {
                 "Before": "HudRevampSettings_Init"
+            }
+        },
+        {
+            "Path": "cl_psg_detector.gnut",
+            "RunOn": "CLIENT",
+            "ClientCallback": {
+                "After": "Cl_PSG_Detector_Init"
             }
         }
     ],
@@ -185,18 +192,18 @@
             "Flags": 16777216
         },
         {
-            "Name": "comp_phase_glitch_detector",
-            "DefaultValue": "0",
+            "Name": "comp_phase_glitch_detector_enabled",
+            "DefaultValue": "1",
             "Flags": 16777216
         },
         {
             "Name": "comp_phase_glitch_detector_pos",
-            "DefaultValue": "0.05 0.38",
+            "DefaultValue": "0.7 0.0",
             "Flags": 16777216
         },
         {
             "Name": "comp_phase_glitch_detector_size",
-            "DefaultValue": "35",
+            "DefaultValue": "24",
             "Flags": 16777216
         },
         {

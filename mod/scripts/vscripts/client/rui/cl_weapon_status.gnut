@@ -23,7 +23,6 @@ struct
 	array< void functionref( float ) > updateCallbacks
 	array< void functionref() > startCallbacks
 	table<string, var> ruis
-	table<string, int> phaseState
 	// GtJt HUD
 } file
 
@@ -59,7 +58,6 @@ global struct BarTopoData {
 struct {
     string abilityText = "%.1f"
 } settings
-string detectMsg
 // GtJt HUD
 
 void function ClWeaponStatus_Init()
@@ -376,28 +374,31 @@ void function UpdateAdditionalRuis( float deltaTime )
 	}
 
 	// update phase glitch detector
-	RuiSetFloat( file.ruis["glitch"], "msgAlpha", GetConVarBool("comp_phase_glitch_detector") ? 0.9 : 0.0 )
-	RuiSetFloat( file.ruis["glitch"], "msgFontSize", GetConVarFloat("comp_phase_glitch_detector_size"))
-	if (!GetConVarBool("comp_phase_glitch_detector"))
-		return
-	array<entity> players = GetPlayerArray()
-	detectMsg = ""
-	for(int i=0; i<players.len(); i++)
+	if (GetConVarBool("comp_phase_glitch_detector_enabled"))
 	{
-		entity player_ = players[i]
-		printt(file.phaseState[player_.GetPlayerName()])
-		if ( IsValid( player_ ) && player_.IsPlayer() )
+		RuiSetFloat( file.ruis["glitch"], "msgAlpha", 0.9)
+		RuiSetFloat( file.ruis["glitch"], "msgFontSize", GetConVarFloat("comp_phase_glitch_detector_size"))
+		array<entity> players = GetPlayerArray()
+		string detectMsg = ""
+		foreach ( currentPlayer in players )
 		{
-			if(player_.IsPhaseShifted())
+			if (GetPSG_State(currentPlayer))
 			{
-				if (player.GetPlayerName() == player_.GetPlayerName())
-					detectMsg = "You are in phase-glitch state\n" + detectMsg
-				else
-					detectMsg = detectMsg + "[" + player_.GetPlayerName() + "] is in phase-glitch state\n"
+				detectMsg += GetPSG_Message(currentPlayer)
 			}
 		}
+		RuiSetString(file.ruis["glitch"], "msgText", detectMsg)
 	}
-	RuiSetString(file.ruis["glitch"], "msgText", detectMsg)
+	else if (GetPSG_State(GetLocalViewPlayer()))
+	{
+		RuiSetFloat( file.ruis["glitch"], "msgAlpha", 0.9)
+		RuiSetFloat( file.ruis["glitch"], "msgFontSize", GetConVarFloat("comp_phase_glitch_detector_size"))
+		RuiSetString(file.ruis["glitch"], "msgText", GetPSG_Message(GetLocalViewPlayer()))
+	}
+	else
+	{
+		RuiSetFloat( file.ruis["glitch"], "msgAlpha", 0.0 )
+	}
 }
 
 void function MenuOpen()
@@ -447,7 +448,7 @@ void function MenuOpen()
 			RuiSetFloat2( file.ruis["glitch"], "msgPos", GetConVarFloat2("comp_phase_glitch_detector_pos") )
 			RuiSetString( file.ruis["glitch"], "msgText", "[Player] Possible Phase Glitch Detected" )
 			RuiSetFloat( file.ruis["glitch"], "msgFontSize", GetConVarFloat("comp_phase_glitch_detector_size") )
-			RuiSetFloat( file.ruis["glitch"], "msgAlpha", GetConVarBool("comp_phase_glitch_detector") ? 0.9 : 0.0 )
+			RuiSetFloat( file.ruis["glitch"], "msgAlpha", GetConVarBool("comp_phase_glitch_detector_enabled") ? 0.9 : 0.0 )
 		}
 }
 
@@ -480,7 +481,7 @@ void function UpdateOffhandRui( var rui, entity player, entity weapon )
 			int curCharges = int( energy ) / curCost
 			int targetAmmo = (curCharges + 1) * curCost
 			timeUntilNextCharge = (targetAmmo - energy) / energyRegenRate
-			ammoFrac = (energy / curCost)
+			ammoFrac = (energy / curCost / maxCharges)
 
 			// Ability - 2/2 | 2.5s
 			break
@@ -535,13 +536,19 @@ void function UpdateOffhandRui( var rui, entity player, entity weapon )
 				grappleRegenRate *= 1.35
 			}
 
-			maxCharges = 2
-			minFracToUse = 0.5
+			try
+			{
+				maxCharges = ammoClipSize / int(ammoMinToFire)
+			}
+			catch (ex) { maxCharges = 1 }
+			minFracToUse = ammoMinToFire / ammoClipSize
 			if (ammoMinToFire > 0) maxCharges = ammoClipSize / int( ammoMinToFire )
 			int curCharges = 0;
 			if (ammoMinToFire > 0) curCharges = int( grapplePower ) / int( ammoMinToFire )
 			int targetAmmo = (curCharges + 1) * int( ammoMinToFire )
 			timeUntilNextCharge = (targetAmmo - grapplePower) / grappleRegenRate
+			if (GameRules_GetGameMode() == "econ")
+				timeUntilNextCharge = 0.0
 			if (ammoClipSize == grapplePower) timeUntilNextCharge = 0
 			ammoFrac = grapplePower / ammoClipSize
 
