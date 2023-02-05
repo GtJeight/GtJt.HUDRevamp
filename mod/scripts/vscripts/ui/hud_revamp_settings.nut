@@ -62,7 +62,7 @@ void function HudRevampSettings_Init()
 
 	// Phase Glitch Detector
 	AddModCategory("Phase Glitch Detector")
-	AddConVarSettingEnum( "comp_phase_glitch_detector", "Enable", [ "No", "Yes" ] )
+	AddConVarSettingEnum( "comp_phase_glitch_detector_enabled", "Enable", [ "No", "Yes" ] )
 	AddConVarSetting("comp_phase_glitch_detector_pos", "Detector Position", "float2")
 	AddConVarSetting("comp_phase_glitch_detector_size", "Font Size", "float" )
 }

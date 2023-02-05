@@ -172,7 +172,7 @@
             "Flags": 16777216
         },
         {
-            "Name": "comp_phase_glitch_detector",
+            "Name": "comp_phase_glitch_detector_enabled",
             "DefaultValue": "1",
             "Flags": 16777216
         },

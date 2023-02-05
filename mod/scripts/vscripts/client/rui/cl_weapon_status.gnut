@@ -346,7 +346,7 @@ void function UpdateAdditionalRuis( float deltaTime )
 	}
 
 	// update phase glitch detector
-	if (GetConVarBool("comp_phase_glitch_detector"))
+	if (GetConVarBool("comp_phase_glitch_detector_enabled"))
 	{
 		RuiSetFloat( file.ruis["glitch"], "msgAlpha", 0.9)
 		RuiSetFloat( file.ruis["glitch"], "msgFontSize", GetConVarFloat("comp_phase_glitch_detector_size"))
@@ -411,7 +411,7 @@ void function MenuOpen()
 			RuiSetFloat2( file.ruis["glitch"], "msgPos", GetConVarFloat2("comp_phase_glitch_detector_pos") )
 			RuiSetString( file.ruis["glitch"], "msgText", "[Player] Possible Phase Glitch Detected" )
 			RuiSetFloat( file.ruis["glitch"], "msgFontSize", GetConVarFloat("comp_phase_glitch_detector_size") )
-			RuiSetFloat( file.ruis["glitch"], "msgAlpha", 0.9 )
+			RuiSetFloat( file.ruis["glitch"], "msgAlpha", GetConVarBool("comp_phase_glitch_detector_enabled") ? 0.9 : 0.0 )
 		}
 }
 
