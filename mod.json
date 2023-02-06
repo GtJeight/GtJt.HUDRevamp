@@ -113,7 +113,7 @@
         },
         {
             "Name": "comp_hud_wpd",
-            "DefaultValue": "1",
+            "DefaultValue": "0",
             "Flags": 16777216
         },
         {
