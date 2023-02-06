@@ -17,11 +17,11 @@ void function HudRevampSettings_Init()
 
 	// Utilities
 	AddModCategory("#Utilities")
+	AddConVarSettingEnum("comp_hud_ability_cooldown", "#comp_hud_ability_cooldown", [ "#hud_no", "#hud_yes" ] )
+	AddConVarSetting("comp_hud_ability_cooldown_pos_offset", "#comp_hud_ability_cooldown_pos_offset", "float2")
 	AddConVarSetting("comp_hud_tactical_position", "#comp_hud_tactical_position", "float2")
 	AddConVarSetting("comp_hud_ordnance_position", "#comp_hud_ordnance_position", "float2")
 	AddConVarSetting("comp_hud_utility_position", "#comp_hud_utility_position", "float2")
-	AddConVarSettingEnum("comp_hud_ability_cooldown", "#comp_hud_ability_cooldown", [ "#hud_no", "#hud_yes" ] )
-	AddConVarSetting("comp_hud_ability_cooldown_pos_offset", "#comp_hud_ability_cooldown_pos_offset", "float2")
 
 	// Core/Titam Meter
 	AddModCategory("#Core_Titan_Meter")
