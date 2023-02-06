@@ -21,6 +21,6 @@ Alternative version of HUDRevamp
 
 - 数字效果改善
 
-## 已知bug：
+## 已知bug
 
 - 核心图标偏置输入0.0 0.0后不会更新坐标
