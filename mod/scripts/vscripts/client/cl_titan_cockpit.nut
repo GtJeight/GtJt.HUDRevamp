@@ -240,7 +240,7 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 					}
 					else
 					{
-						RuiSetString( file.ruis["core2"], "lockMessage", format(Localize("#hud_sword"), remainingTime))
+						RuiSetString( file.ruis["core2"], "lockMessage", format(Localize("#hud_core_timer_sword"), remainingTime))
 						RuiSetBool( file.ruis["core2"], "isVisible", true )
 					}
 				}
@@ -268,13 +268,13 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 					}
 					else
 					{
-						RuiSetString( file.ruis["core2"], "lockMessage", format(Localize("#hud_laser"), remainingTime))
+						RuiSetString( file.ruis["core2"], "lockMessage", format(Localize("#hud_core_timer_laser"), remainingTime))
 						RuiSetBool( file.ruis["core2"], "isVisible", true )
 					}
 				}
 				else if (remainingTimeFake > 0.0)
 				{
-					string text = format(Localize("#hud_fake_laser"), remainingTimeFake)
+					string text = format(Localize("#hud_core_timer_fake_laser"), remainingTimeFake)
 					RuiSetString( file.ruis["core2"], "lockMessage", text)
 					RuiSetBool( file.ruis["core2"], "isVisible", true )
 				}
