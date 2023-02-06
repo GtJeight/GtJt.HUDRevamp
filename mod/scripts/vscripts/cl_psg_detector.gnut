@@ -100,10 +100,13 @@ void function CheckPlayer( entity player )
 				if (file.PhaseShifting[ pname ])
 					return
 
+				float PSRemainingTime = player.PhaseShiftTimeRemaining()
+				if (PSRemainingTime < 0.05)
+					return // Sometimes exits PS but Still have a bit remaining time
+
 				printt(pname + " starts phase shift--------------------------------------------")
 				float curTime = Time()
 				file.PhaseShifting[ pname ] <- true
-				float PSRemainingTime = player.PhaseShiftTimeRemaining()
 				float estimatedStartTime = GetEstimatedPSStart( player.IsTitan(), PSRemainingTime, curTime )
 
 				if ( estimatedStartTime < file.NextPSTime[ pname ])
@@ -143,8 +146,6 @@ void function CheckPlayer( entity player )
 				float realDuration = curTime - file.LastPSStart[ pname ]
 				file.PhaseShifting[ pname ] <- false
 				file.LastPSEnd[ pname ] <- curTime
-				if ( curTime < file.NextPSTime[ pname ] - PS_THRESHOLD && player.IsTitan())
-					file.NextPSTime[ pname ] <- curTime + PS_THRESHOLD // prevent unexpected exit
 				printt(pname + " exits phase shift--------------------------------------------")
 				printt(format("%.6f %.6f", curTime, file.NextPSTime[ pname ]) )
 				printt(format("time in ps %.6f", curTime - file.LastPSStart[ pname ]))
