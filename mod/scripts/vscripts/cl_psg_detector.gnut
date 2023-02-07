@@ -26,6 +26,10 @@ void function Cl_PSG_Detector_Init()
 
 void function PlayerClientScriptInit()
 {
+	if (GameRules_GetGameMode() != FD)
+	{
+		return
+	}
 	ClearStatus()
 	foreach( entity player in GetPlayerArray() )
 	{
