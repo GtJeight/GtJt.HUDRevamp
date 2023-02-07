@@ -34,10 +34,14 @@ void function Cl_DamageIndicator_Init()
 
 void function PlayerTookDamage( float damage, vector pos, int damageType, int damageSourceId, entity attacker )
 {
-	if (!GetLocalViewPlayer().IsTitan() || !GetConVarBool("comp_hud_incoming_damage_indicator")) return
+	if (!GetLocalViewPlayer().IsTitan() || !GetConVarBool("comp_hud_incoming_damage_indicator"))
+		return
+	if (damage == 0.0)
+		return
 	if (Time() - lastIncomingDamageTextHitTime > GetConVarFloat("comp_hud_incoming_damage_indicator_duration"))
 		accumulatedIncomingDamage = damage
-	else accumulatedIncomingDamage += damage
+	else
+		accumulatedIncomingDamage += damage
 	lastIncomingDamageTextHitTime = Time() // :D
 	RuiSetString( stackingIncomingDamageTextRui, "msgText", format( "-%i", int( accumulatedIncomingDamage ) ) )
 }
