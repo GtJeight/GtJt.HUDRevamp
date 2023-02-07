@@ -1,6 +1,6 @@
 # GtJt.HUDRevamp
 
-Alternative version of HUDRevamp
+An alternative, modified and customized version of [HUDRevamp](https://github.com/EladNLG/HUDRevamp). Thanks to EladNLG.
 
 为解决原HUDR图标难看写的mod
 

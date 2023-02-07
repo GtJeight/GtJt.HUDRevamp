@@ -188,7 +188,7 @@ void function InitAdditionalRuis()
 		var rui = RuiCreate( $"ui/cockpit_console_text_center.rpak", clGlobal.topoCockpitHud, RUI_DRAW_COCKPIT, 5 )
 		RuiSetInt( rui, "maxLines", 1 )
 		RuiSetInt( rui, "lineNum", 0 )
-		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_hud_ordnance_position") + GetConVarFloat2("comp_hud_ability_cooldown_pos_offset") )
+		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_hud_ordnance_position") )
 		RuiSetString( rui, "msgText", "5" )
 		RuiSetFloat( rui, "msgFontSize", 32.0 )
 		RuiSetFloat3( rui, "msgColor", GetAccentColor() )
@@ -201,7 +201,7 @@ void function InitAdditionalRuis()
 		var rui = RuiCreate( $"ui/cockpit_console_text_center.rpak", clGlobal.topoCockpitHud, RUI_DRAW_COCKPIT, 5 )
 		RuiSetInt( rui, "maxLines", 1 )
 		RuiSetInt( rui, "lineNum", 0 )
-		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_hud_tactical_position") + GetConVarFloat2("comp_hud_ability_cooldown_pos_offset") )
+		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_hud_tactical_position") )
 		RuiSetString( rui, "msgText", "3" )
 		RuiSetFloat( rui, "msgFontSize", 32.0 )
 		RuiSetFloat3( rui, "msgColor", GetAccentColor() )
@@ -214,7 +214,7 @@ void function InitAdditionalRuis()
 		var rui = RuiCreate( $"ui/cockpit_console_text_center.rpak", clGlobal.topoCockpitHud, RUI_DRAW_COCKPIT, 5 )
 		RuiSetInt( rui, "maxLines", 1 )
 		RuiSetInt( rui, "lineNum", 0 )
-		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_hud_utility_position") + GetConVarFloat2("comp_hud_ability_cooldown_pos_offset") )
+		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_hud_utility_position") )
 		RuiSetString( rui, "msgText", "0.9" )
 		RuiSetFloat( rui, "msgFontSize", 32.0 )
 		RuiSetFloat3( rui, "msgColor", GetAccentColor() )
@@ -351,7 +351,7 @@ void function UpdateAdditionalRuis( float deltaTime )
 					posConVar = "comp_hud_utility_position"
 					break
 			}
-			RuiSetFloat2( rui, "msgPos", GetConVarFloat2(posConVar) + GetConVarFloat2("comp_hud_ability_cooldown_pos_offset") )
+			RuiSetFloat2( rui, "msgPos", GetConVarFloat2(posConVar) )
 
 			UpdateOffhandRui(rui, player, player.GetOffhandWeapon(i))
 		}
@@ -367,7 +367,7 @@ void function UpdateAdditionalRuis( float deltaTime )
 					posConVar = "comp_hud_ordnance_position"
 					break
 			}
-			RuiSetFloat2( rui, "msgPos", GetConVarFloat2(posConVar) + GetConVarFloat2("comp_hud_ability_cooldown_pos_offset") )
+			RuiSetFloat2( rui, "msgPos", GetConVarFloat2(posConVar) )
 
 			UpdateOffhandRui(rui, player, player.GetOffhandWeapon(i))
 		}
@@ -405,21 +405,21 @@ void function MenuOpen()
 {
 		//offhands
 		{
-			RuiSetFloat2( file.ruis["offhand0"], "msgPos", GetConVarFloat2("comp_hud_ordnance_position") + GetConVarFloat2("comp_hud_ability_cooldown_pos_offset") )
+			RuiSetFloat2( file.ruis["offhand0"], "msgPos", GetConVarFloat2("comp_hud_ordnance_position") )
 			RuiSetString( file.ruis["offhand0"], "msgText", "2.0" )
 			RuiSetFloat3( file.ruis["offhand0"], "msgColor", GetAccentColor() )
 			RuiSetFloat( file.ruis["offhand0"], "msgAlpha", GetConVarBool("comp_hud_ability_cooldown") ? 0.9 : 0.0 )
 		}
 
 		{
-			RuiSetFloat2( file.ruis["offhand1"], "msgPos", GetConVarFloat2("comp_hud_tactical_position") + GetConVarFloat2("comp_hud_ability_cooldown_pos_offset") )
+			RuiSetFloat2( file.ruis["offhand1"], "msgPos", GetConVarFloat2("comp_hud_tactical_position") )
 			RuiSetString( file.ruis["offhand1"], "msgText", "1.0" )
 			RuiSetFloat3( file.ruis["offhand1"], "msgColor", GetAccentColor() )
 			RuiSetFloat( file.ruis["offhand1"], "msgAlpha", GetConVarBool("comp_hud_ability_cooldown") ? 0.9 : 0.0 )
 		}
 
 		{
-			RuiSetFloat2( file.ruis["offhand2"], "msgPos", GetConVarFloat2("comp_hud_utility_position") + GetConVarFloat2("comp_hud_ability_cooldown_pos_offset") )
+			RuiSetFloat2( file.ruis["offhand2"], "msgPos", GetConVarFloat2("comp_hud_utility_position") )
 			RuiSetString( file.ruis["offhand2"], "msgText", "3.0" )
 			RuiSetFloat3( file.ruis["offhand2"], "msgColor", GetAccentColor() )
 			RuiSetFloat( file.ruis["offhand2"], "msgAlpha", GetConVarBool("comp_hud_ability_cooldown") ? 0.9 : 0.0 )

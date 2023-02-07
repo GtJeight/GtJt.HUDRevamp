@@ -1,7 +1,7 @@
 {
     "Name": "HUD Revamp Gt ver.",
     "LoadPriority": 6,
-    "Version": "1.2.0",
+    "Version": "1.2.1",
     "Description": "",
     "Scripts": [
         {
@@ -84,11 +84,6 @@
         {
             "Name": "comp_hud_ability_cooldown",
             "DefaultValue": "1",
-            "Flags": 16777216
-        },
-        {
-            "Name": "comp_hud_ability_cooldown_pos_offset",
-            "DefaultValue": "0.0 0.0",
             "Flags": 16777216
         },
         {

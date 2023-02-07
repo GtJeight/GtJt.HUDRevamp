@@ -18,7 +18,6 @@ void function HudRevampSettings_Init()
 	// Utilities
 	AddModCategory("#hud_utilities")
 	AddConVarSettingEnum("comp_hud_ability_cooldown", "#comp_hud_ability_cooldown", [ "#hud_no", "#hud_yes" ] )
-	AddConVarSetting("comp_hud_ability_cooldown_pos_offset", "#comp_hud_ability_cooldown_pos_offset", "float2")
 	AddConVarSetting("comp_hud_tactical_position", "#comp_hud_tactical_position", "float2")
 	AddConVarSetting("comp_hud_ordnance_position", "#comp_hud_ordnance_position", "float2")
 	AddConVarSetting("comp_hud_utility_position", "#comp_hud_utility_position", "float2")
