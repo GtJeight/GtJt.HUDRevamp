@@ -93,7 +93,7 @@ void function AddSmallDamageTextFlyout(float damage, bool isCrit, entity victim)
 
 string function CalculateVictimHP(float damage, entity victim)
 {
-	int totalhealth = int(victim.GetHealth() - damage);
+	int totalhealth = int(victim.GetHealth().tofloat() - damage);
 	totalhealth = totalhealth < 0 ? 0 : totalhealth;
 	return format( "\n%i HP", totalhealth)
 }
