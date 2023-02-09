@@ -71,4 +71,8 @@ void function HudRevampSettings_Init()
 	AddConVarSettingEnum( "comp_phase_glitch_detector_enabled", "#comp_phase_glitch_detector_enabled", [ "#hud_no", "#hud_yes" ] )
 	AddConVarSetting("comp_phase_glitch_detector_pos", "#comp_phase_glitch_detector_pos", "float2")
 	AddConVarSetting("comp_phase_glitch_detector_size", "#comp_phase_glitch_detector_size", "float" )
+
+	// FD miscellaneous
+	AddModCategory("#hud_fd_misc")
+	AddConVarSettingEnum( "comp_fd_master_to_insane", "#comp_fd_master_to_insane", [ "#hud_no", "#hud_yes" ] )
 }
