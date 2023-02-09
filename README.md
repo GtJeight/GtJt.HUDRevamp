@@ -19,8 +19,13 @@ An alternative, modified and customized version of [HUDRevamp](https://github.co
 
 ## 计划（饼）
 
+- 边境小地图编辑
+- 大师疯狂化
 - 数字效果改善
 
 ## 已知bug
 
+- 部分功能可能不支持手柄
+- 可能影响战役模式
+- 销毁泰坦座舱ui时可能引发报错
 - 核心图标偏置输入0.0 0.0后不会更新坐标
