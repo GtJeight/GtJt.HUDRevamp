@@ -179,7 +179,7 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 	if(player.IsTitan() && IsAlive(player))	// any degenerate cases?
 	{
 		// if (file.ruis["health"] == null || file.ruis["shield"] == null || file.ruis["core"] == null || file.ruis["core2"] == null)
-		if (file.ruis["health"] == null)
+		if (file.cockpitRui == null || file.ruis["health"] == null)
 			return
 		if (clGlobal.isMenuOpen)
 		{
