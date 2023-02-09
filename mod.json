@@ -220,11 +220,6 @@
             "Name": "comp_core_meter_timer_size",
             "DefaultValue": "60",
             "Flags": 16777216
-        },
-        {
-            "Name": "comp_fd_master_to_insane",
-            "DefaultValue": "0",
-            "Flags": 16777216
         }
     ],
     "Localisation": [
