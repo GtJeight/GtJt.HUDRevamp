@@ -105,7 +105,7 @@ void function CheckPlayer( entity player )
 					return
 
 				float PSRemainingTime = player.PhaseShiftTimeRemaining()
-				if (PSRemainingTime < 0.05)
+				if (PSRemainingTime < 0.1)
 					return // Sometimes exits PS but Still have a bit remaining time
 
 				printt(pname + " starts phase shift--------------------------------------------")
