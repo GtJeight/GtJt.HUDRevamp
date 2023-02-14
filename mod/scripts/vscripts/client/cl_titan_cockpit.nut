@@ -186,6 +186,8 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 			MenuOpen()
 			return
 		}
+		if (player.GetHealth() < 1)
+			return // HACK
 
 		// update titan health
 		RuiSetFloat( file.ruis["health"], "msgAlpha", GetConVarBool("comp_hud_healthbar") ? 0.9 : 0.0 )
