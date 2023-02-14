@@ -256,11 +256,11 @@ string function GetPSG_Message( entity player ) {
 string function GenerateMsgByP( string pname, float p ) {
 	if ( p > 0.9 )
 	{
-		return format("%s is phase glitching!\n", pname)
+		return format("[%s] strong phase shift anomaly\n", pname)
 	}
 	else if ( p > 0.5 )
 	{
-		return format("%s maybe phase glitching!\n", pname)
+		return format("[%s] weak phase shift anomaly\n", pname)
 	}
 	return ""
 }
