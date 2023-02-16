@@ -387,7 +387,7 @@ void function UpdateAdditionalRuis( float deltaTime )
 				detectMsg += GetPSG_Message(currentPlayer)
 			}
 		}
-		RuiSetString(file.ruis["glitch"], "msgText", detectMsg)
+		RuiSetString(file.ruis["glitch"], "msgText", detectMsg=="" ? detectMsg : detectMsg+Localize("#psgd_msg_confirm"))
 	}
 	else if (GetPSG_State(GetLocalViewPlayer()))
 	{
@@ -446,7 +446,7 @@ void function MenuOpen()
 		// phase glitch detector
 		{
 			RuiSetFloat2( file.ruis["glitch"], "msgPos", GetConVarFloat2("comp_phase_glitch_detector_pos") )
-			RuiSetString( file.ruis["glitch"], "msgText", "[Player1] Strong Phase Shift Anomaly Detected\n[Player2] Weak Phase Shift Anomaly Detected" )
+			RuiSetString( file.ruis["glitch"], "msgText", "[Player1] "+Localize("#psgd_msg_strong")+"\n[Player2] "+Localize("#psgd_msg_weak")+"\n"+Localize("#psgd_msg_confirm") )
 			RuiSetFloat( file.ruis["glitch"], "msgFontSize", GetConVarFloat("comp_phase_glitch_detector_size") )
 			RuiSetFloat( file.ruis["glitch"], "msgAlpha", GetConVarBool("comp_phase_glitch_detector_enabled") ? 0.9 : 0.0 )
 		}

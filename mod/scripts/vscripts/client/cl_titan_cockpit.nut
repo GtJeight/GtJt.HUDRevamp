@@ -322,7 +322,7 @@ void function MenuOpen()
 		else
 		{
 			RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
-			RuiSetString( file.ruis["core2"], "lockMessage", "Core Expires in "+format("%.2f", 8.88)+"s")
+			RuiSetString( file.ruis["core2"], "lockMessage", format(Localize("#hud_core_timer_sword"), 8.88))
 			RuiSetBool( file.ruis["core2"], "isVisible", true )
 		}
 	}
