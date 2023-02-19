@@ -220,7 +220,14 @@ float function GetEstimatedPSStart( bool isTitan, float remaining, float curTime
 	}
 	else
 	{
-		return curTime - ( 2.0 - remaining )
+		if (remaining < 1.01)
+		{
+			return curTime - ( 1.0 - remaining ) // rodeoing ronin
+		}
+		else
+		{
+			return curTime - ( 2.0 - remaining )
+		}
 	}
 	unreachable
 }
