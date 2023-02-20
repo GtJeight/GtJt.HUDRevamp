@@ -929,8 +929,9 @@ void function ClientCodeCallback_PlayerDidDamage( PlayerDidDamageParams params )
 		PlayHitSound( victim, attacker, damageFlags, isCritShot, victimIsHeavyArmor, isKillShot, hitGroup )
 	}
 
-	if ( PlayerHasPassive( attacker, ePassives.PAS_SMART_CORE ) && isKillShot )
+	if (isKillShot && IsCore(attacker))
 	{
+		printt("Core killed")
 		attacker.p.smartCoreKills++
 	}
 
@@ -938,6 +939,21 @@ void function ClientCodeCallback_PlayerDidDamage( PlayerDidDamageParams params )
 	{
 		callback( attacker, victim, damagePosition, damageType )
 	}
+}
+
+bool function IsCore(entity attacker)
+{
+	if (PlayerHasPassive( attacker, ePassives.PAS_SMART_CORE ) ||
+		PlayerHasPassive( attacker, ePassives.PAS_SHIFT_CORE ))
+	{
+		return true
+	}
+	entity weapon = attacker.GetOffhandWeapon( OFFHAND_EQUIPMENT )
+	if (weapon != null)
+	{
+		return weapon.GetWeaponClassName() == "mp_titancore_laser_cannon"
+	}
+	return false
 }
 
 void function PlayHitSound( entity victim, entity attacker, int damageFlags, bool isCritShot, bool victimIsHeavyArmor, bool isKillShot, int hitGroup )
