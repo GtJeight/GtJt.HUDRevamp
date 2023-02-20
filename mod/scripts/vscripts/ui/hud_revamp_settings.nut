@@ -62,7 +62,7 @@ void function HudRevampSettings_Init()
 	// Core Meter Timer
 	AddModCategory("#hud_core_timer")
 	AddConVarSettingEnum( "comp_core_meter_timer", "#comp_core_meter_timer", [ "#hud_no", "#hud_yes" ] )
-	AddConVarSettingEnum( "comp_core_meter_timer_style", "#comp_core_meter_timer_style", [ "#hud_Number", "#hud_Text" ] )
+	AddConVarSettingEnum( "comp_core_meter_timer_style", "#comp_core_meter_timer_style", [ "#hud_Number", "#hud_Text", "#hud_Legion" ] )
 	AddConVarSetting("comp_core_meter_timer_pos", "#comp_core_meter_timer_pos", "float2" )
 	AddConVarSetting("comp_core_meter_timer_size", "#comp_core_meter_timer_size", "float" )
 
