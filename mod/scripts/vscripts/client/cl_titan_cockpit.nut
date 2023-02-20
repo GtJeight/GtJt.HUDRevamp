@@ -219,80 +219,97 @@ void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
 		}
 		RuiSetString(file.ruis["shield"], "msgText", shieldHealth.tostring())
 
-		// update core timer
-		if(GetConVarBool("comp_core_meter_timer"))
+		UpdateCoreTimer()
+	}
+}
+
+void function UpdateCoreTimer()
+{
+	// update core timer
+	if(GetConVarBool("comp_core_meter_timer"))
+	{
+		if (!GetConVarBool("comp_core_meter_timer_style"))	//number
 		{
-			if (!GetConVarBool("comp_core_meter_timer_style"))	//number
+			RuiSetFloat2( file.ruis["core"], "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
+			RuiSetFloat( file.ruis["core"], "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
+		}
+		string titanName = GetTitanCharacterName( player )
+		if ( titanName == "ronin" )
+		{
+			entity soul = player.GetTitanSoul()
+			float curTime = Time()
+			float remainingTime = soul.GetCoreChargeExpireTime() - curTime
+			if (remainingTime >= 0.0)
 			{
-				RuiSetFloat2( file.ruis["core"], "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
-				RuiSetFloat( file.ruis["core"], "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
-			}
-			string titanName = GetTitanCharacterName( player )
-			if ( titanName == "ronin" )
-			{
-				entity soul = player.GetTitanSoul()
-				float curTime = Time()
-				float remainingTime = soul.GetCoreChargeExpireTime() - curTime
-				if (remainingTime >= 0.0)
+				if (!GetConVarBool("comp_core_meter_timer_style"))
 				{
-					if (!GetConVarBool("comp_core_meter_timer_style"))
-					{
-						RuiSetFloat( file.ruis["core"], "msgAlpha", 0.9 )
-						RuiSetString( file.ruis["core"], "msgText", format("%.2f", remainingTime))
-					}
-					else
-					{
-						RuiSetString( file.ruis["core2"], "lockMessage", format(Localize("#hud_core_timer_sword"), remainingTime))
-						RuiSetBool( file.ruis["core2"], "isVisible", true )
-					}
+					UpdateNumberCoreTimer(remainingTime)
 				}
 				else
 				{
-					RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
-					RuiSetBool( file.ruis["core2"], "isVisible", false )
-				}
-			}
-			else if ( titanName == "ion" )
-			{
-				entity soul = player.GetTitanSoul()
-				entity weapon = player.GetOffhandWeapon( OFFHAND_EQUIPMENT )
-				float coreFrac = weapon.GetSustainedDischargeFraction()
-				float curTime = Time()
-				float remainingTimeFake = soul.GetCoreChargeExpireTime() - curTime
-				if (coreFrac > 0.0)
-				{
-					float duration = weapon.GetSustainedDischargeDuration()
-					float remainingTime = (1 - coreFrac) * duration
-					if (!GetConVarBool("comp_core_meter_timer_style"))
-					{
-						RuiSetFloat( file.ruis["core"], "msgAlpha", 0.9)
-						RuiSetString( file.ruis["core"], "msgText", format("%.2f", remainingTime))
-					}
-					else
-					{
-						RuiSetString( file.ruis["core2"], "lockMessage", format(Localize("#hud_core_timer_laser"), remainingTime))
-						RuiSetBool( file.ruis["core2"], "isVisible", true )
-					}
-				}
-				else if (remainingTimeFake > 0.0)
-				{
-					string text = format(Localize("#hud_core_timer_fake_laser"), remainingTimeFake)
-					RuiSetString( file.ruis["core2"], "lockMessage", text)
-					RuiSetBool( file.ruis["core2"], "isVisible", true )
-				}
-				else
-				{
-					RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
-					RuiSetBool( file.ruis["core2"], "isVisible", false )
+					string text = format(Localize("#hud_core_timer_sword"), remainingTime)
+					UpdateTextCoreTimer(text)
 				}
 			}
 			else
 			{
-				RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
-				RuiSetBool( file.ruis["core2"], "isVisible", false )
+				HideNumberAndTextCoreTimer()
 			}
 		}
+		else if ( titanName == "ion" )
+		{
+			entity soul = player.GetTitanSoul()
+			entity weapon = player.GetOffhandWeapon( OFFHAND_EQUIPMENT )
+			float coreFrac = weapon.GetSustainedDischargeFraction()
+			float curTime = Time()
+			float remainingTimeFake = soul.GetCoreChargeExpireTime() - curTime
+			if (coreFrac > 0.0)
+			{
+				float duration = weapon.GetSustainedDischargeDuration()
+				float remainingTime = (1 - coreFrac) * duration
+				if (!GetConVarBool("comp_core_meter_timer_style"))
+				{
+					UpdateNumberCoreTimer(remainingTime)
+				}
+				else
+				{
+					string text = format(Localize("#hud_core_timer_laser"), remainingTime)
+					UpdateTextCoreTimer(text)
+				}
+			}
+			else if (remainingTimeFake > 0.0)
+			{
+				string text = format(Localize("#hud_core_timer_fake_laser"), remainingTimeFake)
+				UpdateTextCoreTimer(text)
+			}
+			else
+			{
+				HideNumberAndTextCoreTimer()
+			}
+		}
+		else
+		{
+			HideNumberAndTextCoreTimer()
+		}
 	}
+}
+
+void function UpdateNumberCoreTimer(float remainingTime)
+{
+	RuiSetFloat( file.ruis["core"], "msgAlpha", 0.9)
+	RuiSetString( file.ruis["core"], "msgText", format("%.2f", remainingTime))
+}
+
+void function UpdateTextCoreTimer(string text)
+{
+	RuiSetString( file.ruis["core2"], "lockMessage", text)
+	RuiSetBool( file.ruis["core2"], "isVisible", true )
+}
+
+void function HideNumberAndTextCoreTimer()
+{
+	RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
+	RuiSetBool( file.ruis["core2"], "isVisible", false )
 }
 
 void function MenuOpen()
