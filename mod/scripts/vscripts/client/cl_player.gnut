@@ -931,7 +931,6 @@ void function ClientCodeCallback_PlayerDidDamage( PlayerDidDamageParams params )
 
 	if (isKillShot && IsCore(attacker))
 	{
-		printt("Core killed")
 		attacker.p.smartCoreKills++
 	}
 
