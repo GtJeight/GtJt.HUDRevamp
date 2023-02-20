@@ -59,6 +59,12 @@ const TITAN_EJECT_DESCENT		= "player_fallingdescent_windrush"
 const EJECT_MIN_VELOCITY = 200.0
 const EJECT_MAX_VELOCITY = 1000.0
 
+enum eHUDCoreTimer {
+	number,
+	text,
+	legion
+}
+
 struct
 {
 	var coreHintRui
@@ -76,6 +82,7 @@ struct
 	array< void functionref( float ) > updateCallbacks
 	array< void functionref() > startCallbacks
 	table<string, var> ruis
+	bool coreFiring = false
 	// GtJt HUD
 } file
 
@@ -228,7 +235,7 @@ void function UpdateCoreTimer()
 	// update core timer
 	if(GetConVarBool("comp_core_meter_timer"))
 	{
-		if (!GetConVarBool("comp_core_meter_timer_style"))	//number
+		if (GetConVarInt("comp_core_meter_timer_style") == eHUDCoreTimer.number)	//number
 		{
 			RuiSetFloat2( file.ruis["core"], "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
 			RuiSetFloat( file.ruis["core"], "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
@@ -239,16 +246,20 @@ void function UpdateCoreTimer()
 			entity soul = player.GetTitanSoul()
 			float curTime = Time()
 			float remainingTime = soul.GetCoreChargeExpireTime() - curTime
-			if (remainingTime >= 0.0)
+			if (remainingTime > 0.0)
 			{
-				if (!GetConVarBool("comp_core_meter_timer_style"))
-				{
-					UpdateNumberCoreTimer(remainingTime)
-				}
-				else
-				{
-					string text = format(Localize("#hud_core_timer_sword"), remainingTime)
-					UpdateTextCoreTimer(text)
+				switch (GetConVarInt("comp_core_meter_timer_style")) {
+					case eHUDCoreTimer.number:
+						UpdateNumberCoreTimer(remainingTime)
+						break;
+					case eHUDCoreTimer.text:
+						string text = format(Localize("#hud_core_timer_sword"), remainingTime)
+						UpdateTextCoreTimer(text)
+						break;
+					case eHUDCoreTimer.legion:
+						break;
+					default:
+						break;
 				}
 			}
 			else
@@ -267,14 +278,18 @@ void function UpdateCoreTimer()
 			{
 				float duration = weapon.GetSustainedDischargeDuration()
 				float remainingTime = (1 - coreFrac) * duration
-				if (!GetConVarBool("comp_core_meter_timer_style"))
-				{
-					UpdateNumberCoreTimer(remainingTime)
-				}
-				else
-				{
-					string text = format(Localize("#hud_core_timer_laser"), remainingTime)
-					UpdateTextCoreTimer(text)
+				switch (GetConVarInt("comp_core_meter_timer_style")) {
+					case eHUDCoreTimer.number:
+						UpdateNumberCoreTimer(remainingTime)
+						break;
+					case eHUDCoreTimer.text:
+						string text = format(Localize("#hud_core_timer_laser"), remainingTime)
+						UpdateTextCoreTimer(text)
+						break;
+					case eHUDCoreTimer.legion:
+						break;
+					default:
+						break;
 				}
 			}
 			else if (remainingTimeFake > 0.0)
@@ -312,6 +327,10 @@ void function HideNumberAndTextCoreTimer()
 	RuiSetBool( file.ruis["core2"], "isVisible", false )
 }
 
+bool function CheckCoreActivated() {
+
+}
+
 void function MenuOpen()
 {
 	// titan health
@@ -328,19 +347,23 @@ void function MenuOpen()
 	}
 	// core timer
 	{
-		if (!GetConVarBool("comp_core_meter_timer_style"))	//number
-		{
-			RuiSetFloat2( file.ruis["core"], "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
-			RuiSetString( file.ruis["core"], "msgText", format("%.2f", 88.88))
-			RuiSetFloat( file.ruis["core"], "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
-			RuiSetFloat( file.ruis["core"], "msgAlpha", 0.9 )
-			RuiSetBool( file.ruis["core2"], "isVisible", false )
-		}
-		else
-		{
-			RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
-			RuiSetString( file.ruis["core2"], "lockMessage", format(Localize("#hud_core_timer_sword"), 8.88))
-			RuiSetBool( file.ruis["core2"], "isVisible", true )
+		switch (GetConVarInt("comp_core_meter_timer_style")) {
+			case eHUDCoreTimer.number:
+				RuiSetFloat2( file.ruis["core"], "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
+				RuiSetString( file.ruis["core"], "msgText", format("%.2f", 88.88))
+				RuiSetFloat( file.ruis["core"], "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
+				RuiSetFloat( file.ruis["core"], "msgAlpha", 0.9 )
+				RuiSetBool( file.ruis["core2"], "isVisible", false )
+				break;
+			case eHUDCoreTimer.text:
+				RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
+				RuiSetString( file.ruis["core2"], "lockMessage", format(Localize("#hud_core_timer_sword"), 8.88))
+				RuiSetBool( file.ruis["core2"], "isVisible", true )
+				break;
+			case eHUDCoreTimer.legion:
+				break;
+			default:
+				break;
 		}
 	}
 }
