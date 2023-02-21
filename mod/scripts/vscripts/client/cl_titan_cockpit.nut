@@ -135,7 +135,7 @@ function ClTitanCockpit_Init()
 	AddCallback_PlayerClassChanged( UpdateLastPlayerSettings )
 
 	AddTitanCockpitManagedRUI( Scorch_CreateHotstreakBar, Scorch_DestroyHotstreakBar, Scorch_ShouldCreateHotstreakBar, RUI_DRAW_COCKPIT ) //RUI_DRAW_HUD
-	AddTitanCockpitManagedRUI( SmartCore_CreateHud, SmartCore_DestroyHud, SmartCore_ShouldCreateHud, RUI_DRAW_COCKPIT )
+	AddTitanCockpitManagedRUI( SmartCore_CreateHud, SmartCore_DestroyHud, ShouldCreateHud, RUI_DRAW_COCKPIT )
 	AddTitanCockpitManagedRUI( Health_CreateHud, Health_DestroyHud, ShouldCreateHud, RUI_DRAW_COCKPIT )
 	AddTitanCockpitManagedRUI( Shield_CreateHud, Shield_DestroyHud, ShouldCreateHud, RUI_DRAW_COCKPIT )
 	AddTitanCockpitManagedRUI( CoreTimerNum_CreateHud, CoreTimerNum_DestroyHud, ShouldCreateHud, RUI_DRAW_COCKPIT )
@@ -146,6 +146,8 @@ function ClTitanCockpit_Init()
 
 void function UpdateTitanCockpitAdditionalRuis(entity player)
 {
+	if ( file.cockpitRui == null )
+		return
 	// updated in cl_weapon_status
 	UpdateTitanHealthNumberRui(player)
 	UpdateCoreTimer(player)
@@ -210,6 +212,7 @@ void function UpdateCoreTimer(entity player)
 			float remainingTime = soul.GetCoreChargeExpireTime() - curTime
 			if (remainingTime > 0.0)
 			{
+				file.coreFired = true
 				int style = GetConVarInt("comp_core_meter_timer_style")
 				switch (style)
 				{
@@ -229,6 +232,11 @@ void function UpdateCoreTimer(entity player)
 			}
 			else
 			{
+				if (file.coreFired)
+				{
+					player.p.smartCoreKills = 0
+					file.coreFired = false
+				}
 				HideCoreTimer(player)
 			}
 		}
@@ -280,7 +288,11 @@ void function UpdateCoreTimer(entity player)
 			}
 			else
 			{
-				file.coreFired = false
+				if (file.coreFired)
+				{
+					player.p.smartCoreKills = 0
+					file.coreFired = false
+				}
 				HideCoreTimer(player)
 			}
 		}
@@ -329,15 +341,7 @@ void function HideCoreTimer(entity player)
 {
 	RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.0 )
 	RuiSetBool( file.coreTimerTextHud, "isVisible", false )
-
-	if (IsPlayerTitanUsingSmartHud(player))
-	{
-		RuiSetFloat( file.smartCoreHud, "smartCoreStatus", 0.00 )
-		if (GetConVarInt("comp_core_meter_timer_style") == eHUDCoreTimer.legion)
-		{
-			player.p.smartCoreKills = 0
-		}
-	}
+	RuiSetFloat( file.smartCoreHud, "smartCoreStatus", 0.00 )
 }
 
 var function SmartCore_CreateHud()
@@ -345,6 +349,7 @@ var function SmartCore_CreateHud()
 	Assert( file.smartCoreHud == null )
 
 	file.smartCoreHud = CreateTitanCockpitRui( $"ui/smart_core.rpak" )
+	RuiSetFloat( file.smartCoreHud, "smartCoreStatus", 0.00 )
 	return file.smartCoreHud
 }
 
@@ -354,27 +359,27 @@ void function SmartCore_DestroyHud()
 	file.smartCoreHud = null
 }
 
-bool function SmartCore_ShouldCreateHud()
-{
-	entity player = GetLocalViewPlayer()
-	if ( !IsValid( player ) )
-		return false
+// bool function SmartCore_ShouldCreateHud()
+// {
+// 	entity player = GetLocalViewPlayer()
+// 	if ( !IsValid( player ) )
+// 		return false
 
-	if (GetConVarInt("comp_core_meter_timer_style") == eHUDCoreTimer.legion && player.IsTitan())
-	{
-		return IsPlayerTitanUsingSmartHud(player)
-	}
-	return false
-}
+// 	if (GetConVarInt("comp_core_meter_timer_style") == eHUDCoreTimer.legion && player.IsTitan())
+// 	{
+// 		return IsPlayerTitanUsingSmartHud(player)
+// 	}
+// 	return false
+// }
 
-bool function IsPlayerTitanUsingSmartHud(entity player) {
-	if (player.IsTitan())
-	{
-		string titanName = GetTitanCharacterName( player )
-		return titanName == "ronin" || titanName == "ion"
-	}
-	return false
-}
+// bool function IsPlayerTitanUsingSmartHud(entity player) {
+// 	if (player.IsTitan())
+// 	{
+// 		string titanName = GetTitanCharacterName( player )
+// 		return titanName == "ronin" || titanName == "ion"
+// 	}
+// 	return false
+// }
 
 bool function ShouldCreateHud()
 {
@@ -501,10 +506,7 @@ void function MenuOpen()
 				RuiSetFloat( file.smartCoreHud, "smartCoreStatus", 0.0 )
 				break
 			case eHUDCoreTimer.legion:
-				if (file.smartCoreHud != null)
-				{
-					RuiSetFloat( file.smartCoreHud, "smartCoreStatus", 1.00 )
-				}
+				RuiSetFloat( file.smartCoreHud, "smartCoreStatus", 1.00 )
 				RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.0 )
 				RuiSetBool( file.coreTimerTextHud, "isVisible", false )
 				break
