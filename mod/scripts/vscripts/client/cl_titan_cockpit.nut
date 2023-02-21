@@ -82,13 +82,12 @@ struct
 	var scorchHotstreakRui
 
 	// GtJt HUD
-	array< void functionref( float ) > updateCallbacks
-	array< void functionref() > startCallbacks
 	var smartCoreHud
 	var healthHud
 	var shieldHud
 	var coreTimerNumHud
 	var coreTimerTextHud
+	bool coreFired = false
 	// GtJt HUD
 } file
 
@@ -242,6 +241,8 @@ void function UpdateCoreTimer(entity player)
 			float remainingTimeFake = soul.GetCoreChargeExpireTime() - curTime
 			if (coreFrac > 0.0)
 			{
+				// real core
+				file.coreFired = true
 				float duration = weapon.GetSustainedDischargeDuration()
 				float remainingTime = (1 - coreFrac) * duration
 				int style = GetConVarInt("comp_core_meter_timer_style")
@@ -263,11 +264,23 @@ void function UpdateCoreTimer(entity player)
 			}
 			else if (remainingTimeFake > 0.0)
 			{
-				string text = format(Localize("#hud_core_timer_fake_laser"), remainingTimeFake)
-				UpdateTextCoreTimer(text)
+				if (file.coreFired)
+				{
+					// fake core
+					string text = format(Localize("#hud_core_timer_fake_laser"), remainingTimeFake)
+					UpdateTextCoreTimer(text)
+				}
+				else
+				{
+					// core fire standby
+					float duration = weapon.GetSustainedDischargeDuration()
+					string text = format(Localize("#hud_core_timer_standby"), remainingTimeFake - duration)
+					UpdateTextCoreTimer(text)
+				}
 			}
 			else
 			{
+				file.coreFired = false
 				HideCoreTimer(player)
 			}
 		}
@@ -282,6 +295,9 @@ void function UpdateNumberCoreTimer(float remainingTime)
 {
 	RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.9)
 	RuiSetString( file.coreTimerNumHud, "msgText", format("%.2f", remainingTime))
+
+	// Hide ion fake core timer
+	RuiSetBool( file.coreTimerTextHud, "isVisible", false )
 }
 
 void function UpdateTextCoreTimer(string text)
