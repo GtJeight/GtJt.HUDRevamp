@@ -20,9 +20,8 @@ struct
 	int lastSelectedIndex
 
 	// GtJt HUD
-	array< void functionref( float ) > updateCallbacks
-	array< void functionref() > startCallbacks
 	table<string, var> ruis
+	bool initialized = false
 	// GtJt HUD
 } file
 
@@ -62,6 +61,8 @@ struct {
 
 void function ClWeaponStatus_Init()
 {
+	if (IsLobby())
+		return
 	AddCallback_OnClientScriptInit( ClWeaponStatus_AddClient )
 	AddCallback_OnSelectedWeaponChanged( OnSelectedWeaponChanged )
 
@@ -97,40 +98,6 @@ var function ClWeaponStatus_GetWeaponHudRui( entity player, entity weapon )
 
 	return GetRuiForIndex( player, index )
 }
-
-// GtJt HUD
-void function AddStartCallback( void functionref() callback )
-{
-	file.startCallbacks.append(callback)
-}
-
-void function AddUpdateCallback( void functionref( float ) callback )
-{
-	file.updateCallbacks.append(callback)
-}
-
-void function Start()
-{
-	foreach(void functionref() f in file.startCallbacks){
-		f()
-	}
-}
-
-void function UpdateThread()
-{
-	float time = Time()
-	while (true)
-	{
-		time = Time()
-		WaitFrame()
-		if (IsWatchingKillReplay()) continue
-		foreach(void functionref(float) f in file.updateCallbacks){
-			f(Time() - time)
-		}
-		//while (IsWatchingKillReplay()) { WaitFrame(); }
-	}
-}
-// GtJt HUD
 
 void function ClWeaponStatus_AddClient( entity player )
 {
@@ -175,9 +142,7 @@ void function ClWeaponStatus_AddClient( entity player )
 	}
 
 	// GtJt HUD
-	AddStartCallback( InitAdditionalRuis )
-	Start()
-	thread UpdateThread()
+	InitAdditionalRuis()
 }
 
 // GtJt HUD
@@ -265,7 +230,7 @@ void function InitAdditionalRuis()
 		file.ruis["glitch"] <- rui
 	}
 
-	AddUpdateCallback( UpdateAdditionalRuis )
+	file.initialized = true
 }
 
 bool isWR = false
@@ -273,19 +238,10 @@ int WRFrames = 0
 float startWRSpeed = 0.0
 float endWRSpeed = 0.0
 float lastSpeed = 0.0
-void function UpdateAdditionalRuis( float deltaTime )
-{
-	entity player = GetLocalViewPlayer()
-	if (!IsValid(player) || !player.IsPlayer()) return
 
-	if (clGlobal.isMenuOpen)
-	{
-		MenuOpen()
-		return
-	}
-
+void function UpdatePliotHealthRui(entity player) {
 	// update pilot health
-	if (player.IsTitan() || !GetConVarBool("comp_hud_pilot_healthbar"))
+	if (!GetConVarBool("comp_hud_pilot_healthbar"))
 	{
 		RuiSetFloat(file.ruis["pilotHealth"], "msgAlpha", 0.0 )
 	}
@@ -297,7 +253,9 @@ void function UpdateAdditionalRuis( float deltaTime )
 		RuiSetFloat3(file.ruis["pilotHealth"], "msgColor", GetConVarFloat3("comp_hud_pilot_healthbar_color") / 255.0)
 		RuiSetString(file.ruis["pilotHealth"], "msgText", player.GetHealth().tostring() )
 	}
+}
 
+void function UpdateWPDRui(entity player) {
 	// update speedometer
 	if (GetConVarBool("comp_hud_wpd") && !player.IsTitan())
 	{
@@ -328,7 +286,10 @@ void function UpdateAdditionalRuis( float deltaTime )
 	}
 	else
 		RuiSetString(file.ruis["speed"], "msgText", "")
+}
 
+void function UpdateCooldownRuis(entity player)
+{
 	// update equipments cooldown
 	for (int i = 0; i < 3; i++)
 	{
@@ -353,7 +314,7 @@ void function UpdateAdditionalRuis( float deltaTime )
 			}
 			RuiSetFloat2( rui, "msgPos", GetConVarFloat2(posConVar) )
 
-			UpdateOffhandRui(rui, player, player.GetOffhandWeapon(i))
+			UpdateCooldownRui(rui, player, player.GetOffhandWeapon(i))
 		}
 		else
 		{
@@ -369,10 +330,12 @@ void function UpdateAdditionalRuis( float deltaTime )
 			}
 			RuiSetFloat2( rui, "msgPos", GetConVarFloat2(posConVar) )
 
-			UpdateOffhandRui(rui, player, player.GetOffhandWeapon(i))
+			UpdateCooldownRui(rui, player, player.GetOffhandWeapon(i))
 		}
 	}
+}
 
+void function UpdatePSGDRui(entity player) {
 	// update phase glitch detector
 	if (GetConVarBool("comp_phase_glitch_detector_enabled"))
 	{
@@ -403,6 +366,10 @@ void function UpdateAdditionalRuis( float deltaTime )
 
 void function MenuOpen()
 {
+	if (!file.initialized)
+	{
+		return
+	}
 		//offhands
 		{
 			RuiSetFloat2( file.ruis["offhand0"], "msgPos", GetConVarFloat2("comp_hud_ordnance_position") )
@@ -452,7 +419,7 @@ void function MenuOpen()
 		}
 }
 
-void function UpdateOffhandRui( var rui, entity player, entity weapon )
+void function UpdateCooldownRui( var rui, entity player, entity weapon )
 {
 	float altCooldown = 0.0
 	float timeUntilNextCharge = 0.0
@@ -628,6 +595,71 @@ void function UpdateOffhandRui( var rui, entity player, entity weapon )
 	}
 }
 
+void function TrackAdditionalRuis_Titan(entity player) {
+	player.EndSignal( "EndTrackOffhandWeaponSlot" )
+	player.EndSignal( "OnDeath" )
+
+	OnThreadEnd(
+		function() : ()
+		{
+			HideAllAdditionalRuis()
+		}
+	)
+
+	while (IsAlive( player ))
+	{
+		WaitFrame()
+		if (clGlobal.isMenuOpen)
+		{
+			MenuOpen()
+		}
+		else
+		{
+			UpdateCooldownRuis(player)
+			UpdatePSGDRui(player)
+		}
+	}
+}
+
+void function TrackAdditionalRuis_Pilot(entity player) {
+	player.EndSignal( "EndTrackOffhandWeaponSlot" )
+	player.EndSignal( "OnDeath" )
+
+	OnThreadEnd(
+		function() : ()
+		{
+			HideAllAdditionalRuis()
+		}
+	)
+
+	while (IsAlive( player ))
+	{
+		WaitFrame()
+		if (clGlobal.isMenuOpen)
+		{
+			MenuOpen()
+		}
+		else
+		{
+			UpdatePliotHealthRui(player)
+			UpdateWPDRui(player)
+			UpdateCooldownRuis(player)
+			UpdatePSGDRui(player)
+		}
+	}
+}
+
+void function HideAllAdditionalRuis()
+{
+	RuiSetFloat(file.ruis["pilotHealth"], "msgAlpha", 0.0 )
+	RuiSetString(file.ruis["speed"], "msgText", "")
+	for (int i = 0; i < 3; i++)
+	{
+		var rui = file.ruis["offhand" + i]
+		RuiSetFloat( rui, "msgAlpha", 0.0 )
+	}
+	RuiSetFloat( file.ruis["glitch"], "msgAlpha", 0.0 )
+}
 
 // GtJt HUD
 
@@ -817,6 +849,8 @@ void function InitWeaponStatusRuis( entity player )
 		thread TrackOffhandWeaponSlot( player, file.ability_right_hud, OFFHAND_RIGHT )
 		if ( IsMultiplayer() )
 			thread TrackOffhandWeaponSlot( player, file.dpad_left_hud, OFFHAND_INVENTORY )
+
+		thread TrackAdditionalRuis_Titan(player)
 	}
 	else
 	{
@@ -832,6 +866,7 @@ void function InitWeaponStatusRuis( entity player )
 			thread TrackATWeaponSlot( player, file.dpad_left_hud )
 		}
 		RuiSetBool( file.ability_right_hud, "isVisible", false )
+		thread TrackAdditionalRuis_Pilot(player)
 	}
 }
 
