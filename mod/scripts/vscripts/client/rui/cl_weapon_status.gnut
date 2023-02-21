@@ -458,7 +458,6 @@ void function UpdateOffhandRui( var rui, entity player, entity weapon )
 	float timeUntilNextCharge = 0.0
 	int maxCharges = 1
 	float minFracToUse = 1
-	bool doNotSetText = false
 	float ammoFrac = 0
 	if (weapon.IsChargeWeapon()) ammoFrac = 1 - weapon.GetWeaponChargeFraction()
 	if (weapon.GetWeaponPrimaryClipCountMax() > 0) ammoFrac = float(weapon.GetWeaponPrimaryClipCount()) / weapon.GetWeaponPrimaryClipCountMax()
@@ -476,14 +475,10 @@ void function UpdateOffhandRui( var rui, entity player, entity weapon )
 			float maxEnergy = float( player.GetSharedEnergyTotal() ) // 1000
 			float energyRegenRate = player.GetSharedEnergyRegenRate()
 
-			maxCharges = int( maxEnergy ) / curCost
-			minFracToUse = float( curCost ) / maxEnergy
-			int curCharges = int( energy ) / curCost
-			int targetAmmo = (curCharges + 1) * curCost
-			timeUntilNextCharge = (targetAmmo - energy) / energyRegenRate
-			ammoFrac = (energy / curCost / maxCharges)
-
-			// Ability - 2/2 | 2.5s
+			maxCharges = int(floor(maxEnergy / curCost))
+			int curCharges = int(floor(energy / curCost))
+			float targetEnergy = min(curCharges + 1, maxCharges) * curCost
+			timeUntilNextCharge = (targetEnergy - energy) / energyRegenRate
 			break
 
 		case "shared_energy_drain":
@@ -623,11 +618,14 @@ void function UpdateOffhandRui( var rui, entity player, entity weapon )
 
 	float cooldown = max(timeUntilNextCharge, altCooldown)
 
-	if (!doNotSetText) RuiSetString(rui, "msgText", format(settings.abilityText, cooldown))
-
-
 	if (cooldown == 0.0)
+	{
 		RuiSetString(rui, "msgText", "")
+	}
+	else
+	{
+		RuiSetString(rui, "msgText", format(settings.abilityText, cooldown))
+	}
 }
 
 
