@@ -476,6 +476,10 @@ void function CoreTimerText_DestroyHud()
 
 void function MenuOpen()
 {
+	if (!GetLocalViewPlayer().IsTitan())
+	{
+		return
+	}
 	// titan health
 	{
 		RuiSetFloat2( file.healthHud, "msgPos", settings.healthPos + (GetConVarBool("comp_hud_healthbar_overlap") ? <0.0, -0.0225, 0.0> : <0,0,0>))

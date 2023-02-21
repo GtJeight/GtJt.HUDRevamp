@@ -194,9 +194,13 @@ void function MenuOpen()
 			RuiSetFloat( stackingOutgoingDamageTextRui, "msgFontSize", msgFontSize)
 			RuiSetFloat2( stackingOutgoingDamageTextRui, "msgPos", GetConVarFloat2("comp_hud_damage_indicator_pos") - <0, GraphCapped(msgFontSize, 36, 72, 0.0, 0.05), 0> )
 			RuiSetString( stackingOutgoingDamageTextRui, "msgText", accumulatedOutgoingDamage.tointeger().tostring() )
-			if (accumulatedIncomingDamage > 1)
+			if (accumulatedIncomingDamage > 1 && player.IsTitan())
 			{
 				RuiSetString( stackingIncomingDamageTextRui, "msgText", format( "-%i", int( accumulatedIncomingDamage ) ) )
+			}
+			else
+			{
+				RuiSetString( stackingIncomingDamageTextRui, "msgText", "" )
 			}
 		}
 		wait max(GetConVarFloat("comp_hud_damage_indicator_duration"), GetConVarFloat("comp_hud_incoming_damage_indicator_duration"))
