@@ -110,6 +110,7 @@ void function Thread_StackingDamageFlyoutText()
 	RuiSetFloat3( stackingOutgoingDamageTextRui, "msgColor", GetConVarFloat3("comp_hud_damage_indicator_color") / 255.0 )
 	RuiSetFloat( stackingOutgoingDamageTextRui, "msgAlpha", 0.9 )
 	RuiSetFloat( stackingOutgoingDamageTextRui, "thicken", 0.0 )
+	RuiSetString( stackingOutgoingDamageTextRui, "msgText", "" )
 
 	// incoming damage text
 	stackingIncomingDamageTextRui = RuiCreate( $"ui/cockpit_console_text_top_left.rpak", clGlobal.topoTitanCockpitHud, RUI_DRAW_COCKPIT, 1)
@@ -121,10 +122,12 @@ void function Thread_StackingDamageFlyoutText()
 	RuiSetFloat3( stackingIncomingDamageTextRui, "msgColor", GetConVarFloat3("comp_hud_incoming_damage_indicator_color") / 255.0 )
 	RuiSetFloat( stackingIncomingDamageTextRui, "msgAlpha", 0.9 )
 	RuiSetFloat( stackingIncomingDamageTextRui, "thicken", 0.0 )
+	RuiSetString( stackingIncomingDamageTextRui, "msgText", "" )
 
 	while (true)
 	{
-		if (IsValid(GetLocalViewPlayer()))
+		entity player = GetLocalViewPlayer()
+		if (IsValid(player))
 		{
 			INCOMING_DAMAGE_TEXT_STACKING_FADE_TIME = GetConVarFloat("comp_hud_incoming_damage_indicator_fade_time")
 			INCOMING_DAMAGE_TEXT_STACKING_DURATION = GetConVarFloat("comp_hud_incoming_damage_indicator_duration")
@@ -150,26 +153,20 @@ void function Thread_StackingDamageFlyoutText()
 				isMenuOpen = true
 				thread MenuOpen()
 			}
-			else if (!clGlobal.isMenuOpen) isMenuOpen = false
-			// incoming damage text update
+			else if (!clGlobal.isMenuOpen)
+			{
+				isMenuOpen = false
+			}
 
+			// incoming damage text update
 			timeSinceLastHit = Time() - lastIncomingDamageTextHitTime
 			alpha = GraphCapped( timeSinceLastHit - INCOMING_DAMAGE_TEXT_STACKING_STAY_TIME, 0, INCOMING_DAMAGE_TEXT_STACKING_FADE_TIME, 0.9, 0)
 			RuiSetFloat( stackingIncomingDamageTextRui, "msgAlpha", alpha )
-			switch (GetLocalViewPlayer().GetPlayerModHealth())
-			{
-				case 12500:
-				case 9000:
-					// 5 segments - 1500 per segment for BT, 2500 for legion/scorch
-					RuiSetFloat2( stackingIncomingDamageTextRui, "msgPos", INCOMING_DAMAGE_TEXT_BEGIN_POS + <0.035, 0, 0> )
-					break;
-				case 10000:
-					RuiSetFloat2( stackingIncomingDamageTextRui, "msgPos", INCOMING_DAMAGE_TEXT_BEGIN_POS )
-					break;
-				case 7500:
-					RuiSetFloat2( stackingIncomingDamageTextRui, "msgPos", INCOMING_DAMAGE_TEXT_BEGIN_POS - <0.035, 0, 0> )
-					break;
-			}
+			string playerSettings = player.GetPlayerSettings()
+			float health = player.GetPlayerModHealth()
+			float healthPerSegment = GetPlayerSettingsFieldForClassName_HealthPerSegment( playerSettings )
+			int segments = int( health / healthPerSegment )
+			RuiSetFloat2( stackingIncomingDamageTextRui, "msgPos", INCOMING_DAMAGE_TEXT_BEGIN_POS + <0.035 * (segments - 4) + 0.01, 0, 0> )
 		}
 
 		WaitFrame()

@@ -476,7 +476,8 @@ void function CoreTimerText_DestroyHud()
 
 void function MenuOpen()
 {
-	if (!GetLocalViewPlayer().IsTitan())
+	entity player = GetLocalViewPlayer()
+	if (!IsAlive(player) || !player.IsTitan())
 	{
 		return
 	}
