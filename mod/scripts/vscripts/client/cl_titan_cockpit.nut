@@ -386,7 +386,7 @@ var function Health_CreateHud()
 {
 	Assert( file.healthHud == null )
 
-	file.healthHud = CreateTitanCockpitRui( $"ui/cockpit_console_text_center.rpak")
+	file.healthHud = CreateTitanCockpitRui( $"ui/cockpit_console_text_center.rpak", 5)
 	RuiSetInt( file.healthHud, "maxLines", 1 )
 	RuiSetInt( file.healthHud, "lineNum", 1 )
 	RuiSetFloat2( file.healthHud, "msgPos", settings.healthPos )
@@ -408,7 +408,7 @@ var function Shield_CreateHud()
 {
 	Assert( file.shieldHud == null )
 
-	file.shieldHud = CreateTitanCockpitRui( $"ui/cockpit_console_text_center.rpak")
+	file.shieldHud = CreateTitanCockpitRui( $"ui/cockpit_console_text_center.rpak", 5)
 	RuiSetInt( file.shieldHud, "maxLines", 1 )
 	RuiSetInt( file.shieldHud, "lineNum", 1 )
 	RuiSetFloat2( file.shieldHud, "msgPos", settings.shieldPos )
@@ -476,12 +476,12 @@ void function MenuOpen()
 		RuiSetFloat2( file.healthHud, "msgPos", settings.healthPos + (GetConVarBool("comp_hud_healthbar_overlap") ? <0.0, -0.0225, 0.0> : <0,0,0>))
 		RuiSetString( file.healthHud, "msgText", "10000")
 		RuiSetFloat3( file.healthHud, "msgColor", GetAccentColor() )
-		RuiSetFloat( file.healthHud, "msgAlpha", 0.9 )
+		RuiSetFloat( file.healthHud, "msgAlpha", GetConVarBool("comp_hud_healthbar") ? 0.9 : 0.0)
 	}
 	// titan shield
 	{
 		RuiSetString( file.shieldHud, "msgText", "2500")
-		RuiSetFloat( file.shieldHud, "msgAlpha", 0.9 )
+		RuiSetFloat( file.shieldHud, "msgAlpha", GetConVarBool("comp_hud_healthbar") ? 0.9 : 0.0 )
 	}
 	// core timer
 	{
@@ -492,17 +492,21 @@ void function MenuOpen()
 				RuiSetFloat( file.coreTimerNumHud, "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
 				RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.9 )
 				RuiSetBool( file.coreTimerTextHud, "isVisible", false )
+				RuiSetFloat( file.smartCoreHud, "smartCoreStatus", 0.0 )
 				break
 			case eHUDCoreTimer.text:
 				RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.0 )
 				RuiSetString( file.coreTimerTextHud, "lockMessage", format(Localize("#hud_core_timer_sword"), 8.88))
 				RuiSetBool( file.coreTimerTextHud, "isVisible", true )
+				RuiSetFloat( file.smartCoreHud, "smartCoreStatus", 0.0 )
 				break
 			case eHUDCoreTimer.legion:
 				if (file.smartCoreHud != null)
 				{
 					RuiSetFloat( file.smartCoreHud, "smartCoreStatus", 1.00 )
 				}
+				RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.0 )
+				RuiSetBool( file.coreTimerTextHud, "isVisible", false )
 				break
 			default:
 				break
