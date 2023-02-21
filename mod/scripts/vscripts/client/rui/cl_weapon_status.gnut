@@ -612,11 +612,13 @@ void function TrackAdditionalRuis_Titan(entity player) {
 		if (clGlobal.isMenuOpen)
 		{
 			MenuOpen()
+			MenuOpen_TitanCockpit()
 		}
 		else
 		{
 			UpdateCooldownRuis(player)
 			UpdatePSGDRui(player)
+			UpdateTitanCockpitAdditionalRuis(player)
 		}
 	}
 }

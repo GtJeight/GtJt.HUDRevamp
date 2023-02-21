@@ -40,6 +40,9 @@ global function SetUnlimitedDash
 global function NetworkedVarChangedCallback_UpdateVanguardRUICoreStatus
 global function DisplayFrontierRank
 #endif
+global function UpdateTitanCockpitAdditionalRuis
+global function MenuOpen_TitanCockpit
+
 struct TitanCockpitManagedRUI
 {
 	bool exists = false
@@ -81,8 +84,11 @@ struct
 	// GtJt HUD
 	array< void functionref( float ) > updateCallbacks
 	array< void functionref() > startCallbacks
-	table<string, var> ruis
 	var smartCoreHud
+	var healthHud
+	var shieldHud
+	var coreTimerNumHud
+	var coreTimerTextHud
 	// GtJt HUD
 } file
 
@@ -115,7 +121,6 @@ function ClTitanCockpit_Init()
 	if ( !IsModelViewer() && !IsLobby() )
 	{
 		AddCreateCallback( "titan_cockpit", TitanCockpitInit )
-		AddCallback_OnClientScriptInit( ClTitanCockpitAdditionalRuis_AddClient )	// GtJt HUD
 	}
 
 	if ( !reloadingScripts )
@@ -132,103 +137,60 @@ function ClTitanCockpit_Init()
 
 	AddTitanCockpitManagedRUI( Scorch_CreateHotstreakBar, Scorch_DestroyHotstreakBar, Scorch_ShouldCreateHotstreakBar, RUI_DRAW_COCKPIT ) //RUI_DRAW_HUD
 	AddTitanCockpitManagedRUI( SmartCore_CreateHud, SmartCore_DestroyHud, SmartCore_ShouldCreateHud, RUI_DRAW_COCKPIT )
+	AddTitanCockpitManagedRUI( Health_CreateHud, Health_DestroyHud, ShouldCreateHud, RUI_DRAW_COCKPIT )
+	AddTitanCockpitManagedRUI( Shield_CreateHud, Shield_DestroyHud, ShouldCreateHud, RUI_DRAW_COCKPIT )
+	AddTitanCockpitManagedRUI( CoreTimerNum_CreateHud, CoreTimerNum_DestroyHud, ShouldCreateHud, RUI_DRAW_COCKPIT )
+	AddTitanCockpitManagedRUI( CoreTimerText_CreateHud, CoreTimerText_DestroyHud, ShouldCreateHud, RUI_DRAW_COCKPIT )
 }
 
 // GtJt HUD
-void function AddStartCallback( void functionref() callback )
+
+void function UpdateTitanCockpitAdditionalRuis(entity player)
 {
-	file.startCallbacks.append(callback)
+	// updated in cl_weapon_status
+	UpdateTitanHealthNumberRui(player)
+	UpdateCoreTimer(player)
 }
 
-void function AddUpdateCallback( void functionref( float ) callback )
-{
-	file.updateCallbacks.append(callback)
-}
-
-void function Start()
-{
-	foreach(void functionref() f in file.startCallbacks){
-		f()
-	}
-}
-
-void function UpdateThread()
-{
-	float time = Time()
-	while (true)
-	{
-		time = Time()
-		WaitFrame()
-		if (IsWatchingKillReplay()) continue
-		foreach(void functionref(float) f in file.updateCallbacks){
-			f(Time() - time)
-		}
-		//while (IsWatchingKillReplay()) { WaitFrame(); }
-	}
-}
-
-void function ClTitanCockpitAdditionalRuis_AddClient( entity player )
-{
-	AddStartCallback( InitTitanCockpitAdditionalRuis )
-	Start()
-	thread UpdateThread()
-}
-
-void function InitTitanCockpitAdditionalRuis()
-{
-	AddUpdateCallback( UpdateTitanCockpitAdditionalRuis )
+void function MenuOpen_TitanCockpit() {
+	MenuOpen()
 }
 
 float lastShieldStateChangeTime = -5.0;
 int lastShieldHealth = 0;
-void function UpdateTitanCockpitAdditionalRuis( float deltaTime )
+
+
+void function UpdateTitanHealthNumberRui(entity player)
 {
-	entity player = GetLocalViewPlayer()
-	if(player.IsTitan() && IsAlive(player))	// any degenerate cases?
+	// update titan health
+	RuiSetFloat( file.healthHud, "msgAlpha", GetConVarBool("comp_hud_healthbar") ? 0.9 : 0.0 )
+	RuiSetString( file.healthHud, "msgText", player.GetHealth().tostring())
+	RuiSetFloat2( file.healthHud, "msgPos", settings.healthPos + (GetConVarBool("comp_hud_healthbar_overlap") ? <0.0, -0.0225, 0.0> : <0,0,0>))
+
+	// update titan shield
+	int shieldHealth = 0;
+	if (player.GetTitanSoul() != null) shieldHealth = player.GetTitanSoul().GetShieldHealth()
+	if (shieldHealth > 0 && GetConVarBool("comp_hud_healthbar"))
 	{
-		// if (file.ruis["health"] == null || file.ruis["shield"] == null || file.ruis["core"] == null || file.ruis["core2"] == null)
-		if (file.cockpitRui == null || file.ruis["health"] == null)
-			return
-		if (clGlobal.isMenuOpen)
+		if (lastShieldHealth <= 0)
 		{
-			MenuOpen()
-			return
+			lastShieldHealth = 1;
+			lastShieldStateChangeTime = Time()
 		}
-		if (player.GetHealth() < 1)
-			return // HACK
 
-		// update titan health
-		RuiSetFloat( file.ruis["health"], "msgAlpha", GetConVarBool("comp_hud_healthbar") ? 0.9 : 0.0 )
-		RuiSetString( file.ruis["health"], "msgText", player.GetHealth().tostring())
-		RuiSetFloat2( file.ruis["health"], "msgPos", settings.healthPos + (GetConVarBool("comp_hud_healthbar_overlap") ? <0.0, -0.0225, 0.0> : <0,0,0>))
-
-		// update titan shield
-		int shieldHealth = 0;
-		if (player.GetTitanSoul() != null) shieldHealth = player.GetTitanSoul().GetShieldHealth()
-		if (shieldHealth > 0 && GetConVarBool("comp_hud_healthbar"))
-		{
-			if (lastShieldHealth <= 0)
-			{
-				lastShieldHealth = 1;
-				lastShieldStateChangeTime = Time()
-			}
-
-			RuiSetFloat( file.ruis["shield"], "msgAlpha", 0.9 )
-		}
-		else
-		{
-			if (lastShieldHealth > 0)
-			{
-				lastShieldHealth = 0;
-				lastShieldStateChangeTime = Time()
-			}
-
-			RuiSetFloat( file.ruis["shield"], "msgAlpha", 0.0 )
-		}
-		RuiSetString(file.ruis["shield"], "msgText", shieldHealth.tostring())
-
-		UpdateCoreTimer(player)
+		RuiSetFloat( file.shieldHud, "msgAlpha", 0.9 )
 	}
+	else
+	{
+		if (lastShieldHealth > 0)
+		{
+			lastShieldHealth = 0;
+			lastShieldStateChangeTime = Time()
+		}
+
+		RuiSetFloat( file.shieldHud, "msgAlpha", 0.0 )
+	}
+	RuiSetString(file.shieldHud, "msgText", shieldHealth.tostring())
 }
 
 void function UpdateCoreTimer(entity player)
@@ -238,8 +200,8 @@ void function UpdateCoreTimer(entity player)
 	{
 		if (GetConVarInt("comp_core_meter_timer_style") == eHUDCoreTimer.number)	//number
 		{
-			RuiSetFloat2( file.ruis["core"], "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
-			RuiSetFloat( file.ruis["core"], "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
+			RuiSetFloat2( file.coreTimerNumHud, "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
+			RuiSetFloat( file.coreTimerNumHud, "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
 		}
 		string titanName = GetTitanCharacterName( player )
 		if ( titanName == "ronin" )
@@ -318,14 +280,14 @@ void function UpdateCoreTimer(entity player)
 
 void function UpdateNumberCoreTimer(float remainingTime)
 {
-	RuiSetFloat( file.ruis["core"], "msgAlpha", 0.9)
-	RuiSetString( file.ruis["core"], "msgText", format("%.2f", remainingTime))
+	RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.9)
+	RuiSetString( file.coreTimerNumHud, "msgText", format("%.2f", remainingTime))
 }
 
 void function UpdateTextCoreTimer(string text)
 {
-	RuiSetString( file.ruis["core2"], "lockMessage", text)
-	RuiSetBool( file.ruis["core2"], "isVisible", true )
+	RuiSetString( file.coreTimerTextHud, "lockMessage", text)
+	RuiSetBool( file.coreTimerTextHud, "isVisible", true )
 }
 
 void function UpdateLegionCoreTimer(entity player, float remainingTime) {
@@ -343,14 +305,14 @@ void function UpdateLegionCoreTimer(entity player, float remainingTime) {
 	RuiSetFloat( file.smartCoreHud, "smartCoreStatus", 1.00 )
 
 	// Hide ion fake core timer
-	// RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
-	RuiSetBool( file.ruis["core2"], "isVisible", false )
+	// RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.0 )
+	RuiSetBool( file.coreTimerTextHud, "isVisible", false )
 }
 
 void function HideCoreTimer(entity player)
 {
-	RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
-	RuiSetBool( file.ruis["core2"], "isVisible", false )
+	RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.0 )
+	RuiSetBool( file.coreTimerTextHud, "isVisible", false )
 
 	if (IsPlayerTitanUsingSmartHud(player))
 	{
@@ -365,8 +327,6 @@ void function HideCoreTimer(entity player)
 var function SmartCore_CreateHud()
 {
 	Assert( file.smartCoreHud == null )
-
-	entity player = GetLocalViewPlayer()
 
 	file.smartCoreHud = CreateTitanCockpitRui( $"ui/smart_core.rpak" )
 	return file.smartCoreHud
@@ -400,34 +360,127 @@ bool function IsPlayerTitanUsingSmartHud(entity player) {
 	return false
 }
 
+bool function ShouldCreateHud()
+{
+	entity player = GetLocalViewPlayer()
+	return IsValid( player ) && IsAlive( player ) && player.IsTitan()
+}
+
+var function Health_CreateHud()
+{
+	Assert( file.healthHud == null )
+
+	file.healthHud = CreateTitanCockpitRui( $"ui/cockpit_console_text_center.rpak")
+	RuiSetInt( file.healthHud, "maxLines", 1 )
+	RuiSetInt( file.healthHud, "lineNum", 1 )
+	RuiSetFloat2( file.healthHud, "msgPos", settings.healthPos )
+	RuiSetString( file.healthHud, "msgText", "")
+	RuiSetFloat( file.healthHud, "msgFontSize", 32.0 )
+	RuiSetFloat3( file.healthHud, "msgColor", GetAccentColor() )
+	RuiSetFloat( file.healthHud, "msgAlpha", 0.0 )
+	RuiSetFloat( file.healthHud, "thicken", 0.0 )
+	return file.healthHud
+}
+
+void function Health_DestroyHud()
+{
+	TitanCockpitDestroyRui( file.healthHud )
+	file.healthHud = null
+}
+
+var function Shield_CreateHud()
+{
+	Assert( file.shieldHud == null )
+
+	file.shieldHud = CreateTitanCockpitRui( $"ui/cockpit_console_text_center.rpak")
+	RuiSetInt( file.shieldHud, "maxLines", 1 )
+	RuiSetInt( file.shieldHud, "lineNum", 1 )
+	RuiSetFloat2( file.shieldHud, "msgPos", settings.shieldPos )
+	RuiSetString( file.shieldHud, "msgText", "")
+	RuiSetFloat( file.shieldHud, "msgFontSize", 32.0 )
+	RuiSetFloat3( file.shieldHud, "msgColor", <0.33, 0.6, 1> )
+	RuiSetFloat( file.shieldHud, "msgAlpha", 0.0 )
+	RuiSetFloat( file.shieldHud, "thicken", 0.0 )
+	return file.shieldHud
+}
+
+void function Shield_DestroyHud()
+{
+	TitanCockpitDestroyRui( file.shieldHud )
+	file.shieldHud = null
+}
+
+var function CoreTimerNum_CreateHud()
+{
+	Assert( file.coreTimerNumHud == null )
+
+	file.coreTimerNumHud = CreateTitanCockpitRui( $"ui/cockpit_console_text_center.rpak")
+	RuiSetInt( file.coreTimerNumHud, "maxLines", 1 )
+	RuiSetInt( file.coreTimerNumHud, "lineNum", 1 )
+	RuiSetFloat2( file.coreTimerNumHud, "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
+	RuiSetString( file.coreTimerNumHud, "msgText", "")
+	RuiSetFloat( file.coreTimerNumHud, "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
+	RuiSetFloat3( file.coreTimerNumHud, "msgColor", GetAccentColor(true) )
+	RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.0 )
+	RuiSetFloat( file.coreTimerNumHud, "thicken", 0.0 )
+	return file.coreTimerNumHud
+}
+
+void function CoreTimerNum_DestroyHud()
+{
+	TitanCockpitDestroyRui( file.coreTimerNumHud )
+	file.coreTimerNumHud = null
+}
+
+var function CoreTimerText_CreateHud()
+{
+	Assert( file.coreTimerTextHud == null )
+
+	file.coreTimerTextHud = CreateCockpitRui( $"ui/lockon_hud.rpak" )
+	RuiSetString( file.coreTimerTextHud, "lockMessage", "")
+	RuiSetGameTime( file.coreTimerTextHud, "lockEndTime", 0.0 )
+	RuiSetBool( file.coreTimerTextHud, "isVisible", false )
+	RuiSetBool( file.coreTimerTextHud, "northLock", false )
+	RuiSetBool( file.coreTimerTextHud, "southLock", false )
+	RuiSetBool( file.coreTimerTextHud, "westLock", false )
+	RuiSetBool( file.coreTimerTextHud, "eastLock", false )
+	return file.coreTimerTextHud
+}
+
+void function CoreTimerText_DestroyHud()
+{
+	TitanCockpitDestroyRui( file.coreTimerTextHud )
+	file.coreTimerTextHud = null
+}
+
 void function MenuOpen()
 {
 	// titan health
 	{
-		RuiSetFloat2( file.ruis["health"], "msgPos", settings.healthPos + (GetConVarBool("comp_hud_healthbar_overlap") ? <0.0, -0.0225, 0.0> : <0,0,0>))
-		RuiSetString( file.ruis["health"], "msgText", "10000")
-		RuiSetFloat3( file.ruis["health"], "msgColor", GetAccentColor() )
-		RuiSetFloat( file.ruis["health"], "msgAlpha", 0.9 )
+		RuiSetFloat2( file.healthHud, "msgPos", settings.healthPos + (GetConVarBool("comp_hud_healthbar_overlap") ? <0.0, -0.0225, 0.0> : <0,0,0>))
+		RuiSetString( file.healthHud, "msgText", "10000")
+		RuiSetFloat3( file.healthHud, "msgColor", GetAccentColor() )
+		RuiSetFloat( file.healthHud, "msgAlpha", 0.9 )
 	}
 	// titan shield
 	{
-		RuiSetString( file.ruis["shield"], "msgText", "2500")
-		RuiSetFloat( file.ruis["shield"], "msgAlpha", 0.9 )
+		RuiSetString( file.shieldHud, "msgText", "2500")
+		RuiSetFloat( file.shieldHud, "msgAlpha", 0.9 )
 	}
 	// core timer
 	{
 		switch (GetConVarInt("comp_core_meter_timer_style")) {
 			case eHUDCoreTimer.number:
-				RuiSetFloat2( file.ruis["core"], "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
-				RuiSetString( file.ruis["core"], "msgText", format("%.2f", 88.88))
-				RuiSetFloat( file.ruis["core"], "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
-				RuiSetFloat( file.ruis["core"], "msgAlpha", 0.9 )
-				RuiSetBool( file.ruis["core2"], "isVisible", false )
+				RuiSetFloat2( file.coreTimerNumHud, "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
+				RuiSetString( file.coreTimerNumHud, "msgText", format("%.2f", 88.88))
+				RuiSetFloat( file.coreTimerNumHud, "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
+				RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.9 )
+				RuiSetBool( file.coreTimerTextHud, "isVisible", false )
 				break
 			case eHUDCoreTimer.text:
-				RuiSetFloat( file.ruis["core"], "msgAlpha", 0.0 )
-				RuiSetString( file.ruis["core2"], "lockMessage", format(Localize("#hud_core_timer_sword"), 8.88))
-				RuiSetBool( file.ruis["core2"], "isVisible", true )
+				RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.0 )
+				RuiSetString( file.coreTimerTextHud, "lockMessage", format(Localize("#hud_core_timer_sword"), 8.88))
+				RuiSetBool( file.coreTimerTextHud, "isVisible", true )
 				break
 			case eHUDCoreTimer.legion:
 				if (file.smartCoreHud != null)
@@ -614,72 +667,6 @@ void function ShowRUIHUD( entity cockpit )
 		RuiSetString( file.cockpitRui, "titanInfo3", GetVanguardCoreString( player, 3 ) )
 		RuiSetString( file.cockpitRui, "titanInfo4", GetVanguardCoreString( player, 4 ) )
 	}
-
-	// GtJt HUD
-	// titan health
-	{
-		var rui = RuiCreate( $"ui/cockpit_console_text_center.rpak", clGlobal.topoTitanCockpitHud, RUI_DRAW_COCKPIT, 5 )
-		RuiSetInt( rui, "maxLines", 1 )
-		RuiSetInt( rui, "lineNum", 1 )
-		RuiSetFloat2( rui, "msgPos", settings.healthPos )
-		RuiSetString( rui, "msgText", "10000")
-		RuiSetFloat( rui, "msgFontSize", 32.0 )
-		RuiSetFloat3( rui, "msgColor", GetAccentColor() )
-		RuiSetFloat( rui, "msgAlpha", 0.9 )
-		RuiSetFloat( rui, "thicken", 0.0 )
-		file.ruis["health"] <- rui
-		TitanCockpitRUI tcRUI
-		tcRUI.rui = file.ruis["health"]
-		player.p.titanCockpitRUIs.append( tcRUI )
-	}
-	// titan shield
-	{
-		var rui = RuiCreate( $"ui/cockpit_console_text_center.rpak", clGlobal.topoTitanCockpitHud, RUI_DRAW_COCKPIT, 5 )
-		RuiSetInt( rui, "maxLines", 1 )
-		RuiSetInt( rui, "lineNum", 1 )
-		RuiSetFloat2( rui, "msgPos", settings.shieldPos )
-		RuiSetString( rui, "msgText", "2500")
-		RuiSetFloat( rui, "msgFontSize", 32.0 )
-		RuiSetFloat3( rui, "msgColor", <0.33, 0.6, 1> )
-		RuiSetFloat( rui, "msgAlpha", 0.9 )
-		RuiSetFloat( rui, "thicken", 0.0 )
-		file.ruis["shield"] <- rui
-		TitanCockpitRUI tcRUI
-		tcRUI.rui = file.ruis["shield"]
-		player.p.titanCockpitRUIs.append( tcRUI )
-	}
-	// core timer number only
-	{
-		var rui = RuiCreate( $"ui/cockpit_console_text_center.rpak", clGlobal.topoTitanCockpitHud, RUI_DRAW_COCKPIT, 5 )
-		RuiSetInt( rui, "maxLines", 1 )
-		RuiSetInt( rui, "lineNum", 1 )
-		RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
-		RuiSetString( rui, "msgText", "")
-		RuiSetFloat( rui, "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
-		RuiSetFloat3( rui, "msgColor", GetAccentColor(true) )
-		RuiSetFloat( rui, "msgAlpha", 0.9 )
-		RuiSetFloat( rui, "thicken", 0.0 )
-		file.ruis["core"] <- rui
-		TitanCockpitRUI tcRUI
-		tcRUI.rui = file.ruis["core"]
-		player.p.titanCockpitRUIs.append( tcRUI )
-	}
-	// core timer text
-	{
-		var rui = CreateCockpitRui( $"ui/lockon_hud.rpak" )
-		RuiSetString( rui, "lockMessage", "")
-		RuiSetGameTime( rui, "lockEndTime", 0.0 )
-		RuiSetBool( rui, "isVisible", true )
-		RuiSetBool( rui, "northLock", false )
-		RuiSetBool( rui, "southLock", false )
-		RuiSetBool( rui, "westLock", false )
-		RuiSetBool( rui, "eastLock", false )
-		file.ruis["core2"] <- rui
-		TitanCockpitRUI tcRUI
-		tcRUI.rui = file.ruis["core2"]
-		player.p.titanCockpitRUIs.append( tcRUI )
-	}
-	// GtJt HUD
 
 	file.cockpitAdditionalRui = CreateTitanCockpitRui( $"ui/ajax_cockpit_fd.rpak" )
 	RuiSetFloat( file.cockpitAdditionalRui, "ejectManualTimeOut", EJECT_FADE_TIME )
