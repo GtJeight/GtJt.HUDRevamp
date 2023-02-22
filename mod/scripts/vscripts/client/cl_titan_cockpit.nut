@@ -212,7 +212,10 @@ void function UpdateCoreTimer(entity player)
 			float remainingTime = soul.GetCoreChargeExpireTime() - curTime
 			if (remainingTime > 0.0)
 			{
-				file.coreFired = true
+				if (!file.coreFired)
+				{
+					file.coreFired = true
+				}
 				int style = GetConVarInt("comp_core_meter_timer_style")
 				switch (style)
 				{
@@ -250,7 +253,10 @@ void function UpdateCoreTimer(entity player)
 			if (coreFrac > 0.0)
 			{
 				// real core
-				file.coreFired = true
+				if (!file.coreFired)
+				{
+					file.coreFired = true
+				}
 				float duration = weapon.GetSustainedDischargeDuration()
 				float remainingTime = (1 - coreFrac) * duration
 				int style = GetConVarInt("comp_core_meter_timer_style")
