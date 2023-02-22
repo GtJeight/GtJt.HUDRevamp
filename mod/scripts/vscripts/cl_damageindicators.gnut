@@ -217,19 +217,25 @@ void function MenuOpen()
 void function PlayerDidDamageText( float damage, vector damagePosition, entity victim, bool isCrit, bool isIneffective )
 {
 	if (!GetConVarBool("comp_hud_damage_indicator")) return
-	if (Time() - lastOutgoingDamageTextHitTime > GetConVarFloat("comp_hud_damage_indicator_duration"))
+	bool resetStack = Time() - lastOutgoingDamageTextHitTime > GetConVarFloat("comp_hud_damage_indicator_duration")
+	if (resetStack)
 	{
 		// Reset stack
 		accumulatedOutgoingDamage = damage
 	}
 	else
-	{
+	{.
 		// Add to stack
 		accumulatedOutgoingDamage += damage
 	}
 	SetOutgoingDamageTextRui(damage, isCrit, victim)
 	if (!GetConVarBool("comp_hud_damage_indicator_style"))
-		thread AddSmallDamageTextFlyout( damage, isCrit, victim )
+	{
+		if (!resetStack)
+		{
+			thread AddSmallDamageTextFlyout( damage, isCrit, victim )
+		}
+	}
 	else
 	{
 		vector randDir2D = < RandomFloatRange( -1, 1 ), 1, 0 >
@@ -245,6 +251,6 @@ void function PlayerDidDamageText( float damage, vector damagePosition, entity v
 	lastOutgoingDamageTextHitTime = Time()
 }
 
-vector function GetDamageTextColor( bool isCrit, entity victim) {
+vector function GetDamageTextColor( bool isCrit, entity victim ) {
 	return ( isCrit ? GetConVarFloat3("comp_hud_damage_indicator_color_crit") : GetConVarFloat3("comp_hud_damage_indicator_color") ) / 255.0
 }
