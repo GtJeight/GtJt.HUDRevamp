@@ -143,6 +143,7 @@ void function ClWeaponStatus_AddClient( entity player )
 
 	// GtJt HUD
 	InitAdditionalRuis()
+	InitDamageFlyoutRuis()
 }
 
 // GtJt HUD
@@ -596,7 +597,8 @@ void function UpdateCooldownRui( var rui, entity player, entity weapon )
 	}
 }
 
-void function TrackAdditionalRuis_Titan(entity player) {
+void function TrackAdditionalRuis_Titan(entity player)
+{
 	player.EndSignal( "EndTrackOffhandWeaponSlot" )
 	player.EndSignal( "OnDeath" )
 
@@ -635,7 +637,8 @@ void function TrackAdditionalRuis_Titan(entity player) {
 	}
 }
 
-void function TrackAdditionalRuis_Pilot(entity player) {
+void function TrackAdditionalRuis_Pilot(entity player)
+{
 	player.EndSignal( "EndTrackOffhandWeaponSlot" )
 	player.EndSignal( "OnDeath" )
 
@@ -890,6 +893,7 @@ void function InitWeaponStatusRuis( entity player )
 		RuiSetBool( file.ability_right_hud, "isVisible", false )
 		thread TrackAdditionalRuis_Pilot(player)
 	}
+	thread Track_StackingDamageFlyoutText(player)
 }
 
 void function UpdateOffhandRuiVisibility( var rui, string hintText )
