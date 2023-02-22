@@ -94,7 +94,7 @@ struct
 // GtJt HUD
 struct {
 	vector healthPos = Vector(0.0, -0.2875, 0.0)
-    vector shieldPos = Vector(0.0, -0.34, 0.0)
+    vector shieldPos = Vector(0.0, -0.3475, 0.0)
 } settings
 // GtJt HUD
 
