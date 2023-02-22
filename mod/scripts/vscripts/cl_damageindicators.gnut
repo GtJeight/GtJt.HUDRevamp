@@ -224,7 +224,7 @@ void function PlayerDidDamageText( float damage, vector damagePosition, entity v
 		accumulatedOutgoingDamage = damage
 	}
 	else
-	{.
+	{
 		// Add to stack
 		accumulatedOutgoingDamage += damage
 	}
