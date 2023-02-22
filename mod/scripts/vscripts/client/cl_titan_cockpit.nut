@@ -483,7 +483,7 @@ void function CoreTimerText_DestroyHud()
 void function MenuOpen()
 {
 	entity player = GetLocalViewPlayer()
-	if (!IsAlive(player) || !player.IsTitan())
+	if (!IsAlive(player) || !player.IsTitan() || file.cockpitRui == null)
 	{
 		return
 	}
