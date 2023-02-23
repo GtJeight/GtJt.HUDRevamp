@@ -284,7 +284,7 @@ void function UpdateCoreTimer(entity player)
 					string text = format(Localize("#hud_core_timer_fake_laser"), remainingTimeFake)
 					UpdateTextCoreTimer(text)
 				}
-				else
+				else if (remainingTimeFake > duration)
 				{
 					// core fire standby
 					float duration = weapon.GetSustainedDischargeDuration()
