@@ -39,6 +39,7 @@ void function PlayerClientScriptInit()
 	}
 	if (!file.running)
 	{
+		file.running = true
 		thread PSG_Monitor( GetLocalViewPlayer() )
 	}
 	else
@@ -71,7 +72,6 @@ void function PSG_Monitor( entity player )
 
 	// player.EndSignal( "OnDestroy" )
 	player.EndSignal( "LocalPlayerDisconnected" )
-	file.running = true
 	OnThreadEnd(
 		function() : ( )
 		{
