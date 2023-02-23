@@ -250,6 +250,7 @@ void function UpdateCoreTimer(entity player)
 			float coreFrac = weapon.GetSustainedDischargeFraction()
 			float curTime = Time()
 			float remainingTimeFake = soul.GetCoreChargeExpireTime() - curTime
+			float duration = weapon.GetSustainedDischargeDuration()
 			if (coreFrac > 0.0)
 			{
 				// real core
@@ -257,7 +258,6 @@ void function UpdateCoreTimer(entity player)
 				{
 					file.coreFired = true
 				}
-				float duration = weapon.GetSustainedDischargeDuration()
 				float remainingTime = (1 - coreFrac) * duration
 				int style = GetConVarInt("comp_core_meter_timer_style")
 				switch (style)
@@ -287,7 +287,6 @@ void function UpdateCoreTimer(entity player)
 				else if (remainingTimeFake > duration)
 				{
 					// core fire standby
-					float duration = weapon.GetSustainedDischargeDuration()
 					string text = format(Localize("#hud_core_timer_standby"), remainingTimeFake - duration)
 					UpdateTextCoreTimer(text)
 				}
