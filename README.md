@@ -13,6 +13,7 @@ Dependecy : [ModSettings v2](https://northstar.thunderstore.io/package/EladNLG/M
 ## 新特性（相比原版）
 
 - 剑核心、镭射核心剩余时间指示
+  - 摆脱离子镭射核心条诈骗
   - 数字风格
   - 文本风格
   - 智慧核心风格
