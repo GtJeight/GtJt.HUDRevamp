@@ -2,7 +2,7 @@ global function Cl_PSG_Detector_Init
 global function GetPSG_State
 global function GetPSG_Message
 
-const float PS_THRESHOLD = 0.052
+const float PS_THRESHOLD = 0.06
 
 struct
 {
@@ -106,13 +106,17 @@ void function CheckPlayer( entity player )
 
 				float PSRemainingTime = player.PhaseShiftTimeRemaining()
 				if (PSRemainingTime < 0.1)
+				{
+					printt(format("Unexpected PS Time %s %.6f", pname, PSRemainingTime))
 					return // Sometimes exits PS but Still have a bit remaining time
+				}
 
 				printt(pname + " starts phase shift--------------------------------------------")
 				float curTime = Time()
 				file.PhaseShifting[ pname ] <- true
-				float estimatedStartTime = GetEstimatedPSStart( player.IsTitan(), PSRemainingTime, curTime )
-
+				// float estimatedStartTime = GetEstimatedPSStart( player.IsTitan(), PSRemainingTime, curTime )
+				float estimatedStartTime = curTime - player.PhaseShiftTimePassed()
+				printt(format("PS duration %.6f", player.PhaseShiftTimePassed() + PSRemainingTime))
 				if ( estimatedStartTime < file.NextPSTime[ pname ])
 				{
 					file.PSGlitching[ pname ] <- 0.6
@@ -146,12 +150,15 @@ void function CheckPlayer( entity player )
 			else if ( file.PhaseShifting[ pname ] )
 			{
 				float curTime = Time()
-				float expectedDuration = file.NextPSTime[ pname ] - file.LastPSStart[ pname ]
+				float expectedDuration = file.NextPSTime[ pname ] - file.LastPSStart[ pname ] - PS_THRESHOLD
 				float realDuration = curTime - file.LastPSStart[ pname ]
 				file.PhaseShifting[ pname ] <- false
 				file.LastPSEnd[ pname ] <- curTime
 				if ( curTime < file.NextPSTime[ pname ] - PS_THRESHOLD && player.IsTitan())
-					file.NextPSTime[ pname ] <- curTime + PS_THRESHOLD // prevent unexpected exit
+				{
+					printt(pname + " unexpected phase shift exit")
+					file.NextPSTime[ pname ] <- curTime + 0.05 // prevent unexpected exit
+				}
 				printt(pname + " exits phase shift--------------------------------------------")
 				printt(format("%.6f %.6f", curTime, file.NextPSTime[ pname ]) )
 				printt(format("time in ps %.6f", curTime - file.LastPSStart[ pname ]))
