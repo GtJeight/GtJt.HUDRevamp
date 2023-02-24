@@ -31,4 +31,5 @@ Dependecy : [ModSettings v2](https://northstar.thunderstore.io/package/EladNLG/M
 - ~~销毁泰坦座舱ui时可能引发报错~~
 - ~~离子镭射肩炮冷却时间错误~~
 - ~~核心图标偏置输入0.0 0.0后不会更新坐标~~
+
 发现任何bug请向GtJeight（Asymmetr）提交log
