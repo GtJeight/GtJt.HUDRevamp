@@ -339,9 +339,8 @@ void function UpdateLegionCoreTimer(entity player, float remainingTime) {
 	// 	return
 	// }
 	RuiSetBool( file.smartCoreHud, "isLocked", false )
-	RuiSetString( file.smartCoreHud, "remainingTime", TimeToString( remainingTime, true, false ) )
-	string killCountText = "X " + player.p.smartCoreKills
-	RuiSetString( file.smartCoreHud, "killCountText", killCountText )
+	RuiSetString( file.smartCoreHud, "remainingTime", TimeToString( remainingTime, true, remainingTime > 60.0 ) )
+	RuiSetString( file.smartCoreHud, "killCountText", format("X %i", player.p.smartCoreKills) )
 	RuiSetFloat( file.smartCoreHud, "zoomFrac", player.GetZoomFrac() )
 	RuiSetBool( file.smartCoreHud, "hasCloseRangeAmmo", false )
 	RuiSetFloat( file.smartCoreHud, "smartCoreStatus", 1.00 )
