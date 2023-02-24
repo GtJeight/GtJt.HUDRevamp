@@ -71,4 +71,9 @@ void function HudRevampSettings_Init()
 	AddConVarSettingEnum( "comp_phase_glitch_detector_enabled", "#comp_phase_glitch_detector_enabled", [ "#hud_no", "#hud_yes" ] )
 	AddConVarSetting("comp_phase_glitch_detector_pos", "#comp_phase_glitch_detector_pos", "float2")
 	AddConVarSetting("comp_phase_glitch_detector_size", "#comp_phase_glitch_detector_size", "float" )
+
+	// Ion HUD
+	AddModCategory("#hud_ion_hud")
+	AddConVarSettingEnum( "comp_hud_fix_ion_energy_bar", "#comp_hud_fix_ion_energy_bar", [ "#hud_no", "#hud_yes" ] )
+	AddConVarSettingEnum( "comp_hud_use_short_energy_bar", "#comp_hud_use_short_energy_bar", [ "#hud_no", "#hud_yes" ] )
 }

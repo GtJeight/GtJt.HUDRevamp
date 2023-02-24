@@ -3,10 +3,11 @@ global function IonEnergy_Init
 #if CLIENT
 global function Ion_CreateEnergyBar
 global function Ion_DestroyEnergyBar
+global function UpdateIonEnergyBar
 #endif
 
 global const float ION_ENERGY_REGEN_INTERVAL = 0.1
-global const int ION_ENERGY_MAX = 1000
+global int ION_ENERGY_MAX = 1000
 
 #if CLIENT
 global function FlashEnergyNeeded_Bar
@@ -14,6 +15,7 @@ global function FlashEnergyNeeded_Bar
 struct
 {
 	var ionEnergyBarRui = null
+	bool useFix = false
 } file
 #endif
 
@@ -31,17 +33,34 @@ var function Ion_CreateEnergyBar()
 	Assert( file.ionEnergyBarRui == null )
 
 	entity player = GetLocalViewPlayer()
-	float energyMax = float( player.GetSharedEnergyTotal() )
+	ION_ENERGY_MAX = player.GetSharedEnergyTotal()
+	// cache, if user changes it after creating rui it would be a mess
+	file.useFix = GetConVarBool("comp_hud_fix_ion_energy_bar")
+
 	var rui
-	if ( energyMax > ION_ENERGY_MAX )
-		rui = CreateTitanCockpitRui( $"ui/ion_energy_bar_Fd.rpak" )
+	if (ION_ENERGY_MAX > 1000)
+	{
+		if (GetConVarBool("comp_hud_use_short_energy_bar"))
+		{
+			rui = CreateTitanCockpitRui( $"ui/ion_energy_bar.rpak" )
+		}
+		else
+		{
+			rui = CreateTitanCockpitRui( $"ui/ion_energy_bar_Fd.rpak" )
+		}
+	}
 	else
+	{
 		rui = CreateTitanCockpitRui( $"ui/ion_energy_bar.rpak" )
+	}
 
 	file.ionEnergyBarRui = rui
 
-	RuiSetFloat( file.ionEnergyBarRui, "energyMax", energyMax )
-	RuiTrackFloat( file.ionEnergyBarRui, "energy", GetLocalViewPlayer(), RUI_TRACK_PLAYER_SHARED_ENERGY )
+	RuiSetFloat( file.ionEnergyBarRui, "energyMax", float(ION_ENERGY_MAX) )
+	if (!file.useFix)
+	{
+		RuiTrackFloat( file.ionEnergyBarRui, "energy", GetLocalViewPlayer(), RUI_TRACK_PLAYER_SHARED_ENERGY )
+	}
 
 	return file.ionEnergyBarRui
 }
@@ -75,7 +94,7 @@ void function FlashEnergyNeeded_Bar( int neededEnergy )
 	if ( file.ionEnergyBarRui == null )
 		return
 
-	RuiSetFloat( file.ionEnergyBarRui, "energyNeededRatio", float( neededEnergy ) / float( ION_ENERGY_MAX ) )
+	RuiSetFloat( file.ionEnergyBarRui, "energyNeededRatio", mapping(float(neededEnergy)) / float(ION_ENERGY_MAX) )
 	RuiSetGameTime( file.ionEnergyBarRui, "energyNeededFlashStartTime", Time() )
 }
 
@@ -86,5 +105,18 @@ void function Ion_CritHitIndicator( entity attacker, entity victim, vector damag
 
 	if ( damageType & DF_CRITICAL )
 		RuiSetGameTime( file.ionEnergyBarRui, "criticalHitFlashStartTime", Time() )
+}
+
+void function UpdateIonEnergyBar(entity player) {
+	if ( file.ionEnergyBarRui == null || !file.useFix )
+		return
+
+	RuiSetFloat(file.ionEnergyBarRui, "energy", mapping(float(player.GetSharedEnergyCount())))
+}
+
+float function mapping(float original) {
+	if (!file.useFix)
+		return original
+	return original * 0.88 + 0.06 * float(ION_ENERGY_MAX)
 }
 #endif

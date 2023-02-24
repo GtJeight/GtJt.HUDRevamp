@@ -1251,7 +1251,15 @@ void function InitOffhandRui( var rui, entity player, entity weapon )
 			RuiSetFloat( rui, "readyFrac", 0.0 )
 			RuiSetFloat( rui, "minFireFrac", 0.0 )
 			RuiTrackFloat( rui, "chargeFrac", player, RUI_TRACK_PLAYER_SHARED_ENERGY )
-			RuiSetFloat( rui, "chargeMaxFrac", float( ION_ENERGY_MAX ) )
+			if (GetConVarBool("comp_hud_fix_ion_energy_bar"))
+			{
+				RuiSetFloat( rui, "chargeMaxFrac", float( player.GetSharedEnergyTotal() ) )
+			}
+			else
+			{
+				// vanilla behavior
+				RuiSetFloat( rui, "chargeMaxFrac", 1000.0 )
+			}
 			break
 
 		case "vortex_drain":
