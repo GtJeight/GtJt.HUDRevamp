@@ -88,6 +88,7 @@ struct
 	var shieldHud
 	var coreTimerNumHud
 	var coreTimerTextHud
+	var ionEnergyNumHud
 	bool coreFired = false
 	// GtJt HUD
 } file
@@ -141,6 +142,7 @@ function ClTitanCockpit_Init()
 	AddTitanCockpitManagedRUI( Shield_CreateHud, Shield_DestroyHud, ShouldCreateHud, RUI_DRAW_COCKPIT )
 	AddTitanCockpitManagedRUI( CoreTimerNum_CreateHud, CoreTimerNum_DestroyHud, ShouldCreateHud, RUI_DRAW_COCKPIT )
 	AddTitanCockpitManagedRUI( CoreTimerText_CreateHud, CoreTimerText_DestroyHud, ShouldCreateHud, RUI_DRAW_COCKPIT )
+	AddTitanCockpitManagedRUI( IonEnergyNum_CreateHud, IonEnergyNum_DestroyHud, IsPlayerIon, RUI_DRAW_COCKPIT )
 }
 
 // GtJt HUD
@@ -152,6 +154,8 @@ void function UpdateTitanCockpitAdditionalRuis(entity player)
 	// updated in cl_weapon_status
 	UpdateTitanHealthNumberRui(player)
 	UpdateCoreTimer(player)
+	if (IsPlayerIon())
+		RuiSetString( file.ionEnergyNumHud, "msgText", player.GetSharedEnergyCount().tostring() )
 }
 
 void function MenuOpen_TitanCockpit() {
@@ -411,6 +415,15 @@ bool function ShouldCreateHud()
 	return IsValid( player ) && IsAlive( player ) && player.IsTitan()
 }
 
+bool function IsPlayerIon() {
+	entity player = GetLocalViewPlayer()
+	if (IsValid( player ) && IsAlive( player ) && player.IsTitan())
+	{
+		return GetTitanCharacterName( player ) == "ion"
+	}
+	return false
+}
+
 var function Health_CreateHud()
 {
 	Assert( file.healthHud == null )
@@ -496,6 +509,28 @@ void function CoreTimerText_DestroyHud()
 {
 	TitanCockpitDestroyRui( file.coreTimerTextHud )
 	file.coreTimerTextHud = null
+}
+
+var function IonEnergyNum_CreateHud()
+{
+	Assert( file.ionEnergyNumHud == null )
+
+	file.ionEnergyNumHud = CreateCockpitRui($"ui/cockpit_console_text_top_left.rpak", -1)
+    RuiSetInt( file.ionEnergyNumHud, "maxLines", 1 )
+    RuiSetInt( file.ionEnergyNumHud, "lineNum", 1 )
+    RuiSetFloat2( file.ionEnergyNumHud, "msgPos", <0.07, 0.4, 0> )
+    RuiSetString( file.ionEnergyNumHud, "msgText", "" )
+    RuiSetFloat( file.ionEnergyNumHud, "msgFontSize", 25.0 )
+    RuiSetFloat( file.ionEnergyNumHud, "msgAlpha", 1.4 )
+    RuiSetFloat( file.ionEnergyNumHud, "thicken", 0.0 )
+    RuiSetFloat3( file.ionEnergyNumHud, "msgColor", <1.0, 0.596, 0.756> )
+	return file.ionEnergyNumHud
+}
+
+void function IonEnergyNum_DestroyHud()
+{
+	TitanCockpitDestroyRui( file.ionEnergyNumHud )
+	file.ionEnergyNumHud = null
 }
 
 void function MenuOpen()
