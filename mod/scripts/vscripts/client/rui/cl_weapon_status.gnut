@@ -632,6 +632,7 @@ void function TrackAdditionalRuis_Titan(entity player)
 			UpdateCooldownRuis(player)
 			UpdatePSGDRui(player)
 			UpdateTitanCockpitAdditionalRuis(player)
+			UpdateIonEnergyBar(player)
 		}
 		WaitFrame()
 	}
