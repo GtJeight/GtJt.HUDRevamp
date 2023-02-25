@@ -1,2 +1,2 @@
 # Auto detect text files and perform LF normalization
-/mod/resource/hudrevamp_*.txt text diff working-tree-encoding=UTF-16LE-BOM
+mod/resource/hudrevamp_*.txt text diff=utf16 working-tree-encoding=UTF-16LE-BOM eol=crlf
