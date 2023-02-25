@@ -2,7 +2,7 @@ global function Cl_PSG_Detector_Init
 global function GetPSG_State
 global function GetPSG_Message
 
-const float PS_THRESHOLD = 0.06
+const float PS_THRESHOLD = 0.061
 
 struct
 {
@@ -116,7 +116,6 @@ void function CheckPlayer( entity player )
 				file.PhaseShifting[ pname ] <- true
 				// float estimatedStartTime = GetEstimatedPSStart( player.IsTitan(), PSRemainingTime, curTime )
 				float estimatedStartTime = curTime - player.PhaseShiftTimePassed()
-				printt(format("PS duration %.6f", player.PhaseShiftTimePassed() + PSRemainingTime))
 				if ( estimatedStartTime < file.NextPSTime[ pname ])
 				{
 					file.PSGlitching[ pname ] <- 0.6
