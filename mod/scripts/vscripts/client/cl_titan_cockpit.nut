@@ -154,8 +154,7 @@ void function UpdateTitanCockpitAdditionalRuis(entity player)
 	// updated in cl_weapon_status
 	UpdateTitanHealthNumberRui(player)
 	UpdateCoreTimer(player)
-	if (IsPlayerIon())
-		RuiSetString( file.ionEnergyNumHud, "msgText", player.GetSharedEnergyCount().tostring() )
+	UpdateIonEnergyNumber(player)
 }
 
 void function MenuOpen_TitanCockpit() {
@@ -424,6 +423,25 @@ bool function IsPlayerIon() {
 	return false
 }
 
+void function UpdateIonEnergyNumber(entity player)
+{
+	if (!IsPlayerIon())
+		return
+
+	if(GetConVarBool("comp_hud_ion_energy_enabled"))
+	{
+		RuiSetFloat2( file.ionEnergyNumHud, "msgPos", GetConVarFloat2("comp_hud_ion_energy_pos") )
+		RuiSetFloat( file.ionEnergyNumHud, "msgFontSize", GetConVarFloat("comp_hud_ion_energy_size") )
+		RuiSetFloat3( file.ionEnergyNumHud, "msgColor", GetConVarFloat3("comp_hud_ion_energy_color") / 255.0 )
+		RuiSetString( file.ionEnergyNumHud, "msgText", player.GetSharedEnergyCount().tostring() )
+	}
+	else
+	{
+		RuiSetString( file.ionEnergyNumHud, "msgText", "" )
+		RuiSetFloat( file.ionEnergyNumHud, "msgAlpha", 0.0 )
+	}
+}
+
 var function Health_CreateHud()
 {
 	Assert( file.healthHud == null )
@@ -518,12 +536,12 @@ var function IonEnergyNum_CreateHud()
 	file.ionEnergyNumHud = CreateCockpitRui($"ui/cockpit_console_text_top_left.rpak", -1)
     RuiSetInt( file.ionEnergyNumHud, "maxLines", 1 )
     RuiSetInt( file.ionEnergyNumHud, "lineNum", 1 )
-    RuiSetFloat2( file.ionEnergyNumHud, "msgPos", <0.07, 0.4, 0> )
+    RuiSetFloat2( file.ionEnergyNumHud, "msgPos", GetConVarFloat2("comp_hud_ion_energy_pos") )
     RuiSetString( file.ionEnergyNumHud, "msgText", "" )
-    RuiSetFloat( file.ionEnergyNumHud, "msgFontSize", 25.0 )
-    RuiSetFloat( file.ionEnergyNumHud, "msgAlpha", 1.4 )
+    RuiSetFloat( file.ionEnergyNumHud, "msgFontSize", GetConVarFloat("comp_hud_ion_energy_size") )
+    RuiSetFloat( file.ionEnergyNumHud, "msgAlpha", 0.9 )
     RuiSetFloat( file.ionEnergyNumHud, "thicken", 0.0 )
-    RuiSetFloat3( file.ionEnergyNumHud, "msgColor", <1.0, 0.596, 0.756> )
+    RuiSetFloat3( file.ionEnergyNumHud, "msgColor", GetConVarFloat3("comp_hud_ion_energy_color") / 255.0 )
 	return file.ionEnergyNumHud
 }
 
@@ -553,6 +571,7 @@ void function MenuOpen()
 		RuiSetFloat( file.shieldHud, "msgAlpha", GetConVarBool("comp_hud_healthbar") ? 0.9 : 0.0 )
 	}
 	// core timer
+	if (GetConVarBool("comp_core_meter_timer"))
 	{
 		switch (GetConVarInt("comp_core_meter_timer_style")) {
 			case eHUDCoreTimer.number:
@@ -581,6 +600,26 @@ void function MenuOpen()
 				break
 			default:
 				break
+		}
+	}
+	else
+	{
+		HideCoreTimers()
+	}
+	// Ion energy number
+	if (IsPlayerIon())
+	{
+		if(GetConVarBool("comp_hud_ion_energy_enabled"))
+		{
+			RuiSetFloat2( file.ionEnergyNumHud, "msgPos", GetConVarFloat2("comp_hud_ion_energy_pos") )
+			RuiSetFloat( file.ionEnergyNumHud, "msgFontSize", GetConVarFloat("comp_hud_ion_energy_size") )
+			RuiSetFloat3( file.ionEnergyNumHud, "msgColor", GetConVarFloat3("comp_hud_ion_energy_color") / 255.0 )
+			RuiSetString( file.ionEnergyNumHud, "msgText", "1000" )
+		}
+		else
+		{
+			RuiSetString( file.ionEnergyNumHud, "msgText", "" )
+			RuiSetFloat( file.ionEnergyNumHud, "msgAlpha", 0.0 )
 		}
 	}
 }

@@ -80,6 +80,10 @@
 		"hud_ion_hud" "Ion HUD"
 		"comp_hud_fix_ion_energy_bar" "Fix energy bar display"
 		"comp_hud_use_short_energy_bar" "Always use short energy bar (in FD)"
+		"comp_hud_ion_energy_enabled" "Show energy number"
+		"comp_hud_ion_energy_pos" "Energy number: Position"
+		"comp_hud_ion_energy_size" "Energy number: Size"
+		"comp_hud_ion_energy_color" "Energy number: Color"
 
 		"hud_no" "No"
 		"hud_yes" "Yes"

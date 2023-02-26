@@ -230,6 +230,26 @@
             "Name": "comp_hud_use_short_energy_bar",
             "DefaultValue": "0",
             "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_ion_energy_enabled",
+            "DefaultValue": "0",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_ion_energy_pos",
+            "DefaultValue": "0.07 0.4",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_ion_energy_size",
+            "DefaultValue": "25",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_ion_energy_color",
+            "DefaultValue": "0 221 228",
+            "Flags": 16777216
         }
     ],
     "Localisation": [

@@ -80,6 +80,10 @@
 		"hud_ion_hud" "離子 HUD"
 		"comp_hud_fix_ion_energy_bar" "修復能量條顯示"
 		"comp_hud_use_short_energy_bar" "强制使用短能量條樣式"
+		"comp_hud_ion_energy_enabled" "顯示能量數值"
+		"comp_hud_ion_energy_pos" "能量數值：位置"
+		"comp_hud_ion_energy_size" "能量數值：大小"
+		"comp_hud_ion_energy_color" "能量數值：顔色"
 
 		"hud_no" "關閉"
 		"hud_yes" "打開"
