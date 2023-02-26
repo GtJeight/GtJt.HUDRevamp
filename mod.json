@@ -222,6 +222,11 @@
             "Flags": 16777216
         },
         {
+            "Name": "comp_core_meter_timer_legion_color",
+            "DefaultValue": "0",
+            "Flags": 16777216
+        },
+        {
             "Name": "comp_hud_fix_ion_energy_bar",
             "DefaultValue": "1",
             "Flags": 16777216

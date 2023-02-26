@@ -22,7 +22,7 @@ void function HudRevampSettings_Init()
 	AddConVarSetting("comp_hud_ordnance_position", "#comp_hud_ordnance_position", "float2")
 	AddConVarSetting("comp_hud_utility_position", "#comp_hud_utility_position", "float2")
 
-	// Core/Titam Meter
+	// Core/Titan Meter
 	AddModCategory("#hud_core_titan_meter")
 	AddConVarSetting("comp_hud_titan_meter_offset", "#comp_hud_titan_meter_offset", "float2" )
 	AddConVarSetting("comp_hud_titan_meter_scale", "#comp_hud_titan_meter_scale", "float2" )
@@ -65,6 +65,7 @@ void function HudRevampSettings_Init()
 	AddConVarSettingEnum( "comp_core_meter_timer_style", "#comp_core_meter_timer_style", [ "#hud_Number", "#hud_Text", "#hud_Legion", "#hud_Hybrid" ] )
 	AddConVarSetting("comp_core_meter_timer_pos", "#comp_core_meter_timer_pos", "float2" )
 	AddConVarSetting("comp_core_meter_timer_size", "#comp_core_meter_timer_size", "float" )
+	AddConVarSettingEnum("comp_core_meter_timer_legion_color", "#comp_core_meter_timer_legion_color", [ "blue", "red" ] )
 
 	// Phase Glitch Detector
 	AddModCategory("#hud_psgd")

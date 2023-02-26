@@ -67,6 +67,7 @@
 		"hud_core_timer_laser" "Laser Core Expires in `1%.2f"
 		"hud_core_timer_fake_laser" "Fake Core Expires in `1%.2f"
 		"hud_core_timer_standby" "Core Firing in `1%.2f"
+		"comp_core_meter_timer_legion_color" "Smart Core Style: Color"
 
 		"hud_psgd" "Phase Glitch Warning"
 		"psgd_msg_strong" "Phase Shift Anomaly Detected: Critical"

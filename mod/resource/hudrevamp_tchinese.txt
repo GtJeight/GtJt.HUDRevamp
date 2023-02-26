@@ -67,6 +67,7 @@
 		"hud_core_timer_laser" "核心剩餘時間 `1%.2f"
 		"hud_core_timer_fake_laser" "虛假核心剩餘時間 `1%.2f"
 		"hud_core_timer_standby" "核心開火倒計時 `1%.2f"
+		"comp_core_meter_timer_legion_color" "智慧核心風格：顔色"
 
 		"hud_psgd" "相位BUG檢測"
 		"psgd_msg_strong" "偵測到反常相位行為：強"
