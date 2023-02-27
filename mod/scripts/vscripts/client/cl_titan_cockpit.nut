@@ -157,7 +157,8 @@ void function UpdateTitanCockpitAdditionalRuis(entity player)
 	UpdateIonEnergyNumber(player)
 }
 
-void function MenuOpen_TitanCockpit() {
+void function MenuOpen_TitanCockpit()
+{
 	MenuOpen()
 }
 
@@ -427,13 +428,18 @@ void function UpdateIonEnergyNumber(entity player)
 {
 	if (!IsPlayerIon())
 		return
+	UpdateIonEnergyNumberInternal(player.GetSharedEnergyCount().tostring())
+}
 
+void function UpdateIonEnergyNumberInternal(string text)
+{
 	if(GetConVarBool("comp_hud_ion_energy_enabled"))
 	{
 		RuiSetFloat2( file.ionEnergyNumHud, "msgPos", GetConVarFloat2("comp_hud_ion_energy_pos") )
 		RuiSetFloat( file.ionEnergyNumHud, "msgFontSize", GetConVarFloat("comp_hud_ion_energy_size") )
 		RuiSetFloat3( file.ionEnergyNumHud, "msgColor", GetConVarFloat3("comp_hud_ion_energy_color") / 255.0 )
-		RuiSetString( file.ionEnergyNumHud, "msgText", player.GetSharedEnergyCount().tostring() )
+		RuiSetString( file.ionEnergyNumHud, "msgText", text )
+		RuiSetFloat( file.ionEnergyNumHud, "msgAlpha", 0.9 )
 	}
 	else
 	{
@@ -598,18 +604,7 @@ void function MenuOpen()
 	// Ion energy number
 	if (IsPlayerIon())
 	{
-		if(GetConVarBool("comp_hud_ion_energy_enabled"))
-		{
-			RuiSetFloat2( file.ionEnergyNumHud, "msgPos", GetConVarFloat2("comp_hud_ion_energy_pos") )
-			RuiSetFloat( file.ionEnergyNumHud, "msgFontSize", GetConVarFloat("comp_hud_ion_energy_size") )
-			RuiSetFloat3( file.ionEnergyNumHud, "msgColor", GetConVarFloat3("comp_hud_ion_energy_color") / 255.0 )
-			RuiSetString( file.ionEnergyNumHud, "msgText", "1000" )
-		}
-		else
-		{
-			RuiSetString( file.ionEnergyNumHud, "msgText", "" )
-			RuiSetFloat( file.ionEnergyNumHud, "msgAlpha", 0.0 )
-		}
+		UpdateIonEnergyNumberInternal("1000")
 	}
 }
 // GtJt HUD
