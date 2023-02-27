@@ -78,7 +78,7 @@ void function HudRevampSettings_Init()
 	AddConVarSettingEnum( "comp_hud_fix_ion_energy_bar", "#comp_hud_fix_ion_energy_bar", [ "#hud_no", "#hud_yes" ] )
 	AddConVarSettingEnum( "comp_hud_use_short_energy_bar", "#comp_hud_use_short_energy_bar", [ "#hud_no", "#hud_yes" ] )
 	AddConVarSettingEnum( "comp_hud_ion_energy_enabled", "#comp_hud_ion_energy_enabled", [ "#hud_no", "#hud_yes" ] )
-	AddConVarSetting( "comp_hud_ion_energy_pos", "#comp_hud_ion_energy_pos", "float2" )
+	AddConVarSetting( "comp_hud_ion_energy_pos", "#comp_hud_ion_energy_pos", "float3" )
 	AddConVarSetting( "comp_hud_ion_energy_size", "#comp_hud_ion_energy_size", "float" )
 	AddConVarSetting( "comp_hud_ion_energy_color", "#comp_hud_ion_energy_color", "float3" )
 }

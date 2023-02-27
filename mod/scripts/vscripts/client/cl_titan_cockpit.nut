@@ -435,7 +435,7 @@ void function UpdateIonEnergyNumberInternal(string text)
 {
 	if(GetConVarBool("comp_hud_ion_energy_enabled"))
 	{
-		RuiSetFloat2( file.ionEnergyNumHud, "msgPos", GetConVarFloat2("comp_hud_ion_energy_pos") )
+		RuiSetFloat2( file.ionEnergyNumHud, "msgPos", GetConVarFloat3("comp_hud_ion_energy_pos") )
 		RuiSetFloat( file.ionEnergyNumHud, "msgFontSize", GetConVarFloat("comp_hud_ion_energy_size") )
 		RuiSetFloat3( file.ionEnergyNumHud, "msgColor", GetConVarFloat3("comp_hud_ion_energy_color") / 255.0 )
 		RuiSetString( file.ionEnergyNumHud, "msgText", text )
@@ -518,7 +518,7 @@ var function CoreTimerText_CreateHud()
 {
 	Assert( file.coreTimerTextHud == null )
 
-	file.coreTimerTextHud = CreateCockpitRui( $"ui/lockon_hud.rpak" )
+	file.coreTimerTextHud = CreateTitanCockpitRui( $"ui/lockon_hud.rpak" )
 	RuiSetString( file.coreTimerTextHud, "lockMessage", "")
 	RuiSetGameTime( file.coreTimerTextHud, "lockEndTime", 0.0 )
 	RuiSetBool( file.coreTimerTextHud, "isVisible", false )
@@ -539,10 +539,10 @@ var function IonEnergyNum_CreateHud()
 {
 	Assert( file.ionEnergyNumHud == null )
 
-	file.ionEnergyNumHud = CreateCockpitRui($"ui/cockpit_console_text_top_left.rpak", -1)
+	file.ionEnergyNumHud = CreateTitanCockpitRui($"ui/cockpit_console_text_top_left.rpak", -1)
     RuiSetInt( file.ionEnergyNumHud, "maxLines", 1 )
     RuiSetInt( file.ionEnergyNumHud, "lineNum", 1 )
-    RuiSetFloat2( file.ionEnergyNumHud, "msgPos", GetConVarFloat2("comp_hud_ion_energy_pos") )
+    RuiSetFloat2( file.ionEnergyNumHud, "msgPos", GetConVarFloat3("comp_hud_ion_energy_pos") )
     RuiSetString( file.ionEnergyNumHud, "msgText", "" )
     RuiSetFloat( file.ionEnergyNumHud, "msgFontSize", GetConVarFloat("comp_hud_ion_energy_size") )
     RuiSetFloat( file.ionEnergyNumHud, "msgAlpha", 0.9 )
