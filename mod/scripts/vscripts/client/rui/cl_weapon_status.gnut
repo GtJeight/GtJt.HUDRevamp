@@ -312,8 +312,7 @@ void function UpdateCooldownRuis(entity player)
 					break
 			}
 			RuiSetFloat2( rui, "msgPos", GetConVarFloat2(posConVar) )
-
-			UpdateCooldownRui(rui, player, player.GetOffhandWeapon(i))
+			UpdateCooldownRui(rui, player, i)
 		}
 		else
 		{
@@ -328,8 +327,7 @@ void function UpdateCooldownRuis(entity player)
 					break
 			}
 			RuiSetFloat2( rui, "msgPos", GetConVarFloat2(posConVar) )
-
-			UpdateCooldownRui(rui, player, player.GetOffhandWeapon(i))
+			UpdateCooldownRui(rui, player, i)
 		}
 	}
 }
@@ -421,8 +419,11 @@ void function MenuOpen()
 	}
 }
 
-void function UpdateCooldownRui( var rui, entity player, entity weapon )
+array<float> lastCooldown = [0.0, 0.0, 0.0]
+array<float> lastUpdate = [0.0, 0.0, 0.0]
+void function UpdateCooldownRui( var rui, entity player, int i)
 {
+	entity weapon = player.GetOffhandWeapon(i)
 	float altCooldown = 0.0
 	float timeUntilNextCharge = 0.0
 	int maxCharges = 1
@@ -593,7 +594,17 @@ void function UpdateCooldownRui( var rui, entity player, entity weapon )
 	}
 	else
 	{
-		RuiSetString(rui, "msgText", format(settings.abilityText, cooldown))
+		float deltaTime = Time() - lastUpdate[i]
+		if (cooldown == lastCooldown[i] && lastCooldown[i] - deltaTime > 0)
+		{
+			RuiSetString(rui, "msgText", format(settings.abilityText, lastCooldown[i] - deltaTime))
+		}
+		else
+		{
+			RuiSetString(rui, "msgText", format(settings.abilityText, cooldown))
+			lastUpdate[i] = Time()
+			lastCooldown[i] = cooldown
+		}
 	}
 }
 
