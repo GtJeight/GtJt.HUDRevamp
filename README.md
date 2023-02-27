@@ -8,7 +8,7 @@ An alternative, modified and customized version of [HUDRevamp](https://github.co
 
 Dependecy : [ModSettings v2](https://northstar.thunderstore.io/package/EladNLG/ModSettings/)（[Vanilla ver is here](https://github.com/Glacir/ModSettings/releases/latest)）
 
-默认设置数值不一定适用于你的分辨率，请在 ModSettings 菜单中自行修改。在游戏中进入 ModSettings 菜单，配合 F1 键显示/隐藏菜单，可以方便地将相应数字项调整到想要的位置。注意此时在铁驭状态下仅显示铁驭相关界面，在泰坦状态下同理。
+默认设置数值不一定适用于你的分辨率，请在 ModSettings 菜单中自行修改。在游戏中进入 ModSettings 菜单，配合 F1 键显示/隐藏菜单（需要自行修改或者使用官服版，原版不支持此特性），可以方便地将相应数字项调整到想要的位置。注意此时在铁驭状态下仅显示铁驭相关界面，在泰坦状态下同理。
 
 ## 新特性（相比原版）
 
@@ -17,8 +17,13 @@ Dependecy : [ModSettings v2](https://northstar.thunderstore.io/package/EladNLG/M
   - 数字风格
   - 文本风格
   - 智慧核心风格
+  - 混合风格（智慧核心+文本）
 - 连续相位提示
   - **注意**：本功能仅供参考之用，存在**误报**或**漏报**可能。请勿仅以该提示断定自己或他人使用了双相位BUG，触发提示后还需自行目视或者使用demo复盘进一步判断。作者不保证检测结果完全正确，任何被该功能指控的玩家持有质疑和反驳的权利
+- 离子HUD
+  - 修复原版能量条显示不准的问题
+  - 强制使用短能量条（边境）
+  - 显示能量数值
 
 ## 计划（饼）
 

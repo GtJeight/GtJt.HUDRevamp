@@ -13,7 +13,7 @@ void function HudRevampSettings_Init()
         [ "#hud_no", "#hud_yes" ] )
 	AddConVarSettingEnum("comp_hud_healthbar_overlap", "#comp_hud_healthbar_overlap",
         [ "#hud_no", "#hud_yes" ] )
-	AddConVarSetting("comp_hud_health_text_offset", "#comp_hud_health_text_offset", "float2" )
+	// AddConVarSetting("comp_hud_health_text_offset", "#comp_hud_health_text_offset", "float2" )
 
 	// Utilities
 	AddModCategory("#hud_utilities")
@@ -22,7 +22,7 @@ void function HudRevampSettings_Init()
 	AddConVarSetting("comp_hud_ordnance_position", "#comp_hud_ordnance_position", "float2")
 	AddConVarSetting("comp_hud_utility_position", "#comp_hud_utility_position", "float2")
 
-	// Core/Titam Meter
+	// Core/Titan Meter
 	AddModCategory("#hud_core_titan_meter")
 	AddConVarSetting("comp_hud_titan_meter_offset", "#comp_hud_titan_meter_offset", "float2" )
 	AddConVarSetting("comp_hud_titan_meter_scale", "#comp_hud_titan_meter_scale", "float2" )
@@ -62,13 +62,23 @@ void function HudRevampSettings_Init()
 	// Core Meter Timer
 	AddModCategory("#hud_core_timer")
 	AddConVarSettingEnum( "comp_core_meter_timer", "#comp_core_meter_timer", [ "#hud_no", "#hud_yes" ] )
-	AddConVarSettingEnum( "comp_core_meter_timer_style", "#comp_core_meter_timer_style", [ "#hud_Number", "#hud_Text", "#hud_Legion" ] )
-	AddConVarSetting("comp_core_meter_timer_pos", "#comp_core_meter_timer_pos", "float2" )
+	AddConVarSettingEnum( "comp_core_meter_timer_style", "#comp_core_meter_timer_style", [ "#hud_Number", "#hud_Text", "#hud_Legion", "#hud_Hybrid" ] )
+	AddConVarSetting("comp_core_meter_timer_pos3", "#comp_core_meter_timer_pos3", "float3" )
 	AddConVarSetting("comp_core_meter_timer_size", "#comp_core_meter_timer_size", "float" )
+	AddConVarSettingEnum("comp_core_meter_timer_legion_color", "#comp_core_meter_timer_legion_color", [ "blue", "red" ] )
 
 	// Phase Glitch Detector
 	AddModCategory("#hud_psgd")
 	AddConVarSettingEnum( "comp_phase_glitch_detector_enabled", "#comp_phase_glitch_detector_enabled", [ "#hud_no", "#hud_yes" ] )
 	AddConVarSetting("comp_phase_glitch_detector_pos", "#comp_phase_glitch_detector_pos", "float2")
 	AddConVarSetting("comp_phase_glitch_detector_size", "#comp_phase_glitch_detector_size", "float" )
+
+	// Ion HUD
+	AddModCategory("#hud_ion_hud")
+	AddConVarSettingEnum( "comp_hud_fix_ion_energy_bar", "#comp_hud_fix_ion_energy_bar", [ "#hud_no", "#hud_yes" ] )
+	AddConVarSettingEnum( "comp_hud_use_short_energy_bar", "#comp_hud_use_short_energy_bar", [ "#hud_no", "#hud_yes" ] )
+	AddConVarSettingEnum( "comp_hud_ion_energy_enabled", "#comp_hud_ion_energy_enabled", [ "#hud_no", "#hud_yes" ] )
+	AddConVarSetting( "comp_hud_ion_energy_pos", "#comp_hud_ion_energy_pos", "float3" )
+	AddConVarSetting( "comp_hud_ion_energy_size", "#comp_hud_ion_energy_size", "float" )
+	AddConVarSetting( "comp_hud_ion_energy_color", "#comp_hud_ion_energy_color", "float3" )
 }
