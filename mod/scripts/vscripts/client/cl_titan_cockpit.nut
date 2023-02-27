@@ -336,15 +336,15 @@ void function UpdateTextCoreTimer(string text)
 }
 
 void function UpdateLegionCoreTimer(entity player, float remainingTime) {
-	// if (file.smartCoreHud == null)
-	// {
-	// 	printt("file.smartCoreHud == null")
-	// 	return
-	// }
+	UpdateLegionCoreTimerInternal(player.p.smartCoreKills, remainingTime, player.GetZoomFrac())
+}
+
+void function UpdateLegionCoreTimerInternal(int kills, float remainingTime, float zoomFrac)
+{
 	RuiSetBool( file.smartCoreHud, "isLocked", GetConVarBool("comp_core_meter_timer_legion_color") )
 	RuiSetString( file.smartCoreHud, "remainingTime", TimeToString( remainingTime, true, remainingTime > 60.0 ) )
-	RuiSetString( file.smartCoreHud, "killCountText", format("X %i", player.p.smartCoreKills) )
-	RuiSetFloat( file.smartCoreHud, "zoomFrac", player.GetZoomFrac() )
+	RuiSetString( file.smartCoreHud, "killCountText", format("X %i", kills) )
+	RuiSetFloat( file.smartCoreHud, "zoomFrac", zoomFrac )
 	RuiSetBool( file.smartCoreHud, "hasCloseRangeAmmo", false )
 	RuiSetFloat( file.smartCoreHud, "smartCoreStatus", 1.00 )
 }
@@ -573,43 +573,20 @@ void function MenuOpen()
 	// core timer
 	if (GetConVarBool("comp_core_meter_timer"))
 	{
+		HideCoreTimers()
 		switch (GetConVarInt("comp_core_meter_timer_style")) {
 			case eHUDCoreTimer.number:
-				RuiSetFloat2( file.coreTimerNumHud, "msgPos", GetConVarFloat2("comp_core_meter_timer_pos") )
-				RuiSetString( file.coreTimerNumHud, "msgText", format("%.2f", 88.88))
-				RuiSetFloat( file.coreTimerNumHud, "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
-				RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.9 )
-				RuiSetBool( file.coreTimerTextHud, "isVisible", false )
-				RuiSetFloat( file.smartCoreHud, "smartCoreStatus", 0.0 )
+				UpdateNumberCoreTimer(8.88)
 				break
 			case eHUDCoreTimer.text:
-				RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.0 )
-				RuiSetString( file.coreTimerTextHud, "lockMessage", format(Localize("#hud_core_timer_sword"), 8.88))
-				RuiSetBool( file.coreTimerTextHud, "isVisible", true )
-				RuiSetFloat( file.smartCoreHud, "smartCoreStatus", 0.0 )
+				UpdateTextCoreTimer(format(Localize("#hud_core_timer_sword"), 8.88))
 				break
 			case eHUDCoreTimer.legion:
-				RuiSetFloat( file.smartCoreHud, "smartCoreStatus", 1.00 )
-				RuiSetBool( file.smartCoreHud, "isLocked", GetConVarBool("comp_core_meter_timer_legion_color") )
-				RuiSetString( file.smartCoreHud, "remainingTime", TimeToString( 8.88, true, false ) )
-				RuiSetString( file.smartCoreHud, "killCountText", "X 10" )
-				RuiSetFloat( file.smartCoreHud, "zoomFrac", player.GetZoomFrac() )
-				RuiSetBool( file.smartCoreHud, "hasCloseRangeAmmo", false )
-				RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.0 )
-				RuiSetBool( file.coreTimerTextHud, "isVisible", false )
+				UpdateLegionCoreTimerInternal(10, 8.88, 1.0)
 				break
 			case eHUDCoreTimer.hybrid:
-				RuiSetFloat( file.smartCoreHud, "smartCoreStatus", 1.00 )
-				RuiSetBool( file.smartCoreHud, "isLocked", GetConVarBool("comp_core_meter_timer_legion_color") )
-				RuiSetString( file.smartCoreHud, "remainingTime", TimeToString( 8.88, true, false ) )
-				RuiSetString( file.smartCoreHud, "killCountText", "X 10" )
-				RuiSetFloat( file.smartCoreHud, "zoomFrac", player.GetZoomFrac() )
-				RuiSetBool( file.smartCoreHud, "hasCloseRangeAmmo", false )
-
-				RuiSetString( file.coreTimerTextHud, "lockMessage", format(Localize("#hud_core_timer_sword"), 8.88))
-				RuiSetBool( file.coreTimerTextHud, "isVisible", true )
-
-				RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.0 )
+				UpdateLegionCoreTimerInternal(10, 8.88, 1.0)
+				UpdateTextCoreTimer(format(Localize("#hud_core_timer_sword"), 8.88))
 			default:
 				break
 		}
