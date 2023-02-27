@@ -13,7 +13,7 @@ void function HudRevampSettings_Init()
         [ "#hud_no", "#hud_yes" ] )
 	AddConVarSettingEnum("comp_hud_healthbar_overlap", "#comp_hud_healthbar_overlap",
         [ "#hud_no", "#hud_yes" ] )
-	AddConVarSetting("comp_hud_health_text_offset", "#comp_hud_health_text_offset", "float2" )
+	// AddConVarSetting("comp_hud_health_text_offset", "#comp_hud_health_text_offset", "float2" )
 
 	// Utilities
 	AddModCategory("#hud_utilities")
