@@ -212,13 +212,13 @@
             "Flags": 16777216
         },
         {
-            "Name": "comp_core_meter_timer_pos",
-            "DefaultValue": "-0.08 -0.12",
+            "Name": "comp_core_meter_timer_pos3",
+            "DefaultValue": "0.0 0.14 0.0",
             "Flags": 16777216
         },
         {
             "Name": "comp_core_meter_timer_size",
-            "DefaultValue": "60",
+            "DefaultValue": "40",
             "Flags": 16777216
         },
         {
