@@ -114,7 +114,6 @@ void function CheckPlayer( entity player )
 				printt(pname + " starts phase shift--------------------------------------------")
 				float curTime = Time()
 				file.PhaseShifting[ pname ] <- true
-				// float estimatedStartTime = GetEstimatedPSStart( player.IsTitan(), PSRemainingTime, curTime )
 				float estimatedStartTime = curTime - player.PhaseShiftTimePassed()
 				if ( estimatedStartTime < file.NextPSTime[ pname ])
 				{
@@ -141,7 +140,7 @@ void function CheckPlayer( entity player )
 					printt(format("estimatedStartTime - file.LastPSEnd %.6f", estimatedStartTime - file.LastPSEnd[ pname ]))
 				}
 
-				file.NextPSTime[ pname ] <- estimatedStartTime + GetEstimatePSThreshold(player.IsTitan(), PSRemainingTime)
+				file.NextPSTime[ pname ] <- estimatedStartTime + GetEstimatePSThreshold(player)
 				file.LastPSStart[ pname ] <- estimatedStartTime
 				printt("curTime estimatedStartTime remaining end")
 				printt(format("%.6f %.6f %.6f %.6f", curTime, estimatedStartTime, PSRemainingTime, curTime + PSRemainingTime) )
@@ -195,47 +194,10 @@ void function InitPlayerStatus( entity player )
 	printt("Start monitoring " + player.GetPlayerName() + " #####################################################")
 }
 
-float function GetEstimatePSThreshold( bool isTitan, float remaining ) {
-	if ( isTitan )
-	{
-		if (remaining > 1.8)
-		{
-			return 3.0 + PS_THRESHOLD // autoshift
-		}
-		return 1.0 + PS_THRESHOLD
-	}
-	else
-	{
-		return 2.2
-	}
-	unreachable
-}
-
-float function GetEstimatedPSStart( bool isTitan, float remaining, float curTime ) {
-
-	if ( isTitan )
-	{
-		if (remaining > 1.8)
-		{
-			return curTime - ( 3.0 - remaining ) // autoshift
-		}
-		else
-		{
-			return curTime - ( 1.0 - remaining )
-		}
-	}
-	else
-	{
-		if (remaining < 1.01)
-		{
-			return curTime - ( 1.0 - remaining ) // rodeoing ronin
-		}
-		else
-		{
-			return curTime - ( 2.0 - remaining )
-		}
-	}
-	unreachable
+float function GetEstimatePSThreshold( entity player ) {
+	if (!(player.IsTitan() || PlayerIsRodeoingTitan(player)))
+		return 2.2  // pliot phase shift
+	return player.PhaseShiftTimePassed() + player.PhaseShiftTimeRemaining() + PS_THRESHOLD
 }
 
 bool function GetPSG_State( entity player ) {
@@ -252,10 +214,6 @@ bool function GetPSG_State( entity player ) {
 			printt(format("Waring: player %s not found in GetPSG_State", pname))
 		}
 	}
-	// else
-	// {
-	// 	printt("Waring: entity is not player! GetPSG_State")
-	// }
 	return false
 }
 
