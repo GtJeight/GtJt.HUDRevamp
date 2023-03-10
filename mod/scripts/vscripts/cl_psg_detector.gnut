@@ -18,13 +18,15 @@ struct
 void function Cl_PSG_Detector_Init()
 {
 	RegisterSignal( "LocalPlayerDisconnected" )
+	RegisterSignal( "StopPsgMonitor" )
 	AddCallback_OnPlayerConnected( PlayerJoinTheGame )
-	AddCallback_GameStateEnter( eGameState.Playing, PlayerClientScriptInit )
+	AddCallback_GameStateEnter( eGameState.Playing, OnEnterPlaying )
+	AddCallback_GameStateEnter( eGameState.Epilogue, StopPsgMonitor )
 	AddCallback_OnPlayerDisconnected( PlayerDisconnected )
 	file.running = false
 }
 
-void function PlayerClientScriptInit()
+void function OnEnterPlaying()
 {
 	if (GameRules_GetGameMode() != FD)
 	{
@@ -58,26 +60,31 @@ void function PlayerJoinTheGame( entity player, int state )
 
 void function PlayerDisconnected( entity player )
 {
-	if (!IsValid( player ) || player == null || GetLocalViewPlayer() == null)
+	if (!IsValid( player ) || player == null || GetLocalViewPlayer() == null || !file.running)
 		return
 	if ( player == GetLocalViewPlayer() || player.GetPlayerName() == GetLocalViewPlayer().GetPlayerName() )
 	{
+		file.running = false
+		printt("\n#################\n" + "LocalPlayerDisconnected" + "\n#################\n")
 		player.Signal( "LocalPlayerDisconnected" )
-		printt("\n#################\n" + "LocalPlayerDisconnected" + "\n#################\n") // TODO check log
+	}
+}
+
+void function StopPsgMonitor()
+{
+	if (clGlobal.levelEnt != null && file.running)
+	{
+		file.running = false
+		printt("\n#################\n" + "StopPsgMonitor" + "\n#################\n")
+		GetLocalViewPlayer().Signal( "StopPsgMonitor" )
 	}
 }
 
 void function PSG_Monitor( entity player )
 {
 
-	// player.EndSignal( "OnDestroy" )
+	player.EndSignal( "StopPsgMonitor" )
 	player.EndSignal( "LocalPlayerDisconnected" )
-	OnThreadEnd(
-		function() : ( )
-		{
-			ClearStatus()
-		}
-	)
 
 	while(true)
 	{
@@ -176,10 +183,6 @@ void function CheckPlayer( entity player )
 			file.PhaseShifting[ pname ] <- false
 		}
 	}
-	// else
-	// {
-	// 	// printt("Warning: player invalid")
-	// }
 }
 
 void function InitPlayerStatus( entity player )
@@ -244,7 +247,7 @@ void function ClearStatus()
 	file.PSGlitching.clear()
 	file.PhaseShifting.clear()
 	file.Initialized.clear()
-	file.running = false
+	// file.running = false
 	printt("#################")
 	printt("Clearing status") // TODO check log
 	printt("#################")
