@@ -419,6 +419,7 @@ void function MenuOpen()
 		RuiSetFloat( file.ruis["glitch"], "msgFontSize", GetConVarFloat("comp_phase_glitch_detector_size") )
 		RuiSetFloat( file.ruis["glitch"], "msgAlpha", GetConVarBool("comp_phase_glitch_detector_enabled") ? 0.9 : 0.0 )
 	}
+	UpdateEarnMeterPos()
 }
 
 array<float> lastCooldown = [0.0, 0.0, 0.0]
@@ -646,6 +647,7 @@ void function TrackAdditionalRuis_Titan(entity player)
 			UpdatePSGDRui(player)
 			UpdateTitanCockpitAdditionalRuis(player)
 			UpdateIonEnergyBar(player)
+			UpdateEarnMeterPos()
 		}
 		WaitFrame()
 	}
@@ -683,6 +685,7 @@ void function TrackAdditionalRuis_Pilot(entity player)
 			UpdateWPDRui(player)
 			UpdateCooldownRuis(player)
 			UpdatePSGDRui(player)
+			UpdateEarnMeterPos()
 		}
 		WaitFrame()
 	}

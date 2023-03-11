@@ -13,6 +13,7 @@ global function Cl_SP_UpdateCoreIcon
 #endif
 
 global function EarnMeter_Update
+global function UpdateEarnMeterPos
 
 const float FILL_ANIM_DURATION = 0.7
 
@@ -46,8 +47,6 @@ void function Cl_EarnMeter_Init()
 
 	file.earnMeterTopo = BasicImageBar_CreateRuiTopo( <0,0,0>, <0, 0, 0>, 1, 1, eDirection.right, false )
 
-	thread EarnMeterTopo_Update()
-
 	AddCallback_OnClientScriptInit( Cl_EarnMeter_AddClient )
 	AddCallback_KillReplayStarted( KillReplayStarted )
 	AddCallback_KillReplayEnded( KillReplayEnded )
@@ -76,14 +75,10 @@ void function Cl_EarnMeter_Init()
 	}
 }
 
-void function EarnMeterTopo_Update()
+void function UpdateEarnMeterPos()
 {
-	while (true)
-	{
-		BasicImageBar_UpdatePosition( file.earnMeterTopo, GetConVarFloat2( "comp_hud_titan_meter_offset" ),
-			GetConVarFloat2("comp_hud_titan_meter_scale").x, GetConVarFloat2("comp_hud_titan_meter_scale").y )
-		WaitFrame()
-	}
+	BasicImageBar_UpdatePosition( file.earnMeterTopo, GetConVarFloat2( "comp_hud_titan_meter_offset" ),
+		GetConVarFloat2("comp_hud_titan_meter_scale").x, GetConVarFloat2("comp_hud_titan_meter_scale").y )
 }
 
 
