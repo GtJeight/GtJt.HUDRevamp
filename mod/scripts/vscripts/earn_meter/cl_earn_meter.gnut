@@ -73,6 +73,7 @@ void function Cl_EarnMeter_Init()
 		//var rui = CreateCockpitRui( $"ui/reward_hud.rpak" )
 		//file.rewardRui = rui
 	}
+	UpdateEarnMeterPos()
 }
 
 void function UpdateEarnMeterPos()
