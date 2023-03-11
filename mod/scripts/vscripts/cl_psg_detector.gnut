@@ -204,18 +204,18 @@ float function GetEstimatePSThreshold( entity player ) {
 }
 
 bool function GetPSG_State( entity player ) {
-	if (player.IsPlayer())
+	if (player.IsPlayer() && IsValid(player))
 	{
 		string pname = player.GetPlayerName()
 		if ( pname in file.PSGlitching )
 		{
 			return file.PSGlitching[ pname ] > 0.5
 		}
-		else
-		{
-			file.PSGlitching[ pname ] <- 0.0
-			printt(format("Waring: player %s not found in GetPSG_State", pname))
-		}
+		// else
+		// {
+		// 	file.PSGlitching[ pname ] <- 0.0
+		// printt(format("Waring: player %s not found in GetPSG_State", pname))
+		// }
 	}
 	return false
 }

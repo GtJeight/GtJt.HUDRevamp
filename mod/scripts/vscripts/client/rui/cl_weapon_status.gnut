@@ -338,6 +338,7 @@ void function UpdatePSGDRui(entity player) {
 	{
 		RuiSetFloat( file.ruis["glitch"], "msgAlpha", 0.9)
 		RuiSetFloat( file.ruis["glitch"], "msgFontSize", GetConVarFloat("comp_phase_glitch_detector_size"))
+		RuiSetFloat2( file.ruis["glitch"], "msgPos", GetConVarFloat2("comp_phase_glitch_detector_pos") )
 		array<entity> players = GetPlayerArray()
 		string detectMsg = ""
 		foreach ( currentPlayer in players )
@@ -354,6 +355,7 @@ void function UpdatePSGDRui(entity player) {
 		RuiSetFloat( file.ruis["glitch"], "msgAlpha", 0.9)
 		RuiSetFloat( file.ruis["glitch"], "msgFontSize", 30)
 		RuiSetString(file.ruis["glitch"], "msgText", GetPSG_Message(GetLocalViewPlayer()))
+		RuiSetFloat2( file.ruis["glitch"], "msgPos", GetConVarFloat2("comp_phase_glitch_detector_pos") )
 	}
 	else
 	{
