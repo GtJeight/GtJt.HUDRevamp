@@ -44,13 +44,6 @@ void function OnEnterPlaying()
 		file.running = true
 		thread PSG_Monitor( GetLocalViewPlayer() )
 	}
-	else
-	{
-		printt("#####################################")
-		printt("Warning: Already running PSG monitor")
-		printt("#####################################")
-		// thread PSG_Monitor( GetLocalViewPlayer() ) // run anyway
-	}
 }
 
 void function PlayerJoinTheGame( entity player, int state )
@@ -65,18 +58,23 @@ void function PlayerDisconnected( entity player )
 	if ( player == GetLocalViewPlayer() || player.GetPlayerName() == GetLocalViewPlayer().GetPlayerName() )
 	{
 		file.running = false
-		printt("\n#################\n" + "LocalPlayerDisconnected" + "\n#################\n")
+		printt("#################")
+		printt("LocalPlayerDisconnected")
+		printt("#################")
 		player.Signal( "LocalPlayerDisconnected" )
 	}
 }
 
 void function StopPsgMonitor()
 {
-	if (clGlobal.levelEnt != null && file.running)
+	entity player = GetLocalViewPlayer()
+	if (IsValid(player) && file.running)
 	{
 		file.running = false
-		printt("\n#################\n" + "StopPsgMonitor" + "\n#################\n")
-		GetLocalViewPlayer().Signal( "StopPsgMonitor" )
+		printt("#################")
+		printt("StopPsgMonitor")
+		printt("#################")
+		player.Signal( "StopPsgMonitor" )
 	}
 }
 
@@ -102,7 +100,7 @@ void function CheckPlayer( entity player )
 		string pname = player.GetPlayerName()
 		if ( !( pname in file.Initialized ) )
 		{
-			InitPlayerStatus( player )
+			return
 		}
 		if ( IsAlive( player ) )
 		{
@@ -249,6 +247,6 @@ void function ClearStatus()
 	file.Initialized.clear()
 	// file.running = false
 	printt("#################")
-	printt("Clearing status") // TODO check log
+	printt("Clearing status")
 	printt("#################")
 }
