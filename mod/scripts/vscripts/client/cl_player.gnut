@@ -667,7 +667,7 @@ function ServerCallback_PlayerConnectedOrDisconnected( player_eHandle, state )
 
 	if ( !IsLobby() || !IsConnected() )
 		UpdatePlayerStatusCounts()
-	if( state != 0 )
+	if( state == 1 && IsValid( player ))
 	{
 		foreach ( callbackFunc in file.onPlayerConnectedFuncs )
 		{
