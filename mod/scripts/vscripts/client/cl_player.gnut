@@ -129,16 +129,8 @@ void function ClPlayer_Init()
 	level.menuHideGroups <- {}
 
 	level.spawnAsTitanSelected <- false
-	RegisterButtonPressedCallback(KEY_L, AAAAA)
-	AddPlayerFunc( Player_AddPlayer )
-}
 
-void function AAAAA(var button){
-	int i=0
-	for(i=0;i<=2048;i++)
-	{
-		print("Entity ["+i+"] "+GetEntByIndex(i))
-	}
+	AddPlayerFunc( Player_AddPlayer )
 }
 
 entity function FindEnemyRodeoParent( entity player )
