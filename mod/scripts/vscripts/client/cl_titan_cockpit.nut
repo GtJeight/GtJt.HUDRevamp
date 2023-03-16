@@ -40,8 +40,6 @@ global function SetUnlimitedDash
 global function NetworkedVarChangedCallback_UpdateVanguardRUICoreStatus
 global function DisplayFrontierRank
 #endif
-global function UpdateTitanCockpitAdditionalRuis
-global function MenuOpen_TitanCockpit
 
 struct TitanCockpitManagedRUI
 {
@@ -90,6 +88,7 @@ struct
 	var coreTimerTextHud
 	var ionEnergyNumHud
 	bool coreFired = false
+	bool isMenuOpen = false
 	// GtJt HUD
 } file
 
@@ -155,11 +154,6 @@ void function UpdateTitanCockpitAdditionalRuis(entity player)
 	UpdateTitanHealthNumberRui(player)
 	UpdateCoreTimer(player)
 	UpdateIonEnergyNumber(player)
-}
-
-void function MenuOpen_TitanCockpit()
-{
-	MenuOpen()
 }
 
 float lastShieldStateChangeTime = -5.0;
@@ -322,6 +316,35 @@ void function UpdateCoreTimer(entity player)
 	}
 }
 
+void function UpdateTitanCockpitAdditionalRuis_Thread(entity cockpit)
+{
+	entity player = GetLocalViewPlayer()
+	player.EndSignal( "OnDeath" )
+	cockpit.EndSignal( "OnDestroy" )
+
+	while(IsAlive(player))
+	{
+		if (clGlobal.isMenuOpen)
+		{
+			if (!file.isMenuOpen)
+			{
+				file.isMenuOpen = true
+			}
+			MenuOpen()
+		}
+		else
+		{
+			if (file.isMenuOpen)
+			{
+				file.isMenuOpen = false
+			}
+			UpdateTitanCockpitAdditionalRuis(player)
+			UpdateIonEnergyBar(player)
+		}
+		WaitFrame()
+	}
+}
+
 void function UpdateNumberCoreTimer(float remainingTime)
 {
 	RuiSetFloat2( file.coreTimerNumHud, "msgPos", GetConVarFloat3("comp_core_meter_timer_pos3") )
@@ -386,28 +409,6 @@ void function SmartCore_DestroyHud()
 	TitanCockpitDestroyRui( file.smartCoreHud )
 	file.smartCoreHud = null
 }
-
-// bool function SmartCore_ShouldCreateHud()
-// {
-// 	entity player = GetLocalViewPlayer()
-// 	if ( !IsValid( player ) )
-// 		return false
-
-// 	if (GetConVarInt("comp_core_meter_timer_style") == eHUDCoreTimer.legion && player.IsTitan())
-// 	{
-// 		return IsPlayerTitanUsingSmartHud(player)
-// 	}
-// 	return false
-// }
-
-// bool function IsPlayerTitanUsingSmartHud(entity player) {
-// 	if (player.IsTitan())
-// 	{
-// 		string titanName = GetTitanCharacterName( player )
-// 		return titanName == "ronin" || titanName == "ion"
-// 	}
-// 	return false
-// }
 
 bool function ShouldCreateHud()
 {
@@ -826,6 +827,8 @@ void function ShowRUIHUD( entity cockpit )
 	file.isFirstBoot = false
 
 	UpdateTitanCockpitVisibility()
+	// Must be after creating managed ruis
+	thread UpdateTitanCockpitAdditionalRuis_Thread(cockpit)
 }
 
 #if MP

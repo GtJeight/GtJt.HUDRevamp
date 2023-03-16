@@ -634,7 +634,6 @@ void function TrackAdditionalRuis_Titan(entity player)
 				file.isMenuOpen = true
 			}
 			MenuOpen()
-			MenuOpen_TitanCockpit()
 		}
 		else
 		{
@@ -647,8 +646,6 @@ void function TrackAdditionalRuis_Titan(entity player)
 			}
 			UpdateCooldownRuis(player)
 			UpdatePSGDRui(player)
-			UpdateTitanCockpitAdditionalRuis(player)
-			UpdateIonEnergyBar(player)
 		}
 		WaitFrame()
 	}
