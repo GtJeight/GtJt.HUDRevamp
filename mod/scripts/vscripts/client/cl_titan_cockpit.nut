@@ -328,6 +328,11 @@ void function UpdateTitanCockpitAdditionalRuis_Thread(entity cockpit)
 
 	while(IsAlive(player) && IsValid(cockpit))
 	{
+		if (GetGameState() != eGameState.Playing)
+		{
+			WaitFrame()
+			continue
+		}
 		if (clGlobal.isMenuOpen)
 		{
 			if (!file.isMenuOpen)

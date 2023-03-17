@@ -627,6 +627,11 @@ void function TrackAdditionalRuis_Titan(entity player)
 
 	while (IsAlive( player ))
 	{
+		if (GetGameState() != eGameState.Playing)
+		{
+			WaitFrame()
+			continue
+		}
 		if (clGlobal.isMenuOpen)
 		{
 			if (!file.isMenuOpen)
@@ -665,6 +670,11 @@ void function TrackAdditionalRuis_Pilot(entity player)
 
 	while (IsAlive( player ))
 	{
+		if (GetGameState() != eGameState.Playing)
+		{
+			WaitFrame()
+			continue
+		}
 		if (clGlobal.isMenuOpen)
 		{
 			if (!file.isMenuOpen)
