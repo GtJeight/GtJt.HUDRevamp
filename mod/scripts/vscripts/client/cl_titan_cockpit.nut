@@ -196,123 +196,127 @@ void function UpdateTitanHealthNumberRui(entity player)
 void function UpdateCoreTimer(entity player)
 {
 	// update core timer
-	if(GetConVarBool("comp_core_meter_timer"))
+	if (!GetConVarBool("comp_core_meter_timer") || !IsAlive(player) || !player.IsTitan())
+		return
+
+	entity soul = player.GetTitanSoul()
+	if (!IsValid(soul))
+		return
+
+	string titanName = GetTitanCharacterName( player )
+	if ( titanName == "ronin" )
 	{
-		string titanName = GetTitanCharacterName( player )
-		if ( titanName == "ronin" )
+		float curTime = Time()
+		float remainingTime = soul.GetCoreChargeExpireTime() - curTime
+		if (remainingTime > 0.0)
 		{
-			entity soul = player.GetTitanSoul()
-			float curTime = Time()
-			float remainingTime = soul.GetCoreChargeExpireTime() - curTime
-			if (remainingTime > 0.0)
+			if (!file.coreFired)
 			{
-				if (!file.coreFired)
-				{
-					file.coreFired = true
-				}
-				int style = GetConVarInt("comp_core_meter_timer_style")
-				switch (style)
-				{
-					case eHUDCoreTimer.number:
-						UpdateNumberCoreTimer(remainingTime)
-						break
-					case eHUDCoreTimer.text:
-						string text = format(Localize("#hud_core_timer_laser"), remainingTime)
-						UpdateTextCoreTimer(text)
-						break
-					case eHUDCoreTimer.legion:
-						UpdateLegionCoreTimer(player, remainingTime)
-						break
-					case eHUDCoreTimer.hybrid:
-						UpdateLegionCoreTimer(player, remainingTime)
-						string text = format(Localize("#hud_core_timer_laser"), remainingTime)
-						UpdateTextCoreTimer(text)
-					default:
-						break
-				}
+				file.coreFired = true
 			}
-			else
+			int style = GetConVarInt("comp_core_meter_timer_style")
+			switch (style)
 			{
-				if (file.coreFired)
-				{
-					player.p.smartCoreKills = 0
-					file.coreFired = false
-				}
-				HideCoreTimers() // TODO only hide when menu close and on core disable?
-			}
-		}
-		else if ( titanName == "ion" )
-		{
-			entity soul = player.GetTitanSoul()
-			entity weapon = player.GetOffhandWeapon( OFFHAND_EQUIPMENT )
-			float coreFrac = weapon.GetSustainedDischargeFraction()
-			float curTime = Time()
-			float remainingTimeFake = soul.GetCoreChargeExpireTime() - curTime
-			float duration = weapon.GetSustainedDischargeDuration()
-			if (coreFrac > 0.0)
-			{
-				// real core
-				if (!file.coreFired)
-				{
-					file.coreFired = true
-				}
-				float remainingTime = (1 - coreFrac) * duration
-				int style = GetConVarInt("comp_core_meter_timer_style")
-				switch (style)
-				{
-					case eHUDCoreTimer.number:
-						UpdateNumberCoreTimer(remainingTime)
-						// Hide ion fake core timer
-						HideCoreTimer_Text()
-						break
-					case eHUDCoreTimer.text:
-						string text = format(Localize("#hud_core_timer_laser"), remainingTime)
-						UpdateTextCoreTimer(text)
-						break
-					case eHUDCoreTimer.legion:
-						UpdateLegionCoreTimer(player, remainingTime)
-						// Hide ion fake core timer
-						HideCoreTimer_Text()
-						break
-					case eHUDCoreTimer.hybrid:
-						UpdateLegionCoreTimer(player, remainingTime)
-						string text = format(Localize("#hud_core_timer_laser"), remainingTime)
-						UpdateTextCoreTimer(text)
-					default:
-						break
-				}
-			}
-			else if (remainingTimeFake > 0.0)
-			{
-				if (file.coreFired)
-				{
-					// fake core
-					HideCoreTimer_Smart()
-					HideCoreTimer_Num()
-					string text = format(Localize("#hud_core_timer_fake_laser"), remainingTimeFake)
+				case eHUDCoreTimer.number:
+					UpdateNumberCoreTimer(remainingTime)
+					break
+				case eHUDCoreTimer.text:
+					string text = format(Localize("#hud_core_timer_laser"), remainingTime)
 					UpdateTextCoreTimer(text)
-				}
-				else if (remainingTimeFake > duration)
-				{
-					// core fire standby
-					string text = format(Localize("#hud_core_timer_standby"), remainingTimeFake - duration)
+					break
+				case eHUDCoreTimer.legion:
+					UpdateLegionCoreTimer(player, remainingTime)
+					break
+				case eHUDCoreTimer.hybrid:
+					UpdateLegionCoreTimer(player, remainingTime)
+					string text = format(Localize("#hud_core_timer_laser"), remainingTime)
 					UpdateTextCoreTimer(text)
-				}
-			}
-			else
-			{
-				if (file.coreFired)
-				{
-					player.p.smartCoreKills = 0
-					file.coreFired = false
-				}
-				HideCoreTimers()
+				default:
+					break
 			}
 		}
 		else
 		{
+			if (file.coreFired)
+			{
+				player.p.smartCoreKills = 0
+				file.coreFired = false
+			}
+			HideCoreTimers() // TODO only hide when menu close and on core disable?
+		}
+	}
+	else if ( titanName == "ion" )
+	{
+		entity weapon = player.GetOffhandWeapon( OFFHAND_EQUIPMENT )
+		if (!IsValid(weapon))
+			return
+		float coreFrac = weapon.GetSustainedDischargeFraction()
+		float curTime = Time()
+		float remainingTimeFake = soul.GetCoreChargeExpireTime() - curTime
+		float duration = weapon.GetSustainedDischargeDuration()
+		if (coreFrac > 0.0)
+		{
+			// real core
+			if (!file.coreFired)
+			{
+				file.coreFired = true
+			}
+			float remainingTime = (1 - coreFrac) * duration
+			int style = GetConVarInt("comp_core_meter_timer_style")
+			switch (style)
+			{
+				case eHUDCoreTimer.number:
+					UpdateNumberCoreTimer(remainingTime)
+					// Hide ion fake core timer
+					HideCoreTimer_Text()
+					break
+				case eHUDCoreTimer.text:
+					string text = format(Localize("#hud_core_timer_laser"), remainingTime)
+					UpdateTextCoreTimer(text)
+					break
+				case eHUDCoreTimer.legion:
+					UpdateLegionCoreTimer(player, remainingTime)
+					// Hide ion fake core timer
+					HideCoreTimer_Text()
+					break
+				case eHUDCoreTimer.hybrid:
+					UpdateLegionCoreTimer(player, remainingTime)
+					string text = format(Localize("#hud_core_timer_laser"), remainingTime)
+					UpdateTextCoreTimer(text)
+				default:
+					break
+			}
+		}
+		else if (remainingTimeFake > 0.0)
+		{
+			if (file.coreFired)
+			{
+				// fake core
+				HideCoreTimer_Smart()
+				HideCoreTimer_Num()
+				string text = format(Localize("#hud_core_timer_fake_laser"), remainingTimeFake)
+				UpdateTextCoreTimer(text)
+			}
+			else if (remainingTimeFake > duration)
+			{
+				// core fire standby
+				string text = format(Localize("#hud_core_timer_standby"), remainingTimeFake - duration)
+				UpdateTextCoreTimer(text)
+			}
+		}
+		else
+		{
+			if (file.coreFired)
+			{
+				player.p.smartCoreKills = 0
+				file.coreFired = false
+			}
 			HideCoreTimers()
 		}
+	}
+	else
+	{
+		HideCoreTimers()
 	}
 }
 
@@ -322,7 +326,7 @@ void function UpdateTitanCockpitAdditionalRuis_Thread(entity cockpit)
 	player.EndSignal( "OnDeath" )
 	cockpit.EndSignal( "OnDestroy" )
 
-	while(IsAlive(player))
+	while(IsAlive(player) && IsValid(cockpit))
 	{
 		if (clGlobal.isMenuOpen)
 		{
@@ -339,7 +343,10 @@ void function UpdateTitanCockpitAdditionalRuis_Thread(entity cockpit)
 				file.isMenuOpen = false
 			}
 			UpdateTitanCockpitAdditionalRuis(player)
-			UpdateIonEnergyBar(player)
+			if (IsPlayerIon())
+			{
+				UpdateIonEnergyBar(player)
+			}
 		}
 		WaitFrame()
 	}
