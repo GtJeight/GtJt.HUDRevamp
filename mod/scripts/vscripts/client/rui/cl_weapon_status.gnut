@@ -629,8 +629,8 @@ void function TrackAdditionalRuis_Titan(entity player)
 	{
 		if (GetGameState() != eGameState.Playing)
 		{
-			WaitFrame()
-			continue
+			printt("TrackAdditionalRuis_Titan not playing")
+			return
 		}
 		if (clGlobal.isMenuOpen)
 		{
@@ -672,8 +672,8 @@ void function TrackAdditionalRuis_Pilot(entity player)
 	{
 		if (GetGameState() != eGameState.Playing)
 		{
-			WaitFrame()
-			continue
+			printt("TrackAdditionalRuis_Pilot not playing")
+			return
 		}
 		if (clGlobal.isMenuOpen)
 		{

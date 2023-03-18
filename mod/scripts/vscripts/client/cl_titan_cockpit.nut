@@ -330,8 +330,8 @@ void function UpdateTitanCockpitAdditionalRuis_Thread(entity cockpit)
 	{
 		if (GetGameState() != eGameState.Playing)
 		{
-			WaitFrame()
-			continue
+			printt("UpdateTitanCockpitAdditionalRuis_Thread not playing")
+			return
 		}
 		if (clGlobal.isMenuOpen)
 		{

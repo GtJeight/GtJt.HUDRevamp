@@ -32,7 +32,15 @@ void function Cl_DamageIndicator_Init()
 
 void function PlayerTookDamage( float damage, vector pos, int damageType, int damageSourceId, entity attacker )
 {
-	if (!GetLocalViewPlayer().IsTitan() || !GetConVarBool("comp_hud_incoming_damage_indicator"))
+	if (GetGameState() != eGameState.Playing)
+	{
+		printt("PlayerTookDamage was called when not playing")
+		return
+	}
+	entity player = GetLocalViewPlayer()
+	if (!IsValid(player))
+		return
+	if (!player.IsTitan() || !GetConVarBool("comp_hud_incoming_damage_indicator"))
 		return
 	if (damage == 0.0)
 		return
@@ -139,6 +147,11 @@ void function Track_StackingDamageFlyoutText(entity player)
 
 	while (IsAlive(player))
 	{
+		if (GetGameState() != eGameState.Playing)
+		{
+			printt("Track_StackingDamageFlyoutText not playing")
+			return
+		}
 		INCOMING_DAMAGE_TEXT_STACKING_FADE_TIME = GetConVarFloat("comp_hud_incoming_damage_indicator_fade_time")
 		INCOMING_DAMAGE_TEXT_STACKING_DURATION = GetConVarFloat("comp_hud_incoming_damage_indicator_duration")
 		INCOMING_DAMAGE_TEXT_STACKING_STAY_TIME = INCOMING_DAMAGE_TEXT_STACKING_DURATION - INCOMING_DAMAGE_TEXT_STACKING_FADE_TIME
