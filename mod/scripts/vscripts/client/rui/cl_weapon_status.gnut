@@ -627,7 +627,7 @@ void function TrackAdditionalRuis_Titan(entity player)
 
 	while (IsAlive( player ))
 	{
-		if (GetGameState() != eGameState.Playing)
+		if (GetGameState() >= eGameState.Epilogue)
 		{
 			printt("TrackAdditionalRuis_Titan not playing")
 			return
@@ -670,7 +670,7 @@ void function TrackAdditionalRuis_Pilot(entity player)
 
 	while (IsAlive( player ))
 	{
-		if (GetGameState() != eGameState.Playing)
+		if (GetGameState() >= eGameState.Epilogue)
 		{
 			printt("TrackAdditionalRuis_Pilot not playing")
 			return

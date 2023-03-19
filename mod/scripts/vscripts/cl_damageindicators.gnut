@@ -32,11 +32,6 @@ void function Cl_DamageIndicator_Init()
 
 void function PlayerTookDamage( float damage, vector pos, int damageType, int damageSourceId, entity attacker )
 {
-	if (GetGameState() != eGameState.Playing)
-	{
-		printt("PlayerTookDamage was called when not playing")
-		return
-	}
 	entity player = GetLocalViewPlayer()
 	if (!IsValid(player))
 		return
@@ -147,7 +142,7 @@ void function Track_StackingDamageFlyoutText(entity player)
 
 	while (IsAlive(player))
 	{
-		if (GetGameState() != eGameState.Playing)
+		if (GetGameState() >= eGameState.Epilogue)
 		{
 			printt("Track_StackingDamageFlyoutText not playing")
 			return
