@@ -146,15 +146,15 @@ function ClTitanCockpit_Init()
 
 // GtJt HUD
 
-void function UpdateTitanCockpitAdditionalRuis(entity player)
-{
-	if ( file.cockpitRui == null )
-		return
-	// updated in cl_weapon_status
-	UpdateTitanHealthNumberRui(player)
-	UpdateCoreTimer(player)
-	UpdateIonEnergyNumber(player)
-}
+// void function UpdateTitanCockpitAdditionalRuis(entity player)
+// {
+// 	if ( file.cockpitRui == null )
+// 		return
+// 	// updated in cl_weapon_status
+// 	UpdateTitanHealthNumberRui(player)
+// 	UpdateCoreTimer(player)
+// 	UpdateIonEnergyNumber(player)
+// }
 
 float lastShieldStateChangeTime = -5.0;
 int lastShieldHealth = 0;
@@ -168,8 +168,10 @@ void function UpdateTitanHealthNumberRui(entity player)
 	RuiSetFloat2( file.healthHud, "msgPos", settings.healthPos + (GetConVarBool("comp_hud_healthbar_overlap") ? <0.0, -0.0225, 0.0> : <0,0,0>))
 
 	// update titan shield
-	int shieldHealth = 0;
-	if (player.GetTitanSoul() != null) shieldHealth = player.GetTitanSoul().GetShieldHealth()
+	entity soul = player.GetTitanSoul()
+	if (!IsValid(soul))
+		return
+	int shieldHealth = soul.GetShieldHealth()
 	if (shieldHealth > 0 && GetConVarBool("comp_hud_healthbar"))
 	{
 		if (lastShieldHealth <= 0)
@@ -347,9 +349,11 @@ void function UpdateTitanCockpitAdditionalRuis_Thread(entity cockpit)
 			{
 				file.isMenuOpen = false
 			}
-			UpdateTitanCockpitAdditionalRuis(player)
+			UpdateTitanHealthNumberRui(player)
+			UpdateCoreTimer(player)
 			if (IsPlayerIon())
 			{
+				UpdateIonEnergyNumber(player)
 				UpdateIonEnergyBar(player)
 			}
 		}
@@ -558,7 +562,7 @@ var function IonEnergyNum_CreateHud()
     RuiSetFloat2( file.ionEnergyNumHud, "msgPos", GetConVarFloat3("comp_hud_ion_energy_pos") )
     RuiSetString( file.ionEnergyNumHud, "msgText", "" )
     RuiSetFloat( file.ionEnergyNumHud, "msgFontSize", GetConVarFloat("comp_hud_ion_energy_size") )
-    RuiSetFloat( file.ionEnergyNumHud, "msgAlpha", 0.9 )
+    RuiSetFloat( file.ionEnergyNumHud, "msgAlpha", 0.0 )
     RuiSetFloat( file.ionEnergyNumHud, "thicken", 0.0 )
     RuiSetFloat3( file.ionEnergyNumHud, "msgColor", GetConVarFloat3("comp_hud_ion_energy_color") / 255.0 )
 	return file.ionEnergyNumHud
