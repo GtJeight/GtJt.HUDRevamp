@@ -144,7 +144,7 @@ void function Track_StackingDamageFlyoutText(entity player)
 	{
 		if (GetGameState() >= eGameState.Epilogue)
 		{
-			printt("Track_StackingDamageFlyoutText not playing")
+			// printt("Track_StackingDamageFlyoutText not playing")
 			return
 		}
 		INCOMING_DAMAGE_TEXT_STACKING_FADE_TIME = GetConVarFloat("comp_hud_incoming_damage_indicator_fade_time")

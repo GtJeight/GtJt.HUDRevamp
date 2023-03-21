@@ -629,7 +629,7 @@ void function TrackAdditionalRuis_Titan(entity player)
 	{
 		if (GetGameState() >= eGameState.Epilogue)
 		{
-			printt("TrackAdditionalRuis_Titan not playing")
+			// printt("TrackAdditionalRuis_Titan not playing")
 			return
 		}
 		if (clGlobal.isMenuOpen)
@@ -645,9 +645,6 @@ void function TrackAdditionalRuis_Titan(entity player)
 			if (file.isMenuOpen)
 			{
 				file.isMenuOpen = false
-				// Hide pilot exclusive ruis
-				RuiSetFloat(file.ruis["pilotHealth"], "msgAlpha", 0.0 )
-				RuiSetString(file.ruis["speed"], "msgText", "")
 			}
 			UpdateCooldownRuis(player)
 			UpdatePSGDRui(player)
@@ -672,7 +669,7 @@ void function TrackAdditionalRuis_Pilot(entity player)
 	{
 		if (GetGameState() >= eGameState.Epilogue)
 		{
-			printt("TrackAdditionalRuis_Pilot not playing")
+			// printt("TrackAdditionalRuis_Pilot not playing")
 			return
 		}
 		if (clGlobal.isMenuOpen)
