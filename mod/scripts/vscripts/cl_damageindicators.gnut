@@ -131,6 +131,7 @@ void function Track_StackingDamageFlyoutText(entity player)
 {
 	player.EndSignal( "EndTrackOffhandWeaponSlot" )
 	player.EndSignal( "OnDeath" )
+	player.EndSignal( "LocalPlayerDisconnected" )
 
 	OnThreadEnd(
 		function() : ()
@@ -166,12 +167,15 @@ void function Track_StackingDamageFlyoutText(entity player)
 		float alpha = GraphCapped( timeSinceLastHit - OUTGOING_DAMAGE_TEXT_STACKING_STAY_TIME, 0, OUTGOING_DAMAGE_TEXT_STACKING_FADE_TIME, 0.9, 0)
 		RuiSetFloat( stackingOutgoingDamageTextRui, "msgAlpha", alpha )
 
-		if (clGlobal.isMenuOpen && !isMenuOpen)
+		if (clGlobal.isMenuOpen)
 		{
-			isMenuOpen = true
-			thread MenuOpen()
+			if (!isMenuOpen)
+			{
+				isMenuOpen = true
+				thread MenuOpen(player)
+			}
 		}
-		else if (!clGlobal.isMenuOpen)
+		else if (isMenuOpen)
 		{
 			isMenuOpen = false
 		}
@@ -190,8 +194,18 @@ void function Track_StackingDamageFlyoutText(entity player)
 	}
 }
 
-void function MenuOpen()
+void function MenuOpen(entity player)
 {
+	player.EndSignal( "EndTrackOffhandWeaponSlot" )
+	player.EndSignal( "OnDeath" )
+	player.EndSignal( "LocalPlayerDisconnected" )
+
+	OnThreadEnd(
+		function() : ()
+		{
+			isMenuOpen = false
+		}
+	)
 	bool isCrit = false
 	while (clGlobal.isMenuOpen)
 	{

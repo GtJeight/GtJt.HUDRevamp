@@ -53,9 +53,9 @@ void function PlayerJoinTheGame( entity player, int state )
 
 void function PlayerDisconnected( entity player )
 {
-	if (!IsValid( player ) || player == null || GetLocalViewPlayer() == null || !file.running)
+	if ( !IsValid(player) )
 		return
-	if ( player == GetLocalViewPlayer() || player.GetPlayerName() == GetLocalViewPlayer().GetPlayerName() )
+	if (player == GetLocalViewPlayer())
 	{
 		file.running = false
 		printt("#################")

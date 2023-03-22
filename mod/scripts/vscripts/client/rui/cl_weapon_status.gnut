@@ -617,6 +617,7 @@ void function TrackAdditionalRuis_Titan(entity player)
 {
 	player.EndSignal( "EndTrackOffhandWeaponSlot" )
 	player.EndSignal( "OnDeath" )
+	player.EndSignal( "LocalPlayerDisconnected" )
 
 	OnThreadEnd(
 		function() : ()
@@ -657,6 +658,7 @@ void function TrackAdditionalRuis_Pilot(entity player)
 {
 	player.EndSignal( "EndTrackOffhandWeaponSlot" )
 	player.EndSignal( "OnDeath" )
+	player.EndSignal( "LocalPlayerDisconnected" )
 
 	OnThreadEnd(
 		function() : ()

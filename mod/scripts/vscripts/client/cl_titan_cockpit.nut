@@ -327,6 +327,7 @@ void function UpdateTitanCockpitAdditionalRuis_Thread(entity cockpit)
 	entity player = GetLocalViewPlayer()
 	player.EndSignal( "OnDeath" )
 	cockpit.EndSignal( "OnDestroy" )
+	player.EndSignal( "LocalPlayerDisconnected" )
 
 	while(IsAlive(player) && IsValid(cockpit))
 	{
