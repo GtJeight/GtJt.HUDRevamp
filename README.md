@@ -34,6 +34,7 @@ Dependecy : [ModSettings v2](https://northstar.thunderstore.io/package/EladNLG/M
 
 - 部分功能可能不支持手柄
 - 可能影响战役模式
+- 结算时如果在泰坦座舱内，可能导致崩溃
 - ~~销毁泰坦座舱ui时可能引发报错~~
 - ~~离子镭射肩炮冷却时间错误~~
 - ~~核心图标偏置输入0.0 0.0后不会更新坐标~~
