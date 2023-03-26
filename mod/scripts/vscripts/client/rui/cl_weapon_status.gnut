@@ -462,19 +462,41 @@ void function UpdateCooldownRui( var rui, entity player, int i)
 			float energyRegenRate = player.GetSharedEnergyRegenRate()
 			maxCharges = 1
 
-			minFracToUse = 0.1
-			timeUntilNextCharge = (maxEnergy - energy) / energyRegenRate
+			switch (weapon.GetWeaponClassName())
+			{
+				case "mp_titanweapon_vortex_shield_ion":
+					minFracToUse = 0.1
+					break;
+				default:
+					minFracToUse = 1
+			}
 			ammoFrac = (energy / maxEnergy)
-
 
 			if (player.GetActiveWeapon() == weapon)
 			{
-				timeUntilNextCharge = (energy / maxEnergy) * weapon.GetWeaponSettingFloat( eWeaponVar.charge_time )
+				timeUntilNextCharge = energy / (weapon.GetWeaponSettingInt( eWeaponVar.shared_energy_charge_cost ) * energyRegenRate)
+			}
+			else
+			{
+				timeUntilNextCharge = (maxEnergy - energy) / energyRegenRate
 			}
 			break
 
 		case "vortex_drain":
 			// display percentage/cooldown
+			maxCharges = 1
+
+			minFracToUse = 0.2
+			ammoFrac = 1 - weapon.GetWeaponChargeFraction()
+
+			if (player.GetActiveWeapon() == weapon)
+			{
+				timeUntilNextCharge = ammoFrac * weapon.GetWeaponSettingFloat( eWeaponVar.charge_time )
+			}
+			else
+			{
+				timeUntilNextCharge = (1.0 - ammoFrac) * weapon.GetWeaponSettingFloat( eWeaponVar.charge_cooldown_time )
+			}
 			break
 
 		case "charged_shot":
