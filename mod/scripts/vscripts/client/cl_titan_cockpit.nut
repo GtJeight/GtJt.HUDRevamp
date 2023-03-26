@@ -576,7 +576,7 @@ var function IonEnergyNum_CreateHud()
 {
 	Assert( file.ionEnergyNumHud == null )
 
-	file.ionEnergyNumHud = CreateTitanCockpitRui($"ui/cockpit_console_text_top_left.rpak", -1)
+	file.ionEnergyNumHud = CreateTitanCockpitRui($"ui/cockpit_console_text_top_left.rpak", 5)
     RuiSetInt( file.ionEnergyNumHud, "maxLines", 3 )
     RuiSetInt( file.ionEnergyNumHud, "lineNum", 1 )
     RuiSetFloat2( file.ionEnergyNumHud, "msgPos", GetConVarFloat3("comp_hud_ion_energy_pos") )
