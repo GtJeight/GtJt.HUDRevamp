@@ -457,11 +457,11 @@ void function UpdateIonEnergyNumber(entity player)
 			int projectiles = GetProjectilesAbsorbedCount( weapon )
 			if(bullets > 0)
 			{
-				text += format("\nBullets:%i/32", bullets)
+				text += format("\nBullets:%i/31", bullets)
 			}
 			if(projectiles > 0)
 			{
-				text += format("\nProjectiles:%i/32", projectiles)
+				text += format("\nProjectiles:%i/31", projectiles)
 			}
 		}
 	}
