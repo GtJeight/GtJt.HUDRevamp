@@ -29,7 +29,7 @@ void function Cl_PSG_Detector_Init()
 
 void function OnEnterPlaying()
 {
-	if (ShouldRunPSGD())
+	if (!ShouldRunPSGD())
 	{
 		return
 	}
