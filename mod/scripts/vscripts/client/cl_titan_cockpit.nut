@@ -446,7 +446,26 @@ void function UpdateIonEnergyNumber(entity player)
 {
 	if (!IsPlayerIon())
 		return
-	UpdateIonEnergyNumberInternal(player.GetSharedEnergyCount().tostring())
+
+	string text = player.GetSharedEnergyCount().tostring()
+	if (GetConVarBool("comp_hud_ion_vortex_abosorbed_count") && ShouldRunPSGD())
+	{
+		entity weapon = player.GetActiveWeapon()
+		if(weapon.GetWeaponClassName() == "mp_titanweapon_vortex_shield_ion")
+		{
+			int bullets = GetBulletsAbsorbedCount( weapon )
+			int projectiles = GetProjectilesAbsorbedCount( weapon )
+			if(bullets > 0)
+			{
+				text += format("\nBullets:%i/32", bullets)
+			}
+			if(projectiles > 0)
+			{
+				text += format("\nProjectiles:%i/32", projectiles)
+			}
+		}
+	}
+	UpdateIonEnergyNumberInternal(text)
 }
 
 void function UpdateIonEnergyNumberInternal(string text)
@@ -558,7 +577,7 @@ var function IonEnergyNum_CreateHud()
 	Assert( file.ionEnergyNumHud == null )
 
 	file.ionEnergyNumHud = CreateTitanCockpitRui($"ui/cockpit_console_text_top_left.rpak", -1)
-    RuiSetInt( file.ionEnergyNumHud, "maxLines", 1 )
+    RuiSetInt( file.ionEnergyNumHud, "maxLines", 3 )
     RuiSetInt( file.ionEnergyNumHud, "lineNum", 1 )
     RuiSetFloat2( file.ionEnergyNumHud, "msgPos", GetConVarFloat3("comp_hud_ion_energy_pos") )
     RuiSetString( file.ionEnergyNumHud, "msgText", "" )
@@ -2166,4 +2185,28 @@ bool function Scorch_ShouldCreateHotstreakBar()
 
 	entity primaryWeapon = mainWeapons[0]
 	return primaryWeapon.HasMod( "fd_hot_streak" )
+}
+
+int function GetBulletsAbsorbedCount( entity vortexWeapon )
+{
+	if ( !vortexWeapon )
+		return 0
+
+	entity vortexSphere = vortexWeapon.GetWeaponUtilityEntity()
+	if ( !vortexSphere )
+		return 0
+
+	return vortexSphere.GetBulletAbsorbedCount()
+}
+
+int function GetProjectilesAbsorbedCount( entity vortexWeapon )
+{
+	if ( !vortexWeapon )
+		return 0
+
+	entity vortexSphere = vortexWeapon.GetWeaponUtilityEntity()
+	if ( !vortexSphere )
+		return 0
+
+	return vortexSphere.GetProjectileAbsorbedCount()
 }

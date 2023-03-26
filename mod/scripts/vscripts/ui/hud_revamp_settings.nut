@@ -81,4 +81,5 @@ void function HudRevampSettings_Init()
 	AddConVarSetting( "comp_hud_ion_energy_pos", "#comp_hud_ion_energy_pos", "float3" )
 	AddConVarSetting( "comp_hud_ion_energy_size", "#comp_hud_ion_energy_size", "float" )
 	AddConVarSetting( "comp_hud_ion_energy_color", "#comp_hud_ion_energy_color", "float3" )
+	AddConVarSettingEnum( "comp_hud_ion_vortex_abosorbed_count", "#comp_hud_ion_vortex_abosorbed_count", [ "#hud_no", "#hud_yes" ] )
 }

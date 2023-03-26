@@ -1,6 +1,7 @@
 global function Cl_PSG_Detector_Init
 global function GetPSG_State
 global function GetPSG_Message
+global function ShouldRunPSGD
 
 const float PS_THRESHOLD = 0.061
 
@@ -28,7 +29,7 @@ void function Cl_PSG_Detector_Init()
 
 void function OnEnterPlaying()
 {
-	if (GameRules_GetGameMode() != FD)
+	if (ShouldRunPSGD())
 	{
 		return
 	}
@@ -44,6 +45,10 @@ void function OnEnterPlaying()
 		file.running = true
 		thread PSG_Monitor( GetLocalViewPlayer() )
 	}
+}
+
+bool function ShouldRunPSGD() {
+	return GameRules_GetGameMode() == FD
 }
 
 void function PlayerJoinTheGame( entity player, int state )

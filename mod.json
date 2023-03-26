@@ -1,7 +1,7 @@
 {
     "Name": "HUD Revamp Gt ver.",
     "LoadPriority": 6,
-    "Version": "1.5.4",
+    "Version": "1.6.0",
     "Description": "",
     "Scripts": [
         {
@@ -254,6 +254,11 @@
         {
             "Name": "comp_hud_ion_energy_color",
             "DefaultValue": "0 221 228",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_ion_vortex_abosorbed_count",
+            "DefaultValue": "0",
             "Flags": 16777216
         }
     ],
