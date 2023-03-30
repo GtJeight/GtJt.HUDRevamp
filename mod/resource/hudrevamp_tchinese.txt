@@ -40,11 +40,12 @@
 		"hud_damage_indicator" "傷害顯示"
 
 		"comp_hud_damage_indicator" "啟用"
-		"comp_hud_damage_indicator_style" "風格"
+		"comp_hud_damage_indicator_style" "傷害飄字風格"
 		"comp_hud_damage_indicator_victim_hp" "顯示目標血量"
 		"comp_hud_damage_indicator_pos" "位置"
 		"comp_hud_damage_indicator_duration" "顯示時間"
 		"comp_hud_damage_indicator_fade_time" "淡出時間"
+		"comp_hud_damage_indicator_popup_fade_time" "飄字淡出時間"
 		"comp_hud_damage_indicator_color" "顏色"
 		"comp_hud_damage_indicator_color_crit" "暴擊顏色"
 		"hud_damage_indicator_style_classic" "經典"

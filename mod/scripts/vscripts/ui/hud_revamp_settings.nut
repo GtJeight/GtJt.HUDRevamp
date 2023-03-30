@@ -44,11 +44,12 @@ void function HudRevampSettings_Init()
 	// Damage Indicator
 	AddModCategory("#hud_damage_indicator")
 	AddConVarSettingEnum( "comp_hud_damage_indicator", "#comp_hud_damage_indicator",  [ "#hud_no", "#hud_yes" ] )
-	AddConVarSettingEnum( "comp_hud_damage_indicator_style", "#comp_hud_damage_indicator_style",  [ "#hud_damage_indicator_style_classic", "#hud_damage_indicator_style_flashy" ] )
+	AddConVarSettingEnum( "comp_hud_damage_indicator_style", "#comp_hud_damage_indicator_style",  [ "#hud_damage_indicator_style_classic", "#hud_damage_indicator_style_flashy", "#hud_no" ] )
 	AddConVarSettingEnum( "comp_hud_damage_indicator_victim_hp", "#comp_hud_damage_indicator_victim_hp",  [ "#hud_no", "#hud_yes" ] )
 	AddConVarSetting( "comp_hud_damage_indicator_pos", "#comp_hud_damage_indicator_pos",  "float2" )
 	AddConVarSetting( "comp_hud_damage_indicator_duration", "#comp_hud_damage_indicator_duration",  "float" )
 	AddConVarSetting( "comp_hud_damage_indicator_fade_time", "#comp_hud_damage_indicator_fade_time",  "float" )
+	AddConVarSetting( "comp_hud_damage_indicator_popup_fade_time", "#comp_hud_damage_indicator_popup_fade_time",  "float" )
 	AddConVarSetting( "comp_hud_damage_indicator_color", "#comp_hud_damage_indicator_color",  "float3" )
 	AddConVarSetting( "comp_hud_damage_indicator_color_crit", "#comp_hud_damage_indicator_color_crit",  "float3" )
 

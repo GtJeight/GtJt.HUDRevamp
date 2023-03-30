@@ -51,11 +51,6 @@
             "DefaultValue": "0",
             "Flags": 16777216
         },
-        // {
-        //     "Name": "comp_hud_health_text_offset",
-        //     "DefaultValue": "0.0 0.0",
-        //     "Flags": 16777216
-        // },
         {
             "Name": "comp_hud_titan_meter_offset",
             "DefaultValue": "0 0",
@@ -148,6 +143,11 @@
         },
         {
             "Name": "comp_hud_damage_indicator_fade_time",
+            "DefaultValue": "0.5",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_damage_indicator_popup_fade_time",
             "DefaultValue": "0.5",
             "Flags": 16777216
         },

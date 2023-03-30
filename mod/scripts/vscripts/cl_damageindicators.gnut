@@ -9,6 +9,8 @@ float OUTGOING_DAMAGE_TEXT_STACKING_FADE_TIME = 0.5
 float OUTGOING_DAMAGE_TEXT_STACKING_DURATION = 1.3
 float OUTGOING_DAMAGE_TEXT_STACKING_STAY_TIME = 0.8
 
+float OUTGOING_DAMAGE_TEXT_SMALL_FADE_TIME = 0.5
+
 const vector INCOMING_DAMAGE_TEXT_BEGIN_POS = <0.63, 0.5 - 0.3, 0>
 float INCOMING_DAMAGE_TEXT_STACKING_FADE_TIME = 0.5
 float INCOMING_DAMAGE_TEXT_STACKING_DURATION = 1.3
@@ -79,7 +81,6 @@ void function AddSmallDamageTextFlyout(float damage, bool isCrit, entity victim)
 	RuiSetFloat( rui, "thicken", 0.0 )
 
 	float startTime = Time()
-	float OUTGOING_DAMAGE_TEXT_SMALL_FADE_TIME = 0.5
 
 	while ( Time() - startTime < OUTGOING_DAMAGE_TEXT_SMALL_FADE_TIME )
 	{
@@ -156,6 +157,8 @@ void function Track_StackingDamageFlyoutText(entity player)
 		OUTGOING_DAMAGE_TEXT_STACKING_FADE_TIME = GetConVarFloat("comp_hud_damage_indicator_fade_time")
 		OUTGOING_DAMAGE_TEXT_STACKING_DURATION = GetConVarFloat("comp_hud_damage_indicator_duration")
 		OUTGOING_DAMAGE_TEXT_STACKING_STAY_TIME = OUTGOING_DAMAGE_TEXT_STACKING_DURATION - OUTGOING_DAMAGE_TEXT_STACKING_FADE_TIME
+
+		OUTGOING_DAMAGE_TEXT_SMALL_FADE_TIME = GetConVarFloat("comp_hud_damage_indicator_popup_fade_time")
 
 		if (OUTGOING_DAMAGE_TEXT_STACKING_STAY_TIME < 0)
 		{
@@ -252,16 +255,24 @@ void function PlayerDidDamageText( float damage, vector damagePosition, entity v
 		accumulatedOutgoingDamage += damage
 	}
 	SetOutgoingDamageTextRui(damage, isCrit, victim)
-	if (!GetConVarBool("comp_hud_damage_indicator_style"))
+	int style = GetConVarInt("comp_hud_damage_indicator_style")
+	if (style == 0)
 	{
 		if (!resetStack)
 		{
 			thread AddSmallDamageTextFlyout( damage, isCrit, victim )
 		}
 	}
-	else
+	else if (style == 1)
 	{
-		thread CreateDamageFlyTextRui( damage, isCrit, victim )
+		if (ShouldRunPSGD())
+		{
+			thread CreateDamageFlyTextRui( damage, isCrit, victim )
+		}
+		else if (!resetStack)
+		{
+			thread AddSmallDamageTextFlyout( damage, isCrit, victim )
+		}
 	}
 
 	lastOutgoingDamageTextHitTime = Time()
@@ -269,27 +280,29 @@ void function PlayerDidDamageText( float damage, vector damagePosition, entity v
 
 void function CreateDamageFlyTextRui(float damage, bool isCrit, entity victim)
 {
-	vector msgPos = victim.GetOrigin() + <0,0,victim.GetBoundingMaxs().z>
-	var rui = RuiCreate( $"ui/cockpit_console_text_top_left.rpak", clGlobal.topoCockpitHudPermanent, RUI_DRAW_COCKPIT, 0)
+	vector victimPos = victim.GetOrigin() + <0,0,victim.GetBoundingMaxs().z>
+	var rui = RuiCreate( $"ui/cockpit_console_text_top_left.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 0)
 	RuiSetInt( rui, "maxLines", 1 );
 	RuiSetInt( rui, "lineNum", 0 );
-	RuiSetFloat2( rui, "msgPos", WorldToScreenPos(msgPos) - <0, 0.01, 0>  )
+	RuiSetFloat2( rui, "msgPos", WorldToScreenPos(victimPos) - <0, 0.01, 0>  )
 	RuiSetString( rui, "msgText",  damage.tointeger().tostring() )
 	RuiSetFloat3( rui, "msgColor",  GetDamageTextColor(isCrit, victim))
-	RuiSetFloat( rui, "msgFontSize", 24.0)
-	RuiSetFloat( rui, "msgAlpha", 0.5 )
+	RuiSetFloat( rui, "msgFontSize", 28.0)
+	RuiSetFloat( rui, "msgAlpha", 0.7 )
 	RuiSetFloat( rui, "thicken", 0.0 )
 
 	float startTime = Time()
-	float OUTGOING_DAMAGE_TEXT_SMALL_FADE_TIME = 0.5
 
+	vector posOffset = <0, 0.01, 0>
 	while ( Time() - startTime < OUTGOING_DAMAGE_TEXT_SMALL_FADE_TIME )
 	{
-		float alpha = Graph( Time() - startTime, 0, OUTGOING_DAMAGE_TEXT_SMALL_FADE_TIME, 0.5, 0 )
-		vector posOffset = <0, 0.01, 0>
-		posOffset.y += Graph( Time() - startTime, 0, OUTGOING_DAMAGE_TEXT_SMALL_FADE_TIME, 0, -0.05 )
-		RuiSetFloat( rui, "msgAlpha", alpha )
-		RuiSetFloat2( rui, "msgPos", WorldToScreenPos(msgPos) + posOffset )
+		if (IsValid(victim))
+		{
+			victimPos = victim.GetOrigin() + <0, 0, victim.GetBoundingMaxs().z>
+		}
+		posOffset.y = Graph( Time() - startTime, 0, OUTGOING_DAMAGE_TEXT_SMALL_FADE_TIME, 0, -0.05 ) + 0.01
+		RuiSetFloat( rui, "msgAlpha", Graph( Time() - startTime, 0, OUTGOING_DAMAGE_TEXT_SMALL_FADE_TIME, 0.66, 0 ) )
+		RuiSetFloat2( rui, "msgPos", WorldToScreenPos(victimPos) + posOffset )
 		WaitFrame()
 	}
 	RuiDestroyIfAlive(rui)

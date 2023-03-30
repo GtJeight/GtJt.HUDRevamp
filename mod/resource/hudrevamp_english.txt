@@ -40,11 +40,12 @@
 		"hud_damage_indicator" "Damage Indicator"
 
 		"comp_hud_damage_indicator" "Enabled"
-		"comp_hud_damage_indicator_style" "Style"
+		"comp_hud_damage_indicator_style" "Damage Popup Number Style"
 		"comp_hud_damage_indicator_victim_hp" "Show Victim HP"
 		"comp_hud_damage_indicator_pos" "Position"
 		"comp_hud_damage_indicator_duration" "Duration"
 		"comp_hud_damage_indicator_fade_time" "Fade Time"
+		"comp_hud_damage_indicator_popup_fade_time" "Popup Fade Time"
 		"comp_hud_damage_indicator_color" "Color"
 		"comp_hud_damage_indicator_color_crit" "Color on critical hits"
 		"hud_damage_indicator_style_classic" "Classic"
