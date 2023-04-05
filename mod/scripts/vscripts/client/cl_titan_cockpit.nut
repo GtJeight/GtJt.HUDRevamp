@@ -88,7 +88,6 @@ struct
 	var coreTimerTextHud
 	var ionEnergyNumHud
 	bool coreFired = false
-	bool isMenuOpen = false
 	// GtJt HUD
 } file
 
@@ -338,17 +337,19 @@ void function UpdateTitanCockpitAdditionalRuis_Thread(entity cockpit)
 		}
 		if (clGlobal.isMenuOpen)
 		{
-			if (!file.isMenuOpen)
+			if (!MOD_SETTINGS_OPEN)
 			{
-				file.isMenuOpen = true
+				RunUIScript("IsModSettingsOpen")
+				WaitFrame()
+				continue
 			}
 			MenuOpen()
 		}
 		else
 		{
-			if (file.isMenuOpen)
+			if (MOD_SETTINGS_OPEN)
 			{
-				file.isMenuOpen = false
+				MOD_SETTINGS_OPEN = false
 			}
 			UpdateTitanHealthNumberRui(player)
 			UpdateCoreTimer(player)

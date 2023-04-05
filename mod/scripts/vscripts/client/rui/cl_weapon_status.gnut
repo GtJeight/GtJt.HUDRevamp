@@ -21,7 +21,6 @@ struct
 
 	// GtJt HUD
 	table<string, var> ruis
-	bool isMenuOpen = false
 	// GtJt HUD
 } file
 
@@ -385,6 +384,7 @@ void function MenuOpen()
 		RuiSetFloat( file.ruis["offhand1"], "msgAlpha", GetConVarBool("comp_hud_ability_cooldown") ? 0.9 : 0.0 )
 	}
 
+	if (player.IsTitan())
 	{
 		RuiSetFloat2( file.ruis["offhand2"], "msgPos", GetConVarFloat2("comp_hud_utility_position") )
 		RuiSetString( file.ruis["offhand2"], "msgText", "3.0" )
@@ -645,6 +645,10 @@ void function TrackAdditionalRuis_Titan(entity player)
 		function() : ()
 		{
 			HideAllAdditionalRuis()
+			if (MOD_SETTINGS_OPEN)
+			{
+				MOD_SETTINGS_OPEN = false
+			}
 		}
 	)
 
@@ -657,17 +661,20 @@ void function TrackAdditionalRuis_Titan(entity player)
 		}
 		if (clGlobal.isMenuOpen)
 		{
-			if (!file.isMenuOpen)
+			if (!MOD_SETTINGS_OPEN)
 			{
-				file.isMenuOpen = true
+				RunUIScript("IsModSettingsOpen")
 			}
-			MenuOpen()
+			else
+			{
+				MenuOpen()
+			}
 		}
 		else
 		{
-			if (file.isMenuOpen)
+			if (MOD_SETTINGS_OPEN)
 			{
-				file.isMenuOpen = false
+				MOD_SETTINGS_OPEN = false
 			}
 			UpdateCooldownRuis(player)
 			UpdatePSGDRui(player)
@@ -686,6 +693,10 @@ void function TrackAdditionalRuis_Pilot(entity player)
 		function() : ()
 		{
 			HideAllAdditionalRuis()
+			if (MOD_SETTINGS_OPEN)
+			{
+				MOD_SETTINGS_OPEN = false
+			}
 		}
 	)
 
@@ -698,17 +709,20 @@ void function TrackAdditionalRuis_Pilot(entity player)
 		}
 		if (clGlobal.isMenuOpen)
 		{
-			if (!file.isMenuOpen)
+			if (!MOD_SETTINGS_OPEN)
 			{
-				file.isMenuOpen = true
+				RunUIScript("IsModSettingsOpen")
 			}
-			MenuOpen()
+			else
+			{
+				MenuOpen()
+			}
 		}
 		else
 		{
-			if (file.isMenuOpen)
+			if (MOD_SETTINGS_OPEN)
 			{
-				file.isMenuOpen = false
+				MOD_SETTINGS_OPEN = false
 			}
 			UpdatePliotHealthRui(player)
 			UpdateWPDRui(player)

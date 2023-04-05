@@ -208,11 +208,21 @@ void function MenuOpen(entity player)
 		function() : ()
 		{
 			isMenuOpen = false
+			if (MOD_SETTINGS_OPEN)
+			{
+				MOD_SETTINGS_OPEN = false
+			}
 		}
 	)
 	bool isCrit = false
 	while (clGlobal.isMenuOpen)
 	{
+		if (!MOD_SETTINGS_OPEN)
+		{
+			RunUIScript("IsModSettingsOpen")
+			WaitFrame()
+			continue
+		}
 		accumulatedIncomingDamage = (accumulatedIncomingDamage + 50) % 250
 		accumulatedOutgoingDamage = (accumulatedOutgoingDamage + 50) % 250
 		if (IsValid(GetLocalClientPlayer()))
@@ -238,6 +248,10 @@ void function MenuOpen(entity player)
 		wait max(GetConVarFloat("comp_hud_damage_indicator_duration"), GetConVarFloat("comp_hud_incoming_damage_indicator_duration"))
 	}
 	isMenuOpen = false
+	if (MOD_SETTINGS_OPEN)
+	{
+		MOD_SETTINGS_OPEN = false
+	}
 }
 
 void function PlayerDidDamageText( float damage, vector damagePosition, entity victim, bool isCrit, bool isIneffective )

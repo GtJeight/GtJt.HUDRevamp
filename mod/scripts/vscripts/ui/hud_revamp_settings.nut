@@ -1,4 +1,11 @@
 global function HudRevampSettings_Init
+global function IsModSettingsOpen
+
+void function IsModSettingsOpen()
+{
+	bool isOpen = GetActiveMenu() == GetMenu( "ModSettings" )
+	RunClientScript("SetModSettingsMenuOpen", isOpen)
+}
 
 void function HudRevampSettings_Init()
 {
