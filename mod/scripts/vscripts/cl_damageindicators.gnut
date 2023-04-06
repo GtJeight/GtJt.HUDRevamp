@@ -72,7 +72,7 @@ void function AddSmallDamageTextFlyout(float damage, bool isCrit, entity victim)
 {
 	var rui = RuiCreate( $"ui/cockpit_console_text_top_left.rpak", clGlobal.topoCockpitHudPermanent, RUI_DRAW_COCKPIT, 0)
 	RuiSetInt( rui, "maxLines", 1 );
-	RuiSetInt( rui, "lineNum", 0 );
+	RuiSetInt( rui, "lineNum", 1 );
 	RuiSetFloat2( rui, "msgPos", GetConVarFloat2("comp_hud_damage_indicator_pos") )
 	RuiSetString( rui, "msgText",  damage.tointeger().tostring() )
 	RuiSetFloat3( rui, "msgColor",  GetDamageTextColor(isCrit, victim))
