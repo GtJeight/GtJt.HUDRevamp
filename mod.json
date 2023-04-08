@@ -1,8 +1,9 @@
 {
     "Name": "HUD Revamp Gt ver.",
     "LoadPriority": 6,
-    "Version": "1.7.2",
-    "Description": "",
+    "Version": "1.7.3",
+    "Description": "An alternative, modified and customized version of EladNLG.HUDRevamp",
+    "DownloadLink": "https://github.com/GtJeight/GtJt.HUDRevamp/releases/latest",
     "Scripts": [
         {
             "Path": "client/rui/basic_image_bar.gnut",
@@ -152,7 +153,7 @@
         },
         {
             "Name": "comp_hud_damage_indicator_popup_fade_time",
-            "DefaultValue": "0.5",
+            "DefaultValue": "0.8",
             "Flags": 16777216
         },
         {
@@ -223,6 +224,16 @@
         {
             "Name": "comp_core_meter_timer_size",
             "DefaultValue": "40",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_damage_indicator_indicate_doom_hp",
+            "DefaultValue": "1",
+            "Flags": 16777216
+        },
+        {
+            "Name": "comp_hud_damage_indicator_color_doom_hp",
+            "DefaultValue": "111 46 152",
             "Flags": 16777216
         },
         {
