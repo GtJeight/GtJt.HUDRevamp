@@ -222,7 +222,7 @@ void function UpdateCoreTimer(entity player)
 					UpdateNumberCoreTimer(remainingTime)
 					break
 				case eHUDCoreTimer.text:
-					string text = format(Localize("#hud_core_timer_laser"), remainingTime)
+					string text = format(Localize("#hud_core_timer_sword"), remainingTime)
 					UpdateTextCoreTimer(text)
 					break
 				case eHUDCoreTimer.legion:
@@ -230,7 +230,7 @@ void function UpdateCoreTimer(entity player)
 					break
 				case eHUDCoreTimer.hybrid:
 					UpdateLegionCoreTimer(player, remainingTime)
-					string text = format(Localize("#hud_core_timer_laser"), remainingTime)
+					string text = format(Localize("#hud_core_timer_sword"), remainingTime)
 					UpdateTextCoreTimer(text)
 				default:
 					break

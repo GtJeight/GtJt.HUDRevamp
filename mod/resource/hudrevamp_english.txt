@@ -23,7 +23,7 @@
 		"comp_hud_titan_meter_offset" "Core Meter Offset"
 		"comp_hud_titan_meter_scale" "Scale"
 
-		"#hud_pliot_health_display" "Pilot Health Display"
+		"hud_pliot_health_display" "Pilot Health Display"
 
 		"comp_hud_pilot_healthbar" "Enabled"
 		"comp_hud_pilot_healthbar_pos" "Position"
