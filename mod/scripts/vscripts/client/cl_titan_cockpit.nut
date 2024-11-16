@@ -262,27 +262,55 @@ void function UpdateCoreTimer(entity player)
 			{
 				file.coreFired = true
 			}
+			float serversideDuration
+			if ( weapon.HasMod( "pas_ion_lasercannon") )
+				serversideDuration = 5.0
+			else
+				serversideDuration = 3.0  // keep consistent with serverside callback
+
+			float overloadTime = remainingTimeFake - serversideDuration
 			float remainingTime = (1 - coreFrac) * duration
 			int style = GetConVarInt("comp_core_meter_timer_style")
 			switch (style)
 			{
 				case eHUDCoreTimer.number:
-					UpdateNumberCoreTimer(remainingTime)
+					string text = format("%.2f", remainingTime)
+					if (overloadTime > 0)
+					{
+						text += format("\n%.2f", overloadTime)
+					}
+					UpdateNumberCoreTimer(text)
 					// Hide ion fake core timer
 					HideCoreTimer_Text()
 					break
 				case eHUDCoreTimer.text:
 					string text = format(Localize("#hud_core_timer_laser"), remainingTime)
+					if (overloadTime > 0)
+					{
+						text += format(Localize("#hud_core_timer_laser_overload_newline"), overloadTime)
+					}
 					UpdateTextCoreTimer(text)
 					break
 				case eHUDCoreTimer.legion:
 					UpdateLegionCoreTimer(player, remainingTime)
-					// Hide ion fake core timer
-					HideCoreTimer_Text()
+					if (overloadTime > 0)
+					{
+						string text = format(Localize("#hud_core_timer_laser_overload"), overloadTime)
+						UpdateTextCoreTimer(text)
+					}
+					else
+					{
+						// Hide ion fake core timer
+						HideCoreTimer_Text()
+					}
 					break
 				case eHUDCoreTimer.hybrid:
 					UpdateLegionCoreTimer(player, remainingTime)
 					string text = format(Localize("#hud_core_timer_laser"), remainingTime)
+					if (overloadTime > 0)
+					{
+						text += format(Localize("#hud_core_timer_laser_overload_newline"), overloadTime)
+					}
 					UpdateTextCoreTimer(text)
 				default:
 					break
@@ -363,12 +391,12 @@ void function UpdateTitanCockpitAdditionalRuis_Thread(entity cockpit)
 	}
 }
 
-void function UpdateNumberCoreTimer(float remainingTime)
+void function UpdateNumberCoreTimer(string text)
 {
 	RuiSetFloat2( file.coreTimerNumHud, "msgPos", GetConVarFloat3("comp_core_meter_timer_pos3") )
 	RuiSetFloat( file.coreTimerNumHud, "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
 	RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.9)
-	RuiSetString( file.coreTimerNumHud, "msgText", format("%.2f", remainingTime))
+	RuiSetString( file.coreTimerNumHud, "msgText", )
 }
 
 void function UpdateTextCoreTimer(string text)

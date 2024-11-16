@@ -66,6 +66,8 @@
 		"comp_core_meter_timer_size" "數字風格：大小"
 		"hud_core_timer_sword" "核心剩餘時間 `1%.2f"
 		"hud_core_timer_laser" "核心剩餘時間 `1%.2f"
+		"hud_core_timer_laser_overload" "溢出剩餘時間 `1%.2f"
+		"hud_core_timer_laser_overload_newline" "\n溢出剩餘時間 `1%.2f"
 		"hud_core_timer_fake_laser" "虛假核心剩餘時間 `1%.2f"
 		"hud_core_timer_standby" "核心開火倒計時 `1%.2f"
 		"comp_core_meter_timer_legion_color" "智慧核心風格：顔色"
