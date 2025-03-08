@@ -391,12 +391,12 @@ void function UpdateTitanCockpitAdditionalRuis_Thread(entity cockpit)
 	}
 }
 
-void function UpdateNumberCoreTimer(string text)
+void function UpdateNumberCoreTimer(float remainingTime)
 {
 	RuiSetFloat2( file.coreTimerNumHud, "msgPos", GetConVarFloat3("comp_core_meter_timer_pos3") )
 	RuiSetFloat( file.coreTimerNumHud, "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
 	RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.9)
-	RuiSetString( file.coreTimerNumHud, "msgText", )
+	RuiSetString( file.coreTimerNumHud, "msgText", format("%.2f", remainingTime))
 }
 
 void function UpdateTextCoreTimer(string text)

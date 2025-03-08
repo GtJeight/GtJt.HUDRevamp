@@ -1,7 +1,7 @@
 {
     "Name": "HUD Revamp Gt ver.",
     "LoadPriority": 6,
-    "Version": "1.8.0",
+    "Version": "1.8.1",
     "Description": "An alternative, modified and customized version of EladNLG.HUDRevamp",
     "DownloadLink": "https://github.com/GtJeight/GtJt.HUDRevamp/releases/latest",
     "Scripts": [
