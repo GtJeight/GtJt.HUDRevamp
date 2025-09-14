@@ -88,6 +88,7 @@ struct
 	var coreTimerTextHud
 	var ionEnergyNumHud
 	bool coreFired = false
+	var coreFracHud
 	// GtJt HUD
 } file
 
@@ -141,6 +142,7 @@ function ClTitanCockpit_Init()
 	AddTitanCockpitManagedRUI( CoreTimerNum_CreateHud, CoreTimerNum_DestroyHud, ShouldCreateHud, RUI_DRAW_COCKPIT )
 	AddTitanCockpitManagedRUI( CoreTimerText_CreateHud, CoreTimerText_DestroyHud, ShouldCreateHud, RUI_DRAW_COCKPIT )
 	AddTitanCockpitManagedRUI( IonEnergyNum_CreateHud, IonEnergyNum_DestroyHud, IsPlayerIon, RUI_DRAW_COCKPIT )
+	AddTitanCockpitManagedRUI( CoreFrac_CreateHud, CoreFrac_DestroyHud, ShouldCreateHud, RUI_DRAW_COCKPIT )
 }
 
 // GtJt HUD
@@ -219,7 +221,7 @@ void function UpdateCoreTimer(entity player)
 			switch (style)
 			{
 				case eHUDCoreTimer.number:
-					UpdateNumberCoreTimer(remainingTime)
+					UpdateNumberCoreTimer(format("%.2f", remainingTime))
 					break
 				case eHUDCoreTimer.text:
 					string text = format(Localize("#hud_core_timer_sword"), remainingTime)
@@ -381,6 +383,7 @@ void function UpdateTitanCockpitAdditionalRuis_Thread(entity cockpit)
 			}
 			UpdateTitanHealthNumberRui(player)
 			UpdateCoreTimer(player)
+			UpdateCoreFracNumRui(player)
 			if (IsPlayerIon())
 			{
 				UpdateIonEnergyNumber(player)
@@ -391,12 +394,12 @@ void function UpdateTitanCockpitAdditionalRuis_Thread(entity cockpit)
 	}
 }
 
-void function UpdateNumberCoreTimer(float remainingTime)
+void function UpdateNumberCoreTimer(string remainingTime)
 {
 	RuiSetFloat2( file.coreTimerNumHud, "msgPos", GetConVarFloat3("comp_core_meter_timer_pos3") )
 	RuiSetFloat( file.coreTimerNumHud, "msgFontSize", GetConVarFloat("comp_core_meter_timer_size") )
 	RuiSetFloat( file.coreTimerNumHud, "msgAlpha", 0.9)
-	RuiSetString( file.coreTimerNumHud, "msgText", format("%.2f", remainingTime))
+	RuiSetString( file.coreTimerNumHud, "msgText", remainingTime)
 }
 
 void function UpdateTextCoreTimer(string text)
@@ -514,6 +517,31 @@ void function UpdateIonEnergyNumberInternal(string text)
 	}
 }
 
+void function UpdateCoreFracNumRui(entity player)
+{
+	entity soul = player.GetTitanSoul()
+	if (!IsValid(soul))
+		return
+
+	float curTime = Time()
+	float remainingTime = soul.GetCoreChargeExpireTime() - curTime
+
+	if (!GetConVarBool("comp_hud_core_frac_enabled") || remainingTime > 0.0)
+	{
+		RuiSetString( file.coreFracHud, "msgText", "" )
+		RuiSetFloat( file.coreFracHud, "msgAlpha", 0.0 )
+	}
+	else
+	{
+		float corePercent = floor(soul.GetTitanSoulNetFloat( "coreAvailableFrac" ) *100)
+		RuiSetFloat2( file.coreFracHud, "msgPos", GetConVarFloat3("comp_hud_core_frac_pos") )
+		RuiSetFloat( file.coreFracHud, "msgFontSize", GetConVarFloat("comp_hud_core_frac_size") )
+		RuiSetFloat3( file.coreFracHud, "msgColor", GetConVarFloat3("comp_hud_core_frac_color") / 255.0 )
+		RuiSetString( file.coreFracHud, "msgText", format("%.0f%%", corePercent))
+		RuiSetFloat( file.coreFracHud, "msgAlpha", 0.9 )
+	}
+}
+
 var function Health_CreateHud()
 {
 	Assert( file.healthHud == null )
@@ -623,6 +651,28 @@ void function IonEnergyNum_DestroyHud()
 	file.ionEnergyNumHud = null
 }
 
+var function CoreFrac_CreateHud()
+{
+	Assert( file.coreFracHud == null )
+
+	file.coreFracHud = CreateTitanCockpitRui($"ui/cockpit_console_text_top_left.rpak", 5)
+    RuiSetInt( file.coreFracHud, "maxLines", 3 )
+    RuiSetInt( file.coreFracHud, "lineNum", 1 )
+    RuiSetFloat2( file.coreFracHud, "msgPos", GetConVarFloat3("comp_hud_core_frac_pos") )
+    RuiSetString( file.coreFracHud, "msgText", "" )
+    RuiSetFloat( file.coreFracHud, "msgFontSize", GetConVarFloat("comp_hud_core_frac_size") )
+    RuiSetFloat( file.coreFracHud, "msgAlpha", 0.0 )
+    RuiSetFloat( file.coreFracHud, "thicken", 0.0 )
+    RuiSetFloat3( file.coreFracHud, "msgColor", GetConVarFloat3("comp_hud_core_frac_color") / 255.0 )
+	return file.coreFracHud
+}
+
+void function CoreFrac_DestroyHud()
+{
+	TitanCockpitDestroyRui( file.coreFracHud )
+	file.coreFracHud = null
+}
+
 void function MenuOpen()
 {
 	entity player = GetLocalViewPlayer()
@@ -648,7 +698,7 @@ void function MenuOpen()
 		HideCoreTimers()
 		switch (GetConVarInt("comp_core_meter_timer_style")) {
 			case eHUDCoreTimer.number:
-				UpdateNumberCoreTimer(8.88)
+				UpdateNumberCoreTimer("8.88")
 				break
 			case eHUDCoreTimer.text:
 				UpdateTextCoreTimer(format(Localize("#hud_core_timer_sword"), 8.88))

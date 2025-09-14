@@ -90,6 +90,12 @@
 		"comp_hud_ion_energy_color" "能量數值：顔色"
 		"comp_hud_ion_vortex_abosorbed_count" "顯示漩渦護盾吸收數量"
 
+		"hud_core_hud" "核心百分比"
+		"comp_hud_core_frac_enabled" "顯示核心百分比"
+		"comp_hud_core_frac_pos" "核心百分比：位置"
+		"comp_hud_core_frac_size" "核心百分比：大小"
+		"comp_hud_core_frac_color" "核心百分比：顔色"
+
 		"hud_no" "關閉"
 		"hud_yes" "打開"
 		"hud_Number" "數字"

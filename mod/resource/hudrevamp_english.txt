@@ -89,7 +89,13 @@
 		"comp_hud_ion_energy_pos" "Energy number: Position"
 		"comp_hud_ion_energy_size" "Energy number: Size"
 		"comp_hud_ion_energy_color" "Energy number: Color"
-		"comp_hud_ion_vortex_abosorbed_count" "Show bullet count absorbed by vortex shield"
+		"comp_hud_ion_vortex_abosorbed_count" "Show bullet count catched by vortex shield"
+
+		"hud_core_hud" "Core Availability"
+		"comp_hud_core_frac_enabled" "Show core availability"
+		"comp_hud_core_frac_pos" "Core Availability: Position"
+		"comp_hud_core_frac_size" "Core Availability: Size"
+		"comp_hud_core_frac_color" "Core Availability: Color"
 
 		"hud_no" "No"
 		"hud_yes" "Yes"

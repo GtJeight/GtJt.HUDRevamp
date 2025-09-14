@@ -34,6 +34,12 @@ void function HudRevampSettings_Init()
 	AddConVarSetting("comp_hud_titan_meter_offset", "#comp_hud_titan_meter_offset", "float2" )
 	AddConVarSetting("comp_hud_titan_meter_scale", "#comp_hud_titan_meter_scale", "float2" )
 
+	AddModCategory("#hud_core_hud")
+	AddConVarSettingEnum( "comp_hud_core_frac_enabled", "#comp_hud_core_frac_enabled", [ "#hud_no", "#hud_yes" ] )
+	AddConVarSetting( "comp_hud_core_frac_pos", "#comp_hud_core_frac_pos", "float3" )
+	AddConVarSetting( "comp_hud_core_frac_size", "#comp_hud_core_frac_size", "float" )
+	AddConVarSetting( "comp_hud_core_frac_color", "#comp_hud_core_frac_color", "float3" )
+
 	// Pilot Health Display
 	AddModCategory("#hud_pliot_health_display")
 	AddConVarSettingEnum("comp_hud_pilot_healthbar", "#comp_hud_pilot_healthbar", [ "#hud_no", "#hud_yes" ] )
